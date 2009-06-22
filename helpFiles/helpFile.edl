@@ -1,0 +1,244 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 223
+y 307
+w 771
+h 478
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 0
+ctlBgColor1 rgb 46517 46517 46517
+ctlBgColor2 rgb 35466 35466 35466
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+title "Help - File"
+endScreenProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 35
+y 64
+w 178
+h 191
+file "$(help)helpFile-MainWin"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 35
+y 270
+w 354
+h 154
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+lineWidth 2
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 36
+y 29
+w 84
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Create new file"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 230
+y 29
+w 97
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Open existing file"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 408
+y 140
+w 40
+h 40
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 8
+xPoints {
+  0 408
+  1 428
+  2 428
+  3 448
+  4 428
+  5 428
+  6 408
+  7 408
+}
+yPoints {
+  0 150
+  1 150
+  2 140
+  3 160
+  4 180
+  5 170
+  6 170
+  7 150
+}
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 11
+y 441
+w 59
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+label "Close"
+font "helvetica-medium-r-12.0"
+3d
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 53
+y 284
+w 49
+h 14
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Save file"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 68
+y 311
+w 290
+h 96
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Saving a file is not done from the main"
+  "window. It is done by clicking the middle"
+  "button on the screen to be saved. The middle"
+  "button menu is context sensitive, so make"
+  "sure that no objects are selected when you"
+  "wish to perform this action."
+}
+autoSize
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 46
+y 109
+w 132
+h 151
+file "$(help)helpFile-New"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 225
+y 64
+w 178
+h 191
+file "$(help)helpFile-MainWin"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 236
+y 109
+w 132
+h 151
+file "$(help)helpFile-Open"
+endObjectProperties
+
+# (PNG Image)
+object activePngClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 456
+y 39
+w 286
+h 401
+file "$(help)helpFile-FileSelect"
+endObjectProperties
+

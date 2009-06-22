@@ -1,0 +1,33 @@
+#ifndef __menu_button_str
+#define __menu_button_str 1
+
+#define activeMenuButtonClass_str1 (char *) "Control PV"
+#define activeMenuButtonClass_str2 (char *) "Unknown object"
+#define activeMenuButtonClass_str3 (char *) " Properties"
+#define activeMenuButtonClass_str4 (char *) "X"
+#define activeMenuButtonClass_str5 (char *) "Y"
+#define activeMenuButtonClass_str6 (char *) "Width"
+#define activeMenuButtonClass_str7 (char *) "Height"
+#define activeMenuButtonClass_str8 (char *) "FG Color"
+#define activeMenuButtonClass_str9 (char *) "FG Color Mode"
+#define activeMenuButtonClass_str10 (char *) "Alarm Sensitive"
+#define activeMenuButtonClass_str11 (char *) "BG Color"
+#define activeMenuButtonClass_str12 (char *) "BG Color Mode"
+#define activeMenuButtonClass_str13 (char *) "Static|Alarm"
+#define activeMenuButtonClass_str14 (char *) "Top Shadow"
+#define activeMenuButtonClass_str15 (char *) "Bottom Shadow"
+#define activeMenuButtonClass_str16 (char *) "Font"
+#define activeMenuButtonClass_str17 (char *) "Control PV"
+#define activeMenuButtonClass_str18 (char *) "Readback PV"
+#define activeMenuButtonClass_str19 (char *) "Menu"
+#define activeMenuButtonClass_str20 (char *) "error creating pv [%s]\n"
+#define activeMenuButtonClass_str28 (char *) "Readback PV"
+#define activeMenuButtonClass_str29 (char *) "Inconsistent Color"
+#define activeMenuButtonClass_str30 (char *) "Visibility PV"
+#define activeMenuButtonClass_str31 (char *) "Not Visible if|Visible if"
+#define activeMenuButtonClass_str32 (char *) ">="
+#define activeMenuButtonClass_str33 (char *) "and <"
+#define activeMenuButtonClass_str34 (char *) "Color PV"
+#define activeMenuButtonClass_str35 (char *) " - illegal pv type"
+
+#endif

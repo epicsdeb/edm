@@ -1,0 +1,7 @@
+#ifndef __group_str
+#define __group_str 1
+
+#define activeGroupClass_str1 (char *) "Insufficient virtual memory - abort\n"
+#define activeGroupClass_str2 (char *) "Multiplexor in group - behavior is undefined"
+
+#endif

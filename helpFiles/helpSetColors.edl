@@ -1,0 +1,629 @@
+3 1 0
+134
+235
+918
+708
+helvetica-medium-r-18.0
+0
+helvetica-medium-r-12.0
+0
+rgb
+0,0,0
+rgb
+50971,52011,50971
+rgb
+0,0,0
+rgb
+0,0,0
+rgb
+0,0,48891
+rgb
+46810,47850,46810
+rgb
+61374,61374,61374
+rgb
+27046,27046,27046
+rgb
+55132,56172,55132
+Help - Set colors
+0
+0
+10
+0
+<<<empty>>>
+<<<empty>>>
+0
+0
+helvetica-bold-r-14.0
+0
+<<<E~O~D>>>
+cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+1 2 0
+19
+65
+304
+592
+$(help)helpSetColors-Props
+0
+0
+0
+<<<E~O~D>>>
+cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+1 2 0
+582
+111
+144
+498
+$(help)helpSetColors-Colors
+0
+0
+0
+<<<E~O~D>>>
+activeRectangleClass
+2 1 0
+0
+0
+918
+35
+rgb
+55132,56172,55132
+0
+1
+rgb
+55132,56172,55132
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+1
+0
+0
+<<<E~O~D>>>
+activeCircleClass
+2 1 0
+826
+325
+65
+65
+rgb
+0,0,65535
+0
+1
+rgb
+0,58253,57213
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+2
+0
+<<<E~O~D>>>
+activeLineClass
+2 1 0
+748
+337
+60
+40
+8
+748 347
+788 347
+788 337
+808 357
+788 377
+788 367
+748 367
+748 347
+rgb
+0,0,0
+0
+1
+rgb
+0,0,0
+0
+1
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+823
+292
+71
+16
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Final result
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+345
+5
+228
+27
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+Set Colors Example
+helvetica-bold-r-24.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeExitButtonClass
+2 1 0
+8
+676
+59
+24
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
+1
+0
+helvetica-medium-r-12.0
+Close
+0
+0
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+355
+282
+174
+16
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+2) Click on line color button
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+355
+311
+181
+16
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+3) Choose color from palette
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+355
+369
+164
+16
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+5) Click on fill color button
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+355
+398
+181
+16
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+6) Choose color from palette
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+355
+340
+73
+16
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+4) Select fill
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+355
+253
+196
+16
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+1) Choose line thickness, style
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+355
+427
+48
+16
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+7) Click
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+405
+427
+22
+16
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+OK
+helvetica-bold-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+relatedDisplayClass
+2 5 0
+382
+508
+139
+28
+rgb
+0,0,0
+rgb
+44730,44730,44730
+rgb
+61374,61374,61374
+rgb
+22885,22885,22885
+$(help)helpSetColorsByName
+<<<empty>>>
+helvetica-medium-r-12.0
+0
+0
+1
+4
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+<<<empty>>>
+0
+0
+<<<empty>>>
+0
+1
+0
+1
+Set Colors by Name
+1
+<<<E~O~D>>>
+activeXTextClass
+2 1 0
+355
+481
+56
+16
+rgb
+0,0,0
+0
+1
+rgb
+46810,47850,46810
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+See also
+helvetica-medium-r-14.0
+0
+1
+<<<empty>>>
+<<<E~O~D>>>
+activeLineClass
+2 1 0
+164
+260
+185
+1
+2
+164 261
+349 260
+rgb
+0,0,0
+0
+0
+rgb
+46810,47850,46810
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+<<<E~O~D>>>
+activeLineClass
+2 1 0
+179
+260
+16
+27
+2
+179 287
+195 260
+rgb
+0,0,0
+0
+0
+rgb
+46810,47850,46810
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+<<<E~O~D>>>
+activeLineClass
+2 1 0
+122
+290
+226
+35
+3
+348 290
+269 324
+122 325
+rgb
+0,0,0
+0
+0
+rgb
+46810,47850,46810
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+<<<E~O~D>>>
+activeLineClass
+2 1 0
+540
+311
+60
+8
+2
+540 319
+600 311
+rgb
+0,0,0
+0
+0
+rgb
+46810,47850,46810
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+<<<E~O~D>>>
+activeLineClass
+2 1 0
+540
+337
+87
+69
+2
+540 406
+627 337
+rgb
+0,0,0
+0
+0
+rgb
+46810,47850,46810
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+<<<E~O~D>>>
+activeLineClass
+2 1 0
+155
+347
+194
+29
+3
+349 347
+282 375
+155 376
+rgb
+0,0,0
+0
+0
+rgb
+46810,47850,46810
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+<<<E~O~D>>>
+activeLineClass
+2 1 0
+121
+377
+229
+23
+3
+350 377
+291 400
+121 400
+rgb
+0,0,0
+0
+0
+rgb
+46810,47850,46810
+0
+2
+0
+<<<empty>>>
+<<<empty>>>
+0
+<<<empty>>>
+<<<empty>>>
+<<<E~O~D>>>

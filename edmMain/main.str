@@ -1,0 +1,20 @@
+#ifndef __main_str
+#define __main_str 1
+
+#define main_str1 (char *) "X error: code=%-d, msg: %s\n"
+#define main_str3 (char *) "Error from sys_cvt_seconds_to_timeout\n"
+#define main_str17 (char *) "Cannot insert node into active queue\n"
+#define main_str18 (char *) "Cannot remove node from free queue\n"
+#define main_str35 (char *) "Cannot get display name\n"
+#define main_str36 (char *) "Cannot open display\n"
+#define main_str37 (char *) "Cannot initialize main free queue - abort\n"
+#define main_str38 (char *) "Cannot initialize main active queue - abort\n"
+#define main_str39 (char *) "Cannot initialize main queue - abort\n"
+#define main_str40 (char *) "Cannot reinsert node into free queue\n"
+#define main_str41 (char *) "Cannot remove node from active queue\n"
+#define main_str44 (char *) "Error from reply\n"
+#define main_str45 (char *) "Exit command ignored - some window is not ready"
+#define main_str46 (char *) "No server found - abort\n"
+#define main_str47 (char *) "Primary session cannot exit with other sessions active"
+
+#endif

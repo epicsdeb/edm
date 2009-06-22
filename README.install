@@ -1,0 +1,180 @@
+###### INSTALLATION NOTES #########
+
+##### EDM Version 1-10-1zd ###########################################
+The Makefile has been modified to be more native for EPICS R3.14 builds.
+The modifications have been made for Linux only.
+
+
+
+### EDM Version 1-7-0c ############################
+
+#### Installing on Solaris 8/9/10 ********************* 
+
+1. Additional software packages required:
+   1a. You need "zlib"  for libpng (we use version 1.1.3) 
+       -- http://www.gzip.org/zlib/
+
+   1b. You need "libpng" (we use version 1.0.9)
+       -- http://www.libpng.org/pub/png/libpng.html
+
+
+   1c. You need "giflib" (we use version 4.1.0)
+     -- http://prtr-13.ucsc.edu/~badger/software/libungif/giflib.shtml
+           note: you may have trouble getting giflib because of licensing issues
+           so a src distribution will be placed on the SNS FTP site 
+           (ftp://snsftp.sns.ornl.gov/UPLOAD/controls/edm) for your convenience.  
+           I think we should use libpng from now on.
+
+2.  Configuration for compiling
+   -- To build edm as an EPICS Extensions unzip/untar the distribution in
+      the following location: $EPICS_EXTENSIONS/src
+
+   -- We are building as an EPICS extension; so modify the files in
+      "$EPICS_EXTENSIONS/configure" appropriately for your site 
+
+   -- Note we are using gcc-2.95.2 and GNU make version 3.79.1
+
+   -- Now go for the gusto and compile
+
+3. Run Time Configuration/Setup
+   a. Define the following environment variables:
+      The $EPICS_EXTENSIONS/src/edm/setup directory contains an example color table, font table
+      and calc.list file. This directory also contains a setup.sh for Bourne shell users.
+      The setup.sh files sets up required environment variables and creates an initial 
+      edmObjects and edmPvObjects file.
+
+      EDMPVOBJECTS   "This is the location of a file that describes the path to EPICS
+                      PV shared libraries"
+      EDMOBJECTS     "This is the location of a file that describes the path to the
+                      various EDM shared libraries"
+      EDMHELPFILES   " Location of EDM "HELP system"
+
+      EDMFILES       " Location of colors.list, fonts.list, and default.scheme files" 
+
+      EDMDATAFILES   " Default search path for edm screens (analogous to $EPICS_DISPLAY_PATH)
+
+      As an example here is what we set at the SNS: 
+
+      -- EDMPVOBJECTS=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMOBJECTS=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMHELPFILES=$EPICS_EXTENSIONS/src/edm/helpFiles
+      -- EDMFILES=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMDATAFILES=./:$IOCTOP/<system1>/opi/edl:$IOCTOP/<system2>/opi/edl
+
+      Also, we will make available the $EPICS_EXTENSIONS/ext_pref/edm as an example.
+      This will be tarred up as ext_pref-edm.tar on our ftp site: (ftp://snsftp.sns.ornl.gov/UPLOAD/controls/edm)
+      Some of the configuration steps may be discussed in the edm documentation located 
+      in the following: $EPICS_EXTENSIONS/src/edm/doc
+  b.  You do not need to modify LD_LIBRARY_PATH to run edm but make sure you do not
+      rename the $EPICS_EXTESIONS/lib/$HOST_ARCH directory. This full path name is
+      recorded in the build output executables and libraries and is added to the
+      library search directories used by the runtime linker.
+   
+#### Installing on Red Hat Linux 7.0/7.1/7.2 *********************
+
+1. Additional software packages required:
+   1a. You need "Motif"   (we use openMotif version 2.1.30-6 on RH 7.1)
+                          (we use openMotif version 2.1.30-8 on RH 7.1/7.2)
+         -- http://www.opengroup.org/openmotif/
+   2a. Giflib, zlib, and libpng is part of the general Linux distribution in most cases
+      
+2.  Configuration for compiling
+    -- To build edm as an EPICS Extensions unzip/untar the distribution in
+      the following location: $EPICS_EXTENSIONS/src
+
+   -- We are building as an EPICS extension; so modify the files in
+      "$EPICS_EXTENSIONS/configure" appropriately for your site
+
+   -- Note we are using gcc-2.96 (Linux native compiler) and GNU make version 3.79.1
+
+   -- Need to make the following softlinks in /usr/include so edm can find motif headers:
+      "ln -s ../X11R6/include/Xm  Xm".
+      "ln -s ../X11R6/include/X11  X11".
+
+ Note there is already a softlink for X11
+   -- Now go for the gusto and compile
+
+3. Run Time Configuration/Setup
+   a. Define the following environment variables:
+      EDMPVOBJECTS   "This is the location of a file that describes the path to EPICS
+                      PV shared libraries"
+      EDMOBJECTS     "This is the location of a file that describes the path to the
+                      various EDM shared libraries"
+      EDMHELPFILES   " Location of EDM "HELP system"
+
+      EDMFILES       " Location of colors.list, fonts.list, and default.scheme files" 
+
+      EDMDATAFILES   " Default search path for edm screens (analogous to $EPICS_DISPLAY_PATH)
+
+      As an example here is what we set at the SNS: 
+
+      -- EDMPVOBJECTS=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMOBJECTS=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMHELPFILES=$EPICS_EXTENSIONS/src/edm/helpFiles
+      -- EDMFILES=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMDATAFILES=./:$IOCTOP/<system1>/opi/edl:$IOCTOP/<system2>/opi/edl
+
+      Also, we will make available the $EPICS_EXTENSIONS/ext_pref/edm as an example.
+      This will be tarred up as ext_pref-edm.tar on our ftp site: (ftp://snsftp.sns.ornl.gov/UPLOAD/controls/edm)
+      Some of the configuration steps may be discussed in the edm documentation located 
+      in the following: $EPICS_EXTENSIONS/src/edm/doc
+  b. Make sure you define LD_LIBRARY_PATH to include $EPICS_EXTESIONS/lib/$HOST_ARCH
+
+   
+#### Installing on Mac OS X 10.4.5 PowerPC *********************
+
+1. Additional software packages required:
+   1a. Install Apple's developer tools including the optional X11 SDK
+   2a. Make sure you install X11 (Apple provides X11 as an optional installation for Mac OS X and the developer tools)
+   3a. You need to download and install darwin ports for other items
+	 -- http://darwinports.opendarwin.org/
+   4a. Using darwin ports, install openmotif, libungif and libpng
+         -- sudo port install openmotif
+	 -- sudo port install libungif
+	 -- sudo port install libpng
+      
+2.  Configuration for compiling
+    -- To build edm as an EPICS Extensions unzip/untar the distribution in the following location: $EPICS_EXTENSIONS/src
+
+   -- Make sure your environment variables are setup for EPICS (EPICS base, extensions, EDM, etc).
+
+   -- We are building as an EPICS extension; so modify the files in
+      "$EPICS_EXTENSIONS/configure" appropriately for your site (for example, you must specify EPICS_BASE_RELEASE explicitly)
+   
+   -- Note we are using gcc-4.0.1 (Apple's version of the Mac OS X native compiler) and GNU make version 3.80
+   
+   -- EPICS 3.14.8 is recommended.  If you are using EPICS 3.14.7, you must make sure that "-Ddarwin" flag is passed to the compiler.  Typically you do this by modifying the configuration file:  <base>/configure/os/CONFIG.Common.darwin-ppc  to append the darwin flag as such:   OP_SYS_CPPFLAGS += -Ddarwin
+
+   -- Open the Terminal application and change directory to the EDM source and type "make" to build EDM
+
+3. Run Time Configuration/Setup
+   a. Define the following environment variables:
+      EDMPVOBJECTS   "This is the location of a file that describes the path to EPICS
+                      PV shared libraries"
+      EDMOBJECTS     "This is the location of a file that describes the path to the
+                      various EDM shared libraries"
+      EDMHELPFILES   " Location of EDM "HELP system"
+
+      EDMFILES       " Location of colors.list, fonts.list, and default.scheme files" 
+
+      EDMDATAFILES   " Default search path for edm screens (analogous to $EPICS_DISPLAY_PATH)
+
+      As an example here is what we set at the SNS: 
+
+      -- EDMPVOBJECTS=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMOBJECTS=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMHELPFILES=$EPICS_EXTENSIONS/src/edm/helpFiles
+      -- EDMFILES=$EPICS_EXTENSIONS/ext_pref/edm
+      -- EDMDATAFILES=./:$IOCTOP/<system1>/opi/edl:$IOCTOP/<system2>/opi/edl
+
+
+
+Note: Documentation is still under construction.  If you find any problems with this install
+      note,  please send e-mail (ernesto@ornl.gov).  I will update the README.install
+      Please take a look at the HTML-based edm documentation as well.
+
+
+Note: Also, edm works with Red Hat 7.3
+
+
+

@@ -1,0 +1,859 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 16
+y 21
+w 1229
+h 985
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 52942 52171 52942
+textColor rgb 0 0 0
+ctlFgColor1 rgb 0 0 0
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 46517 46774 46517
+ctlBgColor2 rgb 57054 56283 57054
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 25443 24929 25443
+disableScroll
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 843
+y 19
+w 365
+h 354
+lineColor rgb 0 0 0
+fillColor rgb 46517 46774 46517
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 19
+y 343
+w 363
+h 106
+lineColor rgb 0 0 0
+fillColor rgb 46517 46774 46517
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 18
+y 19
+w 211
+h 27
+font "helvetica-medium-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 61423 61423 61423
+value {
+  "Embedded Window"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 351
+w 190
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Display Source = String PV"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 44
+y 375
+w 319
+h 64
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "In this mode, the widget monitors the specified PV"
+  "and opens the display given by its value. Macros"
+  "are inherited from the parent window and may not"
+  "be altered."
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 19
+y 464
+w 363
+h 106
+lineColor rgb 0 0 0
+fillColor rgb 46517 46774 46517
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 473
+w 159
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Display Source = Form"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 44
+y 496
+w 326
+h 64
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "In this mode, the widget opens the display given by"
+  "the value of Display File Name (Which may contain"
+  "macro symbols). Macros are inherited from the"
+  "parent window and may not be altered."
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 19
+y 587
+w 363
+h 329
+lineColor rgb 0 0 0
+fillColor rgb 46517 46774 46517
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 29
+y 596
+w 162
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Display Source = Menu"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 44
+y 619
+w 322
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "In this mode, a user specified menu is used to"
+  "determine which display to open. Macros and their"
+  "properties may be spcified for each menu item."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 44
+y 682
+w 330
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Label PV may contain the name of a string PV. If"
+  "so, when a display file is opened, the corresponding"
+  "menu label is written to this PV."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 44
+y 748
+w 333
+h 80
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "In this mode, PV takes the name of a numeric PV."
+  "Writing the value -1 to this PV (perhaps with a"
+  "message button) causes the menu to pop up. When"
+  "the user makes a menu selection, the selected item"
+  "number (starting with 0) is written to PV."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 44
+y 849
+w 318
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Alternatively, some value other than -1 may be"
+  "witten to PV. This will cause the corresponding"
+  "display file to be opened without user intervention."
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 409
+y 13
+w 0
+h 957
+lineColor rgb 0 0 0
+fillColor rgb 46517 46774 46517
+numPoints 2
+xPoints {
+  0 409
+  1 409
+}
+yPoints {
+  0 13
+  1 970
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 521
+y 273
+w 147
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Menu Properties"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 549
+y 305
+w 71
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Menu label"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 549
+y 331
+w 157
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Related display file name"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 549
+y 356
+w 240
+h 96
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Comma separated list of symbols or"
+  "a filename containing symbols and"
+  "an optional list (following the filename)"
+  "that will be defined for the related"
+  "display; the file is specified as"
+  "@<filename>"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 549
+y 713
+w 218
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Append the new symbols to those"
+  "given in the command line"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 549
+y 755
+w 230
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Replace command line symbols with"
+  "the new ones"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 549
+y 793
+w 239
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "All symbols defined for the embedded"
+  "display propagate to its children"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 500
+y 306
+w 42
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Label:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 512
+y 330
+w 30
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "File:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 485
+y 357
+w 57
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Macros:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 439
+y 715
+w 103
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Mode-Append:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 437
+y 756
+w 105
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Mode-Replace:"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 465
+y 793
+w 77
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Propagate:"
+}
+autoSize
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 850
+y 57
+w 350
+h 307
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 25443 24929 25443
+displaySource "file"
+file "$(help)helpRelatedDisplay"
+numDsps 0
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 895
+y 28
+w 251
+h 21
+font "helvetica-bold-r-18.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Example Embedded Window"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 430
+y 20
+w 371
+h 208
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "If \"Set Size\" is selected, the embedded window area is"
+  "resized. Height is set to the height of the target display"
+  "plus the value of \"Size Ofs\". Width is determine in the"
+  "same manner."
+  ""
+  "If \"Disable Scroll Bars\" is selected, scroll bars will"
+  "not be created even if the target display is larger than"
+  "the embedded window area."
+  ""
+  "If \"Ignore Multiplexors\" is set, the embedded window will"
+  "not refresh when a multiplexor changes a symbol set. This"
+  "can help eliminate complex and expensive interactions"
+  "between these two widgets."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 14
+y 931
+w 341
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "If \"Center\" is selected, the target display contents are"
+  "centered in the embedded window."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 550
+y 470
+w 188
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "(2550 characters maximum)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 549
+y 499
+w 231
+h 192
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "examples:"
+  ""
+  "  1) 1=one,2=two"
+  ""
+  "  2) @symbols 3=three,4=four"
+  ""
+  "     The file may contain only one line"
+  "     of 2550 characters maximum"
+  ""
+  "     The format of the single line is"
+  "     the same comma separated list,"
+  "     e.g. 1=one,2=two"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 14
+y 67
+w 359
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "An embedded window is somewhat like a related display"
+  "container; rather than popping up, the related display is"
+  "embedded within the specified screen area."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 14
+y 132
+w 337
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "If the referenced display is larger than the embedded"
+  "window, scroll bars are created."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 14
+y 178
+w 316
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Embedded windows may contain other embedded"
+  "windows but mutual recursion is forbidden."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 14
+y 224
+w 350
+h 48
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "Exit buttons in embedded windows are disabled unless"
+  "the \"Exit program\" or \"Apply to parent\" property is"
+  "true."
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 14
+y 288
+w 356
+h 32
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46774 46517
+useDisplayBg
+value {
+  "The embedded contents may be specified in three ways"
+  "as specified in Display Source."
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 815
+y 13
+w 0
+h 957
+lineColor rgb 0 0 0
+fillColor rgb 46517 46774 46517
+numPoints 2
+xPoints {
+  0 815
+  1 815
+}
+yPoints {
+  0 13
+  1 970
+}
+endObjectProperties
+

@@ -1,0 +1,604 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 234
+y 112
+w 841
+h 786
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 52171 52171 52171
+textColor rgb 0 0 65535
+ctlFgColor1 rgb 0 0 65535
+ctlFgColor2 rgb 0 0 65535
+ctlBgColor1 rgb 8995 8995 36494
+ctlBgColor2 rgb 8995 8995 36494
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+title "Help - Create"
+endScreenProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 166
+w 304
+h 592
+file "$(help)helpCreate-Props"
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 87
+y 233
+w 76
+h 67
+file "$(help)helpCreate-Types"
+endObjectProperties
+
+# (GIF Image)
+object cfcf6c8a_dbeb_11d2_8a97_00104b8742df
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 156
+y 241
+w 108
+h 214
+file "$(help)helpCreate-Items"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 0
+w 842
+h 35
+lineColor rgb 56797 56797 56797
+fill
+fillColor rgb 56797 56797 56797
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 19
+y 165
+w 65
+h 65
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Circle)
+object activeCircleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 757
+y 419
+w 65
+h 65
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 280
+y 340
+w 60
+h 40
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 8
+xPoints {
+  0 280
+  1 320
+  2 320
+  3 340
+  4 320
+  5 320
+  6 280
+  7 280
+}
+yPoints {
+  0 350
+  1 350
+  2 340
+  3 360
+  4 380
+  5 370
+  6 370
+  7 350
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 679
+y 431
+w 60
+h 40
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 8
+xPoints {
+  0 679
+  1 719
+  2 719
+  3 739
+  4 719
+  5 719
+  6 679
+  7 679
+}
+yPoints {
+  0 441
+  1 441
+  2 431
+  3 451
+  4 471
+  5 461
+  6 461
+  7 441
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 10
+y 98
+w 115
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "1) Left B Drag box"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 10
+y 128
+w 300
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "2) Release Left B (box disappears at this point)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 100
+y 180
+w 127
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "3) Choose category"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 699
+y 625
+w 48
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "6) Click"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 386
+y 129
+w 132
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "5) Specify properties"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 754
+y 386
+w 71
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Final result"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 750
+y 625
+w 22
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "OK"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 286
+y 5
+w 268
+h 27
+font "helvetica-bold-r-24.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Create Object Example"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 31
+y 236
+w 50
+h 50
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 10
+xPoints {
+  0 51
+  1 61
+  2 61
+  3 81
+  4 61
+  5 61
+  6 31
+  7 31
+  8 51
+  9 51
+}
+yPoints {
+  0 256
+  1 256
+  2 246
+  3 266
+  4 286
+  5 276
+  6 276
+  7 236
+  8 236
+  9 256
+}
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 6
+y 756
+w 59
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+label "Close"
+font "helvetica-medium-r-12.0"
+3d
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 221
+y 208
+w 110
+h 16
+font "helvetica-medium-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "4) Choose object"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 99
+y 303
+w 50
+h 50
+lineColor rgb 0 0 0
+fill
+fillColor rgb 0 0 0
+numPoints 10
+xPoints {
+  0 119
+  1 129
+  2 129
+  3 149
+  4 129
+  5 129
+  6 99
+  7 99
+  8 119
+  9 119
+}
+yPoints {
+  0 323
+  1 323
+  2 313
+  3 333
+  4 353
+  5 343
+  6 343
+  7 303
+  8 303
+  9 323
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 523
+y 125
+w 101
+h 24
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+topShadowColor rgb 61423 61423 61423
+botShadowColor rgb 24929 24929 24929
+font "helvetica-medium-r-12.0"
+noEdit
+buttonLabel "e.g. set colors"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "$(help)helpSetColors"
+}
+setPosition {
+  0 "button"
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 121
+y 199
+w 22
+h 36
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+lineWidth 2
+arrows "to"
+numPoints 2
+xPoints {
+  0 143
+  1 121
+}
+yPoints {
+  0 199
+  1 235
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 253
+y 227
+w 27
+h 63
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+lineWidth 2
+arrows "to"
+numPoints 2
+xPoints {
+  0 280
+  1 253
+}
+yPoints {
+  0 227
+  1 290
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 523
+y 649
+w 208
+h 70
+lineColor rgb 0 0 0
+fillColor rgb 46517 46517 46517
+lineWidth 2
+arrows "from"
+numPoints 2
+xPoints {
+  0 523
+  1 731
+}
+yPoints {
+  0 719
+  1 649
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 10
+y 621
+w 154
+h 16
+font "helvetica-bold-r-14.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "Mouse click shortcuts"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 10
+y 649
+w 309
+h 84
+font "helvetica-medium-r-12.0"
+fgColor rgb 0 0 0
+bgColor rgb 46517 46517 46517
+useDisplayBg
+value {
+  "The functions performed by the OK, Apply, and Cancel"
+  "buttons may also be achieved by double clicking, in"
+  "some unoccupied background region, the left, center,"
+  "and right mouse buttons respectively. This may, at"
+  "times, eliminate the need for excessive mouse pointer"
+  "movement."
+}
+autoSize
+endObjectProperties
+

@@ -1,0 +1,28 @@
+#ifndef __edmBoxComplete_str
+#define __edmBoxComplete_str 1
+
+#define edmBoxComplete_str1 (char *) "Control PV"
+#define edmBoxComplete_str2 (char *) "Unknown object"
+#define edmBoxComplete_str3 (char *) " Properties"
+#define edmBoxComplete_str4 (char *) "X"
+#define edmBoxComplete_str5 (char *) "Y"
+#define edmBoxComplete_str6 (char *) "Width"
+#define edmBoxComplete_str7 (char *) "Height"
+#define edmBoxComplete_str8 (char *) "Line Thk"
+#define edmBoxComplete_str9 (char *) "Line Style"
+#define edmBoxComplete_str10 (char *) "Line Color"
+#define edmBoxComplete_str11 (char *) "Alarm Sensitive"
+#define edmBoxComplete_str12 (char *) "Fill"
+#define edmBoxComplete_str13 (char *) "Fill Color"
+#define edmBoxComplete_str14 (char *) "PV"
+#define edmBoxComplete_str15 (char *) "Min Value"
+#define edmBoxComplete_str16 (char *) "Max Value"
+#define edmBoxComplete_str17 (char *) "Font"
+#define edmBoxComplete_str18 (char *) "Label"
+#define edmBoxComplete_str19 (char *) "0|1|2|3|4|5|6|7|8|9|10"
+#define edmBoxComplete_str20 (char *) "Solid|Dash"
+#define edmBoxComplete_str21 (char *) "error creating pv\n"
+#define edmBoxComplete_str22 (char *) "edmBoxClass - Process variable must be numeric"
+#define edmBoxComplete_str23 (char *) "Precision"
+
+#endif

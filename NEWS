@@ -1,0 +1,81 @@
+Version 1-10-0g-beta
+--------------------
+
+Default pvtype under the old generic pv scheme used to be "epics".
+This is now translated to EPICS.
+
+Popup buttons now created with XmNpopupEnabled set to false.
+
+Add wheel mouse support to up/down button, slider, motif slider
+(just experimenting for the moment).
+
+
+Version 1-10-0e-beta
+--------------------
+
+Related display widget and embedded window features added.
+
+Macro symbol definition may now include the following syntax forms:
+
+  s1=v1,s2=v2,...        (this variation is currently supported)
+
+      or
+
+  @<filename>
+
+      or
+
+  @<filename> s1=v1,s2=v2,...
+
+In the 2nd and 3rd variations, macro definitions will be read from the
+first line of an ascii file. Optionally (as shown by the 3nd variation), a
+list of inline definitions will be appended to the definitions obtained
+from the file.
+
+
+Version 1-10-0d-beta
+--------------------
+
+Fixed bit edit pvs bitmask
+
+
+Version 1-10-0c-beta
+--------------------
+
+Fixed problem with button press/release actions. When member of a group, if
+button is pushed, mouse pointer moves away from putton, and then button
+is released, the release action is not seen by the button.
+
+
+Version 1-10-0b-beta
+--------------------
+
+Default pv type specified in display properties now works.
+
+
+Version 1-10-0beta
+------------------
+
+Changes since 1-9-6:
+
+  o All widgets now utilize the pv_factory facility
+
+  o The file format is now based on a tag/value scheme; it's not
+    yet XML but it is a definite improvement. Reading of old format
+    files is still supported but write operations will employ the new
+    format which will not be forward compatible with older versions
+    of edm. You should therefore archive existing edl files before
+    upgrading to the new version.
+
+  o The embedded widget now supports scrolling and macros.
+
+  o Edit-mode drag-and-drop has been implemented using
+    a ctrl-middle-button mouse operation. Raw PV names
+    (i.e. names with untranslated macro references) may
+    be obtained from widgets in this manner.
+
+  o Medm-like group visibility has been added and there are
+    two associated edit-mode operations: "copy group visibility info"
+    and "paste group visibility info". These may be used with
+    an ungroup-edit-group sequence to copy and restore the group
+    visibility information.

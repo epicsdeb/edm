@@ -1,0 +1,105 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+EPICS_HOST_ARCH:=$(shell /usr/epics/base/startup/EpicsHostArch)
+
+ENV=EPICS_HOST_ARCH=$(EPICS_HOST_ARCH)
+CONFIG=INSTALL_LOCATION_EXTENSIONS=$(CURDIR)/build/inst USE_RPATH=NO
+
+BLOB=$(wildcard *)
+SRC=$(filter-out debian,$(filter-out build,$(BLOB)))
+
+build: build-stamp
+
+build-stamp:
+	dh_testdir
+
+	install -d build/src/edm
+	cp -r $(SRC) build/src/edm
+	ln -s /usr/epics/extensions/configure build/configure
+
+	# Add here commands to compile the package.
+	$(ENV) $(MAKE) -C build/src/edm $(CONFIG)
+
+	touch $@
+
+clean: 
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+
+	# Add here commands to clean up after the build process.
+	rm -rf build
+
+	dh_clean 
+
+devbindir=debian/edm-dev/usr/epics/base/bin/$(EPICS_HOST_ARCH)
+devlibdir=debian/edm-dev/usr/epics/base/lib/$(EPICS_HOST_ARCH)
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+
+	install -d debian/edm/usr/bin
+	cp build/inst/bin/linux-*/* debian/edm/usr/bin/
+	install -d debian/edm/usr/lib
+	cp build/inst/lib/linux-*/*.so* debian/edm/usr/lib/
+
+	install -d $(devlibdir)
+
+	cp -r build/inst/include debian/edm-dev/usr/epics/base/
+	cp build/inst/lib/linux-*/*.a $(devlibdir)
+
+	for ll in $(wildcard debian/edm/usr/lib); do \
+rm -f $(devlibdir)/`basename $$ll`; \
+ln -s ../../../../lib/`basename $$ll` $(devlibdir)/; \
+done
+
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs 
+	dh_installdocs
+	dh_installexamples
+#	dh_install
+#	dh_installmenu
+#	dh_installdebconf	
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_python
+#	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_perl
+#	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

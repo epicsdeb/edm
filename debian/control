@@ -2,19 +2,19 @@ Source: edm
 Section: unknown
 Priority: extra
 Maintainer: Michael Davidsaver <mdavidsaver@bnl.gov>
-Build-Depends: debhelper (>= 7), epics-dev libgif-dev, libpng-dev, libz-dev
+Build-Depends: debhelper (>= 7), epics-dev, libgif-dev, libpng-dev, libz-dev
 Standards-Version: 3.7.3
 Homepage: http://ics-web.sns.ornl.gov/edm/
 
 Package: edm
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, epics-libs
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system
 
 Package: edm-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, epics-dev, edm
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system.
  Development libraries and headers

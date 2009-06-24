@@ -19,6 +19,9 @@ SRC=$(filter-out debian,$(filter-out build,$(BLOB)))
 
 build: build-stamp
 
+binbuild=build/inst/bin/$(EPICS_HOST_ARCH)
+libbuild=build/inst/lib/$(EPICS_HOST_ARCH)
+
 build-stamp:
 	dh_testdir
 
@@ -26,8 +29,23 @@ build-stamp:
 	cp -r $(SRC) build/src/edm
 	ln -s /usr/epics/extensions/configure build/configure
 
-	# Add here commands to compile the package.
 	$(ENV) $(MAKE) -C build/src/edm $(CONFIG)
+
+	rm -f build/edmPvObjects
+	for pv in Epics Calc Log Loc; do \
+echo $$pv; \
+EDMPVOBJECTS=$(CURDIR)/build EDMOBJECTS=$(CURDIR)/build \
+LD_LIBRARY_PATH=$(CURDIR)/$(libbuild):$$LD_LIBRARY_PATH $(binbuild)/edm -addpv $(CURDIR)/$(libbuild)/lib$$pv.so; \
+done
+
+	rm -f build/edmObjects
+	for obj in $(CURDIR)/$(libbuild)/lib*.so; do \
+echo $$obj; \
+EDMPVOBJECTS=$(CURDIR)/build EDMOBJECTS=$(CURDIR)/build \
+LD_LIBRARY_PATH=$(CURDIR)/$(libbuild):$$LD_LIBRARY_PATH $(binbuild)/edm -add $$obj; \
+done
+
+	sed -i -e "s|$(CURDIR)/$(libbuild)|/usr/lib/edm|" build/edmObjects build/edmPvObjects
 
 	touch $@
 
@@ -50,19 +68,33 @@ install: build
 	dh_clean -k 
 	dh_installdirs
 
+	install -d debian/edm/etc/edm
+	install build/edmPvObjects debian/edm/etc/edm/
+	install build/edmObjects debian/edm/etc/edm/
+
+	install helpFiles/* debian/edm/etc/edm/
+	install edmMain/colors.list debian/edm/etc/edm/
+	install edmMain/fonts.list debian/edm/etc/edm/
+
 	install -d debian/edm/usr/bin
-	cp build/inst/bin/linux-*/* debian/edm/usr/bin/
-	install -d debian/edm/usr/lib
-	cp build/inst/lib/linux-*/*.so* debian/edm/usr/lib/
+	cp build/inst/bin/$(EPICS_HOST_ARCH)/* debian/edm/usr/bin/
+	install -d debian/edm/usr/lib/edm
+	install build/inst/lib/$(EPICS_HOST_ARCH)/libEdmBase.so debian/edm/usr/lib/
+	# these are not really plugins
+	install build/inst/lib/$(EPICS_HOST_ARCH)/lib114135a4-6f6c-11d3-95bc-00104b8742df.so debian/edm/usr/lib/
+	install build/inst/lib/$(EPICS_HOST_ARCH)/libcfcaa62e-8199-11d3-a77f-00104b8742df.so debian/edm/usr/lib/
+	# the reset are
+	cp build/inst/lib/$(EPICS_HOST_ARCH)/*.so* debian/edm/usr/lib/edm/
 
 	install -d $(devlibdir)
 
 	cp -r build/inst/include debian/edm-dev/usr/epics/base/
-	cp build/inst/lib/linux-*/*.a $(devlibdir)
+	cp build/inst/lib/$(EPICS_HOST_ARCH)/*.a $(devlibdir)
 
-	for ll in $(wildcard debian/edm/usr/lib); do \
+	for ll in $(wildcard debian/edm/usr/lib/edm/*.so); do \
+echo "$$ll"; \
 rm -f $(devlibdir)/`basename $$ll`; \
-ln -s ../../../../lib/`basename $$ll` $(devlibdir)/; \
+ln -s ../../../../lib/edm/`basename $$ll` $(devlibdir)/; \
 done
 
 
@@ -90,13 +122,13 @@ binary-arch: build install
 #	dh_installinfo
 	dh_installman
 	dh_link
-	dh_strip
+	dh_strip -Xusr/epics
 	dh_compress
 	dh_fixperms
 #	dh_perl
 #	dh_makeshlibs
 	dh_installdeb
-	dh_shlibdeps
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:debian/edm/usr/lib/edm dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb

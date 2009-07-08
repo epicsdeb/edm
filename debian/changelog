@@ -1,6 +1,13 @@
+edm (1.12.4-2) unstable; urgency=low
+
+  * Add printer config file
+  * Build against OpenMotif instead of LessTif
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Wed, 08 Jul 2009 13:30:00 -0400
+
 edm (1.12.4-1) unstable; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Initial release
 
  -- Michael Davidsaver <mdavidsaver@bnl.gov>  Mon, 22 Jun 2009 13:24:45 -0400
 

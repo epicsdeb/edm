@@ -76,6 +76,7 @@ install: build
 	install edmMain/colors.list debian/edm/etc/edm/
 	install edmMain/fonts.list debian/edm/etc/edm/
 	install edmMain/edmPrintDef debian/edm/etc/edm/
+	chmod 0644 debian/edm/etc/edm/*
 
 	install -d debian/edm/usr/bin
 	cp build/inst/bin/$(EPICS_HOST_ARCH)/* debian/edm/usr/bin/

@@ -1,3 +1,9 @@
+edm (1.12.4-3) unstable; urgency=low
+
+  * Give SONAMES to all plugin libraries
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Thu, 23 Jul 2009 13:37:00 -0400
+
 edm (1.12.4-2) unstable; urgency=low
 
   * Add printer config file

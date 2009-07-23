@@ -9,10 +9,12 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+SOV=1.12.4
+
 EPICS_HOST_ARCH:=$(shell /usr/epics/base/startup/EpicsHostArch)
 
 ENV=EPICS_HOST_ARCH=$(EPICS_HOST_ARCH)
-CONFIG=INSTALL_LOCATION_EXTENSIONS=$(CURDIR)/build/inst USE_RPATH=NO
+CONFIG=INSTALL_LOCATION_EXTENSIONS=$(CURDIR)/build/inst USE_RPATH=NO SHRLIB_VERSION=$(SOV)
 
 BLOB=$(wildcard *)
 SRC=$(filter-out debian,$(filter-out build,$(BLOB)))
@@ -35,11 +37,11 @@ build-stamp:
 	for pv in Epics Calc Log Loc; do \
 echo $$pv; \
 EDMPVOBJECTS=$(CURDIR)/build EDMOBJECTS=$(CURDIR)/build \
-LD_LIBRARY_PATH=$(CURDIR)/$(libbuild):$$LD_LIBRARY_PATH $(binbuild)/edm -addpv $(CURDIR)/$(libbuild)/lib$$pv.so; \
+LD_LIBRARY_PATH=$(CURDIR)/$(libbuild):$$LD_LIBRARY_PATH $(binbuild)/edm -addpv $(CURDIR)/$(libbuild)/lib$$pv.so.$(SOV); \
 done
 
 	rm -f build/edmObjects
-	for obj in $(CURDIR)/$(libbuild)/lib*.so; do \
+	for obj in $(CURDIR)/$(libbuild)/lib*.so.$(SOV); do \
 echo $$obj; \
 EDMPVOBJECTS=$(CURDIR)/build EDMOBJECTS=$(CURDIR)/build \
 LD_LIBRARY_PATH=$(CURDIR)/$(libbuild):$$LD_LIBRARY_PATH $(binbuild)/edm -add $$obj; \
@@ -81,20 +83,27 @@ install: build
 	install -d debian/edm/usr/bin
 	cp build/inst/bin/$(EPICS_HOST_ARCH)/* debian/edm/usr/bin/
 	install -d debian/edm/usr/lib/edm
-	install build/inst/lib/$(EPICS_HOST_ARCH)/libEdmBase.so debian/edm/usr/lib/
+	install build/inst/lib/$(EPICS_HOST_ARCH)/libEdmBase.so.$(SOV) debian/edm/usr/lib/
 	# these are not really plugins
-	install build/inst/lib/$(EPICS_HOST_ARCH)/lib114135a4-6f6c-11d3-95bc-00104b8742df.so debian/edm/usr/lib/
-	install build/inst/lib/$(EPICS_HOST_ARCH)/libcfcaa62e-8199-11d3-a77f-00104b8742df.so debian/edm/usr/lib/
+	install build/inst/lib/$(EPICS_HOST_ARCH)/lib114135a4-6f6c-11d3-95bc-00104b8742df.so.$(SOV) debian/edm/usr/lib/
+	install build/inst/lib/$(EPICS_HOST_ARCH)/libcfcaa62e-8199-11d3-a77f-00104b8742df.so.$(SOV) debian/edm/usr/lib/
 	# the reset are
-	cp build/inst/lib/$(EPICS_HOST_ARCH)/*.so* debian/edm/usr/lib/edm/
+	cp build/inst/lib/$(EPICS_HOST_ARCH)/*.so.$(SOV) debian/edm/usr/lib/edm/
 
 	install -d $(devlibdir)
 
 	cp -r build/inst/include debian/edm-dev/usr/epics/base/
+	cp build/inst/lib/$(EPICS_HOST_ARCH)/*.so $(devlibdir)
 	cp build/inst/lib/$(EPICS_HOST_ARCH)/*.a $(devlibdir)
 
-	for ll in $(wildcard debian/edm/usr/lib/edm/*.so); do \
-echo "$$ll"; \
+	for ll in $(wildcard $(devlibdir)/*.so); do \
+echo "A $$ll"; \
+rm -f $(devlibdir)/`basename $$ll`; \
+ln -s `basename $$ll`.$(SOV) $(devlibdir)/`basename $$ll`; \
+done
+
+	for ll in $(wildcard debian/edm/usr/lib/edm/*.so.$(SOV)); do \
+echo "B $$ll"; \
 rm -f $(devlibdir)/`basename $$ll`; \
 ln -s ../../../../lib/edm/`basename $$ll` $(devlibdir)/; \
 done
@@ -128,7 +137,7 @@ binary-arch: build install
 	dh_compress
 	dh_fixperms
 #	dh_perl
-#	dh_makeshlibs
+	dh_makeshlibs
 	dh_installdeb
 	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(CURDIR)/debian/edm/usr/lib/edm dh_shlibdeps
 	dh_gencontrol

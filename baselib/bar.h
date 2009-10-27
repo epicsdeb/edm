@@ -153,9 +153,18 @@ typedef struct editBufTag {
   char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
   char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
   char bufNullPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufLabel[PV_Factory::MAX_PV_NAME+1];
 } editBufType, *editBufPtr;
 
 editBufPtr eBuf;
+
+entryListBase *labelTypeEntry, *labelEntry;
+
+entryListBase *showScaleEntry, *labelTicksEntry, *majorTicksEntry,
+ *minorTicksEntry, *scaleFormatEntry, *scaleOriginEntry;
+
+entryListBase *limitsFromDbEntry, *scalePrecEntry, *scaleMinEntry,
+ *scaleMaxEntry;
 
 int bufX, bufY, bufW, bufH;
 
@@ -166,8 +175,8 @@ int minH, minVertH;
 
 double controlV, curControlV, readV, curReadV, curNullV;
 int barY, oldBarY, barH, oldBarH, barW, oldBarW, bufInvalid, barX, oldBarX,
- originW, originH, mode, barAreaX, barAreaW, barAreaY, barAreaH, barStrLen, barMaxW, barMaxH,
- aboveBarOrigin, oldAboveBarOrigin, zeroCrossover;
+ originW, originH, mode, barAreaX, barAreaW, barAreaY, barAreaH, barStrLen,
+ barMaxW, barMaxH, aboveBarOrigin, oldAboveBarOrigin, zeroCrossover;
 double barOriginX, barOriginY, factorLt, factorGe;
 expStringClass barOriginXExpStr;
 
@@ -180,7 +189,7 @@ ProcessVariable *readPvId, *nullPvId;
 int initialReadConnection, initialNullConnection;
 int oldStat, oldSev;
 
-expStringClass controlPvExpStr, readPvExpStr, nullPvExpStr;
+expStringClass controlPvExpStr, readPvExpStr, nullPvExpStr, label;
 
 unsigned char pvNotConnectedMask;
 
@@ -191,7 +200,6 @@ int init, active, activeMode;
 int barColorMode, fgColorMode;
 pvColorClass barColor, fgColor, bgColor;
 colorButtonClass barCb, fgCb, bgCb;
-char label[39+1];
 int labelType;
 int border;
 int showScale;
@@ -206,7 +214,6 @@ expStringClass precisionExpStr;
 
 int bufBarColorMode, bufFgColorMode;
 int bufBarColor, bufFgColor, bufBgColor;
-char bufLabel[39+1];
 int bufLabelType;
 int bufBorder;
 int bufShowScale;
@@ -221,7 +228,7 @@ char bufBarOriginX[15+1];
 int needErase, needDraw, needFullDraw, needDrawCheck, needConnectInit,
  needRefresh, needInfoInit;
 int needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 public:
 
@@ -279,6 +286,11 @@ int deactivate ( int pass );
 void updateDimensions ( void );
 
 void bufInvalidate ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

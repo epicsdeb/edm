@@ -50,10 +50,10 @@ static XtTranslations g_parsedTrans;
 
 static char g_dragTrans[] =
   "#override ~Ctrl~Shift<Btn2Down>: startDrag()\n\
-   Ctrl~Shift<Btn2Down>: pvInfo()\n\
-   Shift Ctrl<Btn2Down>: dummy()\n\
+   Ctrl~Shift<Btn2Down>: dummy()\n\
+   Ctrl~Shift<Btn2Up>: selectActions()\n\
+   Shift Ctrl<Btn2Down>: pvInfo()\n\
    Shift~Ctrl<Btn2Down>: dummy()\n\
-   Shift Ctrl<Btn2Up>: selectActions()\n\
    Shift~Ctrl<Btn2Up>: selectDrag()\n\
    <Btn3Up>: ChangeParams()";
 
@@ -1966,8 +1966,13 @@ char title[32], *ptr;
 
   ef.addTextField( activeTriumfSliderClass_str37, 35, eBuf->controlBufLabelName,
    PV_Factory::MAX_PV_NAME );
+  labelEntry = ef.getCurItem();
   ef.addOption( activeTriumfSliderClass_str38, activeTriumfSliderClass_str39,
    &bufControlLabelType );
+  labelTypeEntry = ef.getCurItem();
+  labelTypeEntry->setNumValues( 3 );
+  labelTypeEntry->addInvDependency( 2, labelEntry );
+  labelTypeEntry->addDependencyCallbacks();
 
   ef.addToggle( activeTriumfSliderClass_str86, &bufShowLimits );
   ef.addToggle( activeTriumfSliderClass_str87, &bufShowLabel );
@@ -1980,11 +1985,19 @@ char title[32], *ptr;
   ef.addTextField( activeTriumfSliderClass_str28, 35, &bufIncrement );
 
   ef.addToggle( activeTriumfSliderClass_str29, &bufLimitsFromDb );
+  limitsFromDbEntry = ef.getCurItem();
   ef.addOption( activeTriumfSliderClass_str30, activeTriumfSliderClass_str35,
    &bufFormatType );
   ef.addTextField( activeTriumfSliderClass_str31, 35, &bufEfPrecision );
+  scalePrecEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scalePrecEntry );
   ef.addTextField( activeTriumfSliderClass_str32, 35, &bufEfScaleMin );
+  scaleMinEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMinEntry );
   ef.addTextField( activeTriumfSliderClass_str33, 35, &bufEfScaleMax );
+  scaleMaxEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMaxEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
 
   ef.addColorButton( activeTriumfSliderClass_str24, actWin->ci, &fgCb,
    &bufFgColor );
@@ -2577,7 +2590,7 @@ KeySym key;
 char keyBuf[20];
 const int keyBufSize = 20;
 XComposeStatus compose;
-int charCount, stat, v;
+int b2Op, charCount, stat, v;
 double mult, fvalue;
 #ifdef TRIUMF
 int at_limit = 0;
@@ -2649,7 +2662,24 @@ double df;
     }
 #endif
   }
-  else if ( e->type == ButtonPress ) {
+
+  // allow Button2 operations when no write access
+  b2Op = 0;
+  if ( ( e->type == ButtonPress ) || ( e->type == ButtonRelease ) ) {
+    be = (XButtonEvent *) e;
+    if ( be->button == Button2 ) {
+      b2Op = 1;
+    }
+  }
+
+  if ( mslo->controlPvId ) {
+    if ( !mslo->controlPvId->have_write_access() && !b2Op ) {
+      *continueToDispatch = False;
+      return;
+    }
+  }
+
+  if ( e->type == ButtonPress ) {
 
     be = (XButtonEvent *) e;
 
@@ -2968,7 +2998,7 @@ static void triumfSliderEventHandler (
 
 XButtonEvent *be;
 activeTriumfSliderClass *mslo;
-int stat;
+int stat, b2Op;
 char title[32], *ptr, strVal[255+1];
 
 #if 0
@@ -3022,11 +3052,23 @@ double fvalue, mult;
 
   }
 
-  if ( mslo->controlPvId ) {
-    if ( !mslo->controlPvId->have_write_access() ) return;
+  // allow Button2 operations when no write access
+  b2Op = 0;
+  if ( ( e->type == ButtonPress ) || ( e->type == ButtonRelease ) ) {
+    be = (XButtonEvent *) e;
+    if ( be->button == Button2 ) {
+      b2Op = 1;
+    }
   }
-  if ( e->type == ButtonPress ) {
 
+  if ( mslo->controlPvId ) {
+    if ( !mslo->controlPvId->have_write_access() && !b2Op ) {
+      *continueToDispatch = False;
+      return;
+    }
+  }
+
+  if ( e->type == ButtonPress ) {
 
     be = (XButtonEvent *) e;
 
@@ -3049,7 +3091,7 @@ double fvalue, mult;
       if ( !( be->state & ( ControlMask | ShiftMask ) ) ) {
         stat = mslo->startDrag( w, e );
       }
-      else if ( !( be->state & ShiftMask ) &&
+      else if ( ( be->state & ShiftMask ) &&
                 ( be->state & ControlMask ) ) {
         stat = mslo->showPvInfo( be, be->x, be->y );
       }
@@ -3245,7 +3287,7 @@ double fvalue, mult;
            !( be->state & ControlMask ) ) {
         stat = mslo->selectDragValue( be );
       }
-      else if ( ( be->state & ShiftMask ) &&
+      else if ( !( be->state & ShiftMask ) &&
                 ( be->state & ControlMask ) ) {
         mslo->doActions( be, be->x, be->y );
       }
@@ -3692,6 +3734,30 @@ void activeTriumfSliderClass::updateDimensions ( void )
   midVertScaleY = scaleH/2 + scaleY - (int) ( (double) fontHeight * 0.5 );
   midVertScaleY1 = scaleH/3 + scaleY - (int) ( (double) fontHeight * 0.5 );
   midVertScaleY2 = 2*scaleH/3 + scaleY - (int) ( (double) fontHeight * 0.5 );
+
+}
+
+int activeTriumfSliderClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( controlPvName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlPvName.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( savedValuePvName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  savedValuePvName.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( controlLabelName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlLabelName.setRaw( tmpStr.getExpanded() );
+
+  return 1;
 
 }
 

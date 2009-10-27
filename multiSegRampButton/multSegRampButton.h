@@ -268,6 +268,12 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *finalEntry[MAXSEGS], *rateEntry[MAXSEGS];
+
+entryListBase *limitsFromDbEntry, *minEntry, *maxEntry;
+
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
 int destType, finalType[MAXSEGS], rampRateType[MAXSEGS], rampStateType;
 
 pvColorClass fgColor, bgColor;
@@ -316,7 +322,7 @@ double controlV, curControlV, curFinalV[MAXSEGS], rampFinalV[MAXSEGS], curRampRa
 int needConnectInit, needFinalConnectInit[MAXSEGS], needRampRateConnectInit[MAXSEGS],
  needRampStateConnectInit, needCtlInfoInit, needRefresh, needErase, needDraw,
  needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 int initialConnection, initialFinalValueConnection[MAXSEGS],
  initialRampRateConnection[MAXSEGS],
  initialRampStateValueConnection, initialVisConnection,
@@ -425,6 +431,11 @@ int getButtonActionRequest (
   int *down,
   int *drag,
   int *focus );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

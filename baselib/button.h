@@ -229,12 +229,18 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *ctlPvEntry, *ctlPvBitEntry;
+
+entryListBase *rdPvEntry, *rdPvBitEntry;
+
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
 short controlV, curControlV, readV, curReadV;
 
 int needCtlConnectInit, needCtlInfoInit, needCtlRefresh;
 int needReadConnectInit, needReadInfoInit, needReadRefresh;
 int needErase, needDraw, needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 int fgColorMode;
 pvColorClass fgColor, inconsistentColor, onColor, offColor;
@@ -383,6 +389,11 @@ int getButtonActionRequest (
   int *down,
   int *drag,
   int *focus );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

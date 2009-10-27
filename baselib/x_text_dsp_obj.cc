@@ -33,9 +33,9 @@ static int g_showTextBorderAlways = 0;
 static char g_dragTrans[] =
   "#override\n\
    ~Ctrl~Shift<Btn2Down>: startDrag()\n\
-   Ctrl~Shift<Btn2Down>: pvInfo()\n\
-   Shift Ctrl<Btn2Down>: dummy()\n\
-   Shift Ctrl<Btn2Up>: selectActions()\n\
+   Ctrl~Shift<Btn2Up>: selectActions()\n\
+   Shift~Ctrl<Btn2Down>: dummy()\n\
+   Shift Ctrl<Btn2Down>: pvInfo()\n\
    Shift~Ctrl<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] = {
@@ -102,14 +102,33 @@ int n, l;
 
   if ( !axtdo->enabled ) return;
 
+  if ( axtdo->writeDisabled && axtdo->editable ) {
+    if ( axtdo->pvId->have_write_access() ) {
+      axtdo->writeDisabled = 0;
+      if ( axtdo->tf_widget ) XtVaSetValues( axtdo->tf_widget,
+       XmNeditable, (XtArgVal) True,
+       NULL );
+    }
+  }
+  if ( !axtdo->writeDisabled && axtdo->editable ) {
+    if ( !axtdo->pvId->have_write_access() ) {
+      axtdo->writeDisabled = 1;
+      if ( axtdo->tf_widget ) XtVaSetValues( axtdo->tf_widget,
+       XmNeditable, (XtArgVal) False,
+       NULL );
+    }
+  }
+
   if ( e->type == FocusIn ) {
 
     axtdo->focusIn = 1;
     axtdo->focusOut = 0;
 
-    n = 0;
-    XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
-    XtSetValues( axtdo->tf_widget, args, n );
+    if ( axtdo->pvId->have_write_access() ) {
+      n = 0;
+      XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
+      if ( axtdo->tf_widget ) XtSetValues( axtdo->tf_widget, args, n );
+    }
 
     if ( !(axtdo->inputFocusUpdatesAllowed) || axtdo->cursorIn ) {
       axtdo->grabUpdate = 1;
@@ -698,7 +717,8 @@ char *buf;
 
   buf = XmTextGetString( axtdo->tf_widget );
 
-  if ( !blank( buf ) && axtdo->characterMode ) {
+  //if ( !blank( buf ) && axtdo->characterMode ) {
+  if ( axtdo->characterMode ) {
     if ( axtdo->pvExists ) {
       axtdo->putValueWithClip( buf );
     }
@@ -807,18 +827,11 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) client;
 int l;
 char *buf;
 
-//Arg args[10];
-//int n;
-
   axtdo->widget_value_changed = 0;
 
   buf = XmTextGetString( axtdo->tf_widget );
   l = strlen(buf);
   XtFree( buf );
-
-  //n = 0;
-  //XtSetArg( args[n], XmNcursorPositionVisible, (XtArgVal) True ); n++;
-  //XtSetValues( axtdo->tf_widget, args, n );
 
   if ( axtdo->autoSelect ) {
     XmTextSetSelection( axtdo->tf_widget, 0, l,
@@ -1263,6 +1276,30 @@ char *buf, tmp[XTDC_K_MAX+1];
     }
 
   }
+
+}
+
+static void xtdo_access_security_change (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
+
+  axtdo->actWin->appCtx->proc->lock();
+
+  if ( axtdo->activeMode ) {
+
+    if ( pv->is_valid() ) {
+
+      axtdo->needAccessSecurityCheck = 1;
+      axtdo->actWin->addDefExeNode( axtdo->aglPtr );
+
+    }
+
+  }
+
+  axtdo->actWin->appCtx->proc->unlock();
 
 }
 
@@ -3824,16 +3861,28 @@ int noedit;
    PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeXTextDspClass_str74, 35, eBuf->bufColorPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeXTextDspClass_str25, 35, eBuf->bufSvalPvName,
    PV_Factory::MAX_PV_NAME );
+  nullPvEntry = ef.getCurItem();
+
   ef.addOption( activeXTextDspClass_str23, activeXTextDspClass_str24,
    &eBuf->bufNullDetectMode );
+  nullCondEntry = ef.getCurItem();
+  nullPvEntry->addDependency( nullCondEntry );
+
   ef.addOption( activeXTextDspClass_str18,
    activeXTextDspClass_str19, &eBuf->bufFormatType );
   ef.addToggle( activeXTextDspClass_str77, &eBuf->bufUseHexPrefix );
+
   ef.addToggle( activeXTextDspClass_str20, &eBuf->bufLimitsFromDb );
-  ef.addTextField( activeXTextDspClass_str85, 35, eBuf->bufFieldLenInfo, 7 );
+  limitsFromDbEntry = ef.getCurItem();
   ef.addTextField( activeXTextDspClass_str21, 35, &eBuf->bufEfPrecision );
+  precisionEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( precisionEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
+
+  ef.addTextField( activeXTextDspClass_str85, 35, eBuf->bufFieldLenInfo, 7 );
   ef.addToggle( activeXTextDspClass_str88, &eBuf->bufNoExecuteClipMask );
   ef.addToggle( activeXTextDspClass_str84, &eBuf->bufClipToDspLimits );
   ef.addToggle( activeXTextDspClass_str81, &eBuf->bufShowUnits );
@@ -3841,28 +3890,51 @@ int noedit;
 
   if ( !noedit ) {
     ef.addToggle( activeXTextDspClass_str27, &eBuf->bufEditable );
+    editableEntry = ef.getCurItem();
   }
   else {
     eBuf->bufEditable = editable = 0;
+    editableEntry = NULL;
   }
 
   if ( !noedit ) {
     ef.addToggle( activeXTextDspClass_str67, &eBuf->bufUseKp );
+    keypadEntry = ef.getCurItem();
   }
   else {
     eBuf->bufUseKp = useKp = 0;
+    keypadEntry = NULL;
   }
 
   ef.addToggle( activeXTextDspClass_str28, &eBuf->bufSmartRefresh );
   ef.addToggle( activeXTextDspClass_str29, &eBuf->bufIsWidget );
+  if ( !noedit ) {
+    isWidgetEntry = ef.getCurItem();
+  }
+  else {
+    isWidgetEntry = NULL;
+  }
 
   if ( !noedit ) {
     ef.addToggle( activeXTextDspClass_str87, &eBuf->bufCharacterMode );
+    charModeEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( charModeEntry );
     ef.addToggle( activeXTextDspClass_str83, &eBuf->bufInputFocusUpdatesAllowed );
+    inFocUpdEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( inFocUpdEntry );
     ef.addToggle( activeXTextDspClass_str68, &eBuf->bufChangeValOnLoseFocus );
+    chgValOnFocEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( chgValOnFocEntry );
     ef.addToggle( activeXTextDspClass_str75, &eBuf->bufAutoSelect );
+    autoSelEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( autoSelEntry );
     ef.addToggle( activeXTextDspClass_str76, &eBuf->bufUpdatePvOnDrop );
+    updPvOnDropEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( updPvOnDropEntry );
     ef.addToggle( activeXTextDspClass_str86, &eBuf->bufIsPassword );
+    isPwEntry = ef.getCurItem();
+    isWidgetEntry->addDependency( isPwEntry );
+    isWidgetEntry->addDependencyCallbacks();
   }
   else {
     eBuf->bufCharacterMode = characterMode = 0;
@@ -3877,35 +3949,67 @@ int noedit;
 
   if ( !noedit ) {
     ef.addToggle( activeXTextDspClass_str70, &eBuf->bufIsDate );
+    dateEntry = ef.getCurItem();
     ef.addToggle( activeXTextDspClass_str80, &eBuf->bufDateAsFileName );
+    cvtDateToFileEntry = ef.getCurItem();
+    dateEntry->addDependency( cvtDateToFileEntry );
+    dateEntry->addDependencyCallbacks();
     ef.addToggle( activeXTextDspClass_str71, &eBuf->bufIsFile );
+    fileEntry = ef.getCurItem();
     ef.addOption( activeXTextDspClass_str78,
      activeXTextDspClass_str79, &eBuf->bufFileComponent );
+    returnEntry = ef.getCurItem();
+    fileEntry->addDependency( returnEntry );
     ef.addTextField( activeXTextDspClass_str72, 35, eBuf->bufDefDir, XTDC_K_MAX );
+    defDirEntry = ef.getCurItem();
+    fileEntry->addDependency( defDirEntry );
     ef.addTextField( activeXTextDspClass_str73, 35, eBuf->bufPattern, XTDC_K_MAX );
+    patEntry = ef.getCurItem();
+    fileEntry->addDependency( patEntry );
+    fileEntry->addDependencyCallbacks();
   }
   else {
     eBuf->bufIsDate = isDate = 0;
     eBuf->bufIsFile = isFile = 0;
     fileComponent = XTDC_K_FILE_FULL_PATH;
     dateAsFileName = 0;
+    dateEntry = fileEntry = NULL;
   }
 
   ef.addColorButton( activeXTextDspClass_str15, actWin->ci, &eBuf->fgCb,
    &eBuf->bufFgColor );
   ef.addToggle( activeXTextDspClass_str14, &eBuf->bufColorMode );
   ef.addToggle( activeXTextDspClass_str82, &eBuf->bufUseAlarmBorder );
+
   ef.addColorButton( activeXTextDspClass_str16, actWin->ci, &eBuf->bgCb,
    &eBuf->bufBgColor );
+  bgColorEntry = ef.getCurItem();
   ef.addToggle( activeXTextDspClass_str17, &eBuf->bufUseDisplayBg );
+  useDspBgEntry = ef.getCurItem();
+  useDspBgEntry->addInvDependency( bgColorEntry );
+  useDspBgEntry->addDependencyCallbacks();
+
   ef.addColorButton( activeXTextDspClass_str26, actWin->ci, &eBuf->svalCb,
    &eBuf->bufSvalColor );
+  nullColorEntry = ef.getCurItem();
+  nullPvEntry->addDependency( nullColorEntry );
+  nullPvEntry->addDependencyCallbacks();
+
   ef.addFontMenu( activeXTextDspClass_str12, actWin->fi, &fm, eBuf->bufFontTag );
   fm.setFontAlignment( alignment );
 
-  //ef.addToggle( activeXTextDspClass_str30, &eBuf->bufActivateCallbackFlag );
-  //ef.addToggle( activeXTextDspClass_str31, &eBuf->bufDeactivateCallbackFlag );
-  ef.addToggle( activeXTextDspClass_str32, &eBuf->bufChangeCallbackFlag );
+  if ( !noedit ) {
+    ef.addToggle( activeXTextDspClass_str32, &eBuf->bufChangeCallbackFlag );
+    chgCbEntry = ef.getCurItem();
+  }
+
+  if ( !noedit ) {
+    editableEntry->addDependency( keypadEntry );
+    editableEntry->addDependency( dateEntry );
+    editableEntry->addDependency( fileEntry );
+    editableEntry->addDependency( chgCbEntry );
+    editableEntry->addDependencyCallbacks();
+  }
 
   return 1;
 
@@ -4352,6 +4456,53 @@ void activeXTextDspClass::bufInvalidate ( void ) {
 
 }
 
+int activeXTextDspClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] ) {
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( pvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  pvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( svalPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  svalPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( fgPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  fgPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( defDir.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  defDir.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( pattern.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  pattern.setRaw( tmpStr.getExpanded() );
+
+  strncpy( pvName, pvExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+  pvName[PV_Factory::MAX_PV_NAME] = 0;
+  strncpy( value, pvName, minStringSize() );
+  value[minStringSize()] = 0;
+  stringLength = strlen( value );
+  fs = actWin->fi->getXFontStruct( fontTag );
+  updateFont( value, fontTag, &fs, &fontAscent, &fontDescent, &fontHeight,
+   &stringWidth );
+  stringY = y + fontAscent + h/2 - fontHeight/2;
+  if ( alignment == XmALIGNMENT_BEGINNING )
+    stringX = x;
+  else if ( alignment == XmALIGNMENT_CENTER )
+    stringX = x + w/2 - stringWidth/2;
+  else if ( alignment == XmALIGNMENT_END )
+    stringX = x + w - stringWidth;
+
+  return 1;
+
+}
+
 int activeXTextDspClass::expand1st (
   int numMacros,
   char *macros[],
@@ -4430,7 +4581,7 @@ char callbackName[63+1];
 
       deferredCount = 0;
       needConnectInit = needInfoInit = needErase = needDraw = needRefresh =
-       needUpdate = needFgPvPut = 0;
+       needUpdate = needFgPvPut = needAccessSecurityCheck = 0;
       needToEraseUnconnected = 0;
       needToDrawUnconnected = 0;
       initialConnection = 1;
@@ -4462,6 +4613,7 @@ char callbackName[63+1];
       handlerInstalled = 0;
       strcpy( pwValue, "" );
       pwLength = 0;
+      writeDisabled = 0;
 
       initEnable();
 
@@ -4525,6 +4677,7 @@ char callbackName[63+1];
 	pvId = the_PV_Factory->create( pvExpStr.getExpanded() );
 	if ( pvId ) {
 	  pvId->add_conn_state_callback( xtdo_monitor_connect_state, this );
+          pvId->add_access_security_callback( xtdo_access_security_change, this );
 	}
 	else {
           fprintf( stderr, activeXTextDspClass_str33 );
@@ -4678,6 +4831,7 @@ int activeXTextDspClass::deactivate (
   if ( pvExists ) {
 
     if ( pvId ) {
+      pvId->remove_access_security_callback( xtdo_access_security_change, this );
       pvId->remove_conn_state_callback( xtdo_monitor_connect_state, this );
       pvId->remove_value_callback( XtextDspUpdate, this );
       pvId->release();
@@ -4929,10 +5083,10 @@ void activeXTextDspClass::pointerIn (
 
   if ( !pvId->have_write_access() ) {
 
-    if ( isWidget ) {
-      XtVaSetValues( tf_widget,
+    if ( isWidget && !writeDisabled && editable ) {
+      writeDisabled = 1;
+      if ( tf_widget ) XtVaSetValues( tf_widget,
        XmNeditable, (XtArgVal) False,
-       XmNcursorPositionVisible, (XtArgVal) False,
        NULL );
     }
 
@@ -4940,6 +5094,13 @@ void activeXTextDspClass::pointerIn (
 
   }
   else {
+
+    if ( isWidget && writeDisabled && editable ) {
+      writeDisabled = 0;
+      if ( tf_widget ) XtVaSetValues( tf_widget,
+       XmNeditable, (XtArgVal) True,
+       NULL );
+    }
 
     actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
 
@@ -5051,7 +5212,7 @@ XButtonEvent *be = (XButtonEvent *) e;
 void activeXTextDspClass::executeDeferred ( void ) {
 
 int n, numCols, width, csrPos;
-int nc, ni, nu, nr, nd, ne, nfgpvp;
+int nc, ni, nu, nr, nd, ne, nfgpvp, nasc;
 short svalue;
 Arg args[10];
 unsigned int bg, pixel;
@@ -5083,12 +5244,36 @@ char locFieldLenInfo[7+1];
   nd = needDraw; needDraw = 0;
   ne = needErase; needErase = 0;
   nfgpvp = needFgPvPut; needFgPvPut = 0;
+  nasc = needAccessSecurityCheck; needAccessSecurityCheck = 0;
   strncpy( value, curValue, XTDC_K_MAX );
   value[XTDC_K_MAX] = 0;
   actWin->remDefExeNode( aglPtr );
   actWin->appCtx->proc->unlock();
 
   if ( !activeMode ) return;
+
+  if ( nasc ) {
+
+    if ( pvId ) {
+      if ( pvId->have_write_access() ) {
+        if ( isWidget && writeDisabled && editable ) {
+          writeDisabled = 0;
+          if ( tf_widget ) XtVaSetValues( tf_widget,
+           XmNeditable, (XtArgVal) True,
+           NULL );
+        }
+      }
+      else {
+        if ( isWidget && !writeDisabled && editable ) {
+          writeDisabled = 1;
+          if ( tf_widget ) XtVaSetValues( tf_widget,
+           XmNeditable, (XtArgVal) False,
+           NULL );
+        }
+      }
+    }
+
+  }
 
   if ( nfgpvp ) {
 

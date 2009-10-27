@@ -182,6 +182,13 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *cntlPvEntry[SYMBOL_K_MAX_PVS],
+ *andMaskEntry[SYMBOL_K_MAX_PVS],
+ *xorMaskEntry[SYMBOL_K_MAX_PVS],
+ *shiftCountEntry[SYMBOL_K_MAX_PVS];
+
+entryListBase *presColorEntry, *fgColorEntry, *bgColorEntry;
+
 int fgColor, bgColor;
 colorButtonClass fgCb, bgCb;
 
@@ -192,7 +199,7 @@ entryListBase *pvNamesObj;
 int needErase, needDraw, needConnectInit, needConnect[SYMBOL_K_MAX_PVS],
  needRefresh, needColorInit, needColorRefresh, needToDrawUnconnected,
  needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 int orientation, prevOr;
 
@@ -407,6 +414,11 @@ void btnUp (
   int buttonNumber );
 
 void updateGroup ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

@@ -222,6 +222,8 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
 char bufPw1[31+1];
 char bufPw2[31+1];
 
@@ -283,7 +285,7 @@ int sourcePressPvConnected, sourceReleasePvConnected, destPvConnected,
 
 int needConnectInit, needErase, needDraw, needToEraseUnconnected,
  needToDrawUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 char pw[31+1];
 int usePassword;
@@ -391,6 +393,11 @@ int getButtonActionRequest (
   int *down,
   int *drag,
   int *focus );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

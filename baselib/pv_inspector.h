@@ -345,8 +345,8 @@ char rtype[63+1];
 int grabUpdate;
 ProcessVariable *pvId, *rtypePvId;
 int resolvingName;
-int unconnectedTimer;
-int rtypeUnconnectedTimer;
+XtIntervalId unconnectedTimer;
+XtIntervalId rtypeUnconnectedTimer;
 msgDialogClass msgDialog;
 int msgDialogPoppedUp;
 int pvType;
@@ -415,6 +415,11 @@ int activate (
 int deactivate ( int pass );
 
 void updateDimensions ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

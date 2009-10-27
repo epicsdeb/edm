@@ -1738,31 +1738,52 @@ char title[32], *ptr;
 
   ef.addTextField( activeSliderClass_str36, 35, eBuf->controlBufPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( activeSliderClass_str42, 35, eBuf->readBufPvName,
    PV_Factory::MAX_PV_NAME );
+  rdPvEntry = ef.getCurItem();
+
   ef.addTextField( activeSliderClass_str48, 35, eBuf->savedValueBufPvName,
    PV_Factory::MAX_PV_NAME );
 
   ef.addTextField( activeSliderClass_str37, 35, eBuf->controlBufLabelName,
    PV_Factory::MAX_PV_NAME );
+  ctlLabelEntry = ef.getCurItem();
   ef.addOption( activeSliderClass_str38, activeSliderClass_str39,
    controlLabelTypeStr, 15 );
+  ctlLabelTypeEntry = ef.getCurItem();
+  ctlLabelTypeEntry->setNumValues( 3 );
+  ctlLabelTypeEntry->addInvDependency( 2, ctlLabelEntry );
+  ctlLabelTypeEntry->addDependencyCallbacks();
 
   ef.addTextField( activeSliderClass_str43, 35, eBuf->readBufLabelName,
    PV_Factory::MAX_PV_NAME );
+  rdLabelEntry = ef.getCurItem();
   ef.addOption( activeSliderClass_str44, activeSliderClass_str45,
    readLabelTypeStr, 15 );
+  rdLabelTypeEntry = ef.getCurItem();
+  rdLabelTypeEntry->setNumValues( 3 );
+  rdLabelTypeEntry->addInvDependency( 2, rdLabelEntry );
+  rdLabelTypeEntry->addDependencyCallbacks();
 
   ef.addTextField( activeSliderClass_str28, 35, &eBuf->bufIncrement );
 
   ef.addTextField( activeSliderClass_str86, 35, &eBuf->bufAccelMultiplier );
 
   ef.addToggle( activeSliderClass_str29, &eBuf->bufLimitsFromDb );
+  limitsFromDbEntry = ef.getCurItem();
   ef.addOption( activeSliderClass_str30, activeSliderClass_str35,
    eBuf->bufDisplayFormat, 15 );
   ef.addTextField( activeSliderClass_str31, 35, &eBuf->bufEfPrecision );
+  precEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( precEntry );
   ef.addTextField( activeSliderClass_str32, 35, &eBuf->bufEfScaleMin );
+  scaleMinEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMinEntry );
   ef.addTextField( activeSliderClass_str33, 35, &eBuf->bufEfScaleMax );
+  scaleMaxEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMaxEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
 
   ef.addColorButton( activeSliderClass_str24, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
   ef.addColorButton( activeSliderClass_str26, actWin->ci, &eBuf->bgCb, &eBuf->bufBgColor );
@@ -1771,15 +1792,17 @@ char title[32], *ptr;
   ef.addColorButton( activeSliderClass_str40, actWin->ci, &eBuf->controlCb,
    &eBuf->bufControlColor );
   ef.addToggle( activeSliderClass_str41, &eBuf->bufControlColorMode );
+
   ef.addColorButton( activeSliderClass_str46, actWin->ci, &eBuf->readCb,
    &eBuf->bufReadColor );
+  rdPvColorEntry = ef.getCurItem();
+  rdPvEntry->addDependency( rdPvColorEntry );
   ef.addToggle( activeSliderClass_str47, &eBuf->bufReadColorMode );
+  rdPvAlarmSensEntry = ef.getCurItem();
+  rdPvEntry->addDependency( rdPvAlarmSensEntry );
+  rdPvEntry->addDependencyCallbacks();
 
   ef.addFontMenu( activeSliderClass_str23, actWin->fi, &fm, fontTag );
-
-  //ef.addToggle( activeSliderClass_str49, &eBuf->bufActivateCallbackFlag );
-  //ef.addToggle( activeSliderClass_str50, &eBuf->bufDeactivateCallbackFlag );
-  //ef.addToggle( activeSliderClass_str51, &eBuf->bufChangeCallbackFlag );
 
   XtUnmanageChild( fm.alignWidget() ); // no alignment info
 
@@ -2428,7 +2451,7 @@ void sliderEventHandler(
 XMotionEvent *me;
 XButtonEvent *be;
 activeSliderClass *slo;
-int stat, deltaX, xOfs, newX, popupDialog = 0;
+int stat, b2Op, deltaX, xOfs, newX, popupDialog = 0;
 double fvalue;
 char title[32], *ptr;
 int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
@@ -2472,7 +2495,18 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
 
   }
 
-  if ( !slo->controlPvId->have_write_access() ) return;
+  // allow Button2 operations when no write access
+  b2Op = 0;
+  if ( ( e->type == ButtonPress ) || ( e->type == ButtonRelease ) ) {
+    be = (XButtonEvent *) e;
+    if ( be->button == Button2 ) {
+      b2Op = 1;
+    }
+  }
+
+  if ( slo->controlPvId ) {
+    if ( !slo->controlPvId->have_write_access() && !b2Op ) return;
+  }
 
   if ( e->type == ButtonPress ) {
 
@@ -2537,9 +2571,11 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->actWin->appCtx->proc->unlock();
 
         if ( slo->controlExists ) {
-          stat = slo->controlPvId->put(
-           XDisplayName(slo->actWin->appCtx->displayName), fvalue );
-          if ( !stat ) fprintf( stderr, activeSliderClass_str56 );
+          if ( slo->controlPvId ) {
+            stat = slo->controlPvId->put(
+             XDisplayName(slo->actWin->appCtx->displayName), fvalue );
+            if ( !stat ) fprintf( stderr, activeSliderClass_str56 );
+	  }
         }
         else if ( slo->anyCallbackFlag ) {
           slo->needCtlRefresh = 1;
@@ -2658,7 +2694,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
       if ( !( be->state & ( ControlMask | ShiftMask ) ) ) {
         stat = slo->startDrag( w, e );
       }
-      else if ( !( be->state & ShiftMask ) &&
+      else if ( ( be->state & ShiftMask ) &&
                 ( be->state & ControlMask ) ) {
         stat = slo->showPvInfo( be, be->x, be->y );
       }
@@ -2744,7 +2780,7 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
            !( be->state & ControlMask ) ) {
         stat = slo->selectDragValue( be );
       }
-      else if ( ( be->state & ShiftMask ) &&
+      else if ( !( be->state & ShiftMask ) &&
                 ( be->state & ControlMask ) ) {
         slo->doActions( be, be->x, be->y );
       }
@@ -2802,9 +2838,11 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->actWin->appCtx->proc->unlock();
 
         if ( slo->controlExists ) {
-          stat = slo->controlPvId->put(
-           XDisplayName(slo->actWin->appCtx->displayName), fvalue );
-          if ( !stat ) fprintf( stderr, activeSliderClass_str59 );
+          if ( slo->controlPvId ) {
+            stat = slo->controlPvId->put(
+             XDisplayName(slo->actWin->appCtx->displayName), fvalue );
+            if ( !stat ) fprintf( stderr, activeSliderClass_str59 );
+	  }
         }
         else if ( slo->anyCallbackFlag ) {
           slo->needCtlRefresh = 1;
@@ -2868,9 +2906,11 @@ int tX, tY, x0, y0, x1, y1, incX0, incY0, incX1, incY1;
         slo->actWin->appCtx->proc->unlock();
 
         if ( slo->controlExists ) {
-          stat = slo->controlPvId->put(
-           XDisplayName(slo->actWin->appCtx->displayName), fvalue );
-          if ( !stat ) fprintf( stderr, activeSliderClass_str60 );
+          if ( slo->controlPvId ) {
+            stat = slo->controlPvId->put(
+             XDisplayName(slo->actWin->appCtx->displayName), fvalue );
+            if ( !stat ) fprintf( stderr, activeSliderClass_str60 );
+	  }
         }
         else if ( slo->anyCallbackFlag ) {
           slo->needCtlRefresh = 1;
@@ -3645,6 +3685,38 @@ int adjH = h - 4;
     restoreY1 = -2;
     restoreY0 = -1;
   }
+
+}
+
+int activeSliderClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( controlPvName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlPvName.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readPvName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvName.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( savedValuePvName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  savedValuePvName.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( controlLabelName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlLabelName.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readLabelName.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readLabelName.setRaw( tmpStr.getExpanded() );
+
+  return 1;
 
 }
 

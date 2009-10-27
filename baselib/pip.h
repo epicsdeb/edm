@@ -222,6 +222,11 @@ typedef struct bufTag {
   int bufIgnoreMultiplexors;
 } bufType, *bufPtr;
 
+entryListBase *disSrcEntry, *pvNameEntry, *labelPvNameEntry, *fileNameEntry,
+ *menuBtnEntry;
+
+entryListBase *setSizeEntry, *sizeOfsEntry;
+
 int numDsps, dspIndex;
 
 bufPtr buf;
@@ -275,11 +280,11 @@ int bufFgColor, bufBgColor, bufTopShadowColor, bufBotShadowColor;
 int needConnectInit, needUpdate, needMenuConnectInit, needMenuUpdate,
  needDraw, needFileOpen, needInitMenuFileOpen, needMap, needUnmap,
  needToDrawUnconnected, needToEraseUnconnected, needConnectTimeout;
-int initialReadConnection, initialMenuConnection, initialLabelConnection,
- unconnectedTimer;
+int initialReadConnection, initialMenuConnection, initialLabelConnection;
+XtIntervalId unconnectedTimer;
 int consecutiveDeactivateErrors;
 
-int retryTimerNU, retryTimerNMU, retryTimerNUM, retryTimerNM;
+XtIntervalId retryTimerNU, retryTimerNMU, retryTimerNUM, retryTimerNM;
 
 activeWindowClass *aw;
 
@@ -372,6 +377,11 @@ char *getRelatedDisplayName (
 char *getRelatedDisplayMacros (
   int index
 );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

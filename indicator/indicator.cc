@@ -76,7 +76,7 @@ int l;
   indicatoro->readPvExpStr.setRaw( indicatoro->eBuf->bufReadPvName );
   indicatoro->nullPvExpStr.setRaw( indicatoro->eBuf->bufNullPvName );
 
-  strncpy( indicatoro->label, indicatoro->bufLabel, 39 );
+  indicatoro->label.setRaw( indicatoro->eBuf->bufLabel );
 
   indicatoro->labelType = indicatoro->bufLabelType;
 
@@ -371,7 +371,6 @@ activeIndicatorClass::activeIndicatorClass ( void ) {
   indicatorStrLen = 10;
   strcpy( fontTag, "" );
   fs = NULL;
-  strcpy( label, "" );
   activeMode = 0;
 
   indicatorColorMode = INDICATORC_K_COLORMODE_STATIC;
@@ -429,8 +428,7 @@ activeGraphicClass *indicatoro = (activeGraphicClass *) this;
   controlPvExpStr.copy( source->controlPvExpStr );
   readPvExpStr.copy( source->readPvExpStr );
   nullPvExpStr.copy( source->nullPvExpStr );
-
-  strncpy( label, source->label, 39 );
+  label.copy( source->label );
 
   indicatorColorMode = source->indicatorColorMode;
   fgColorMode = source->fgColorMode;
@@ -462,8 +460,6 @@ activeGraphicClass *indicatoro = (activeGraphicClass *) this;
   precision = source->precision;
 
   strncpy( scaleFormat, source->scaleFormat, 15 );
-
-  strcpy( label, source->label );
 
   horizontal = source->horizontal;
 
@@ -590,7 +586,7 @@ static int orienTypeEnum[2] = {
   tag.loadW( "bgColor", actWin->ci, &bgColor );
   tag.loadW( "indicatorPv", &readPvExpStr, emptyStr );
   tag.loadW( "nullPv", &nullPvExpStr, emptyStr );
-  tag.loadW( "label", label, emptyStr );
+  tag.loadW( "label", &label, emptyStr );
   tag.loadW( "labelType", 2, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
   tag.loadBoolW( "showScale", &showScale, &zero );
@@ -676,7 +672,7 @@ efDouble efMin, efMax;
   tag.loadR( "bgColor", actWin->ci, &bgColor );
   tag.loadR( "indicatorPv", &readPvExpStr, emptyStr );
   tag.loadR( "nullPv", &nullPvExpStr, emptyStr );
-  tag.loadR( "label", 39, label, emptyStr );
+  tag.loadR( "label", &label, emptyStr );
   tag.loadR( "labelType", 2, labelTypeEnumStr, labelTypeEnum,
    &labelType, &lit );
   tag.loadR( "showScale", &showScale, &zero );
@@ -830,7 +826,10 @@ char title[32], *ptr;
   else
     strcpy( eBuf->bufNullPvName, "" );
 
-  strncpy( bufLabel, label, 39 );
+  if ( label.getRaw() )
+    strncpy( eBuf->bufLabel, label.getRaw(), PV_Factory::MAX_PV_NAME );
+  else
+    strcpy( eBuf->bufLabel, "" );
 
   bufLabelType = labelType;
 
@@ -905,23 +904,49 @@ char title[32], *ptr;
   ef.addTextField( activeIndicatorClass_str8, 35, &bufY );
   ef.addTextField( activeIndicatorClass_str9, 35, &bufW );
   ef.addTextField( activeIndicatorClass_str10, 35, &bufH );
-//   ef.addTextField( activeIndicatorClass_str11, 35, eBuf->bufControlPvName, PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeIndicatorClass_str12, 35, eBuf->bufReadPvName, PV_Factory::MAX_PV_NAME );
   ef.addTextField( activeIndicatorClass_str13, 35, eBuf->bufNullPvName, PV_Factory::MAX_PV_NAME );
-  ef.addOption( activeIndicatorClass_str14, activeIndicatorClass_str15, &bufLabelType );
-  ef.addTextField( activeIndicatorClass_str16, 35, bufLabel, 39 );
-  ef.addToggle( activeIndicatorClass_str18, &bufBorder );
-  ef.addToggle( activeIndicatorClass_str19, &bufShowScale );
 
+  ef.addOption( activeIndicatorClass_str14, activeIndicatorClass_str15, &bufLabelType );
+  labelTypeEntry = ef.getCurItem();
+  labelTypeEntry->setNumValues( 2 );
+  ef.addTextField( activeIndicatorClass_str16, 35, eBuf->bufLabel, PV_Factory::MAX_PV_NAME );
+  labelEntry = ef.getCurItem();
+  labelTypeEntry->addInvDependency( 0, labelEntry );
+  labelTypeEntry->addDependencyCallbacks();
+
+  ef.addToggle( activeIndicatorClass_str18, &bufBorder );
+
+  ef.addToggle( activeIndicatorClass_str19, &bufShowScale );
+  showScaleEntry = ef.getCurItem();
   ef.addTextField( activeIndicatorClass_str20, 35, bufLabelTicks, 15 );
+  labelTicksEntry = ef.getCurItem();
+  showScaleEntry->addDependency( labelTicksEntry );
   ef.addTextField( activeIndicatorClass_str21, 35, bufMajorTicks, 15 );
+  majorTicksEntry = ef.getCurItem();
+  showScaleEntry->addDependency( majorTicksEntry );
   ef.addTextField( activeIndicatorClass_str22, 35, bufMinorTicks, 15 );
+  minorTicksEntry = ef.getCurItem();
+  showScaleEntry->addDependency( minorTicksEntry );
 
   ef.addToggle( activeIndicatorClass_str23, &bufLimitsFromDb );
+  limitsFromDbEntry = ef.getCurItem();
+
   ef.addOption( activeIndicatorClass_str24, activeIndicatorClass_str25, bufScaleFormat, 15 );
+  scaleFormatEntry = ef.getCurItem();
+  showScaleEntry->addDependency( scaleFormatEntry );
+  showScaleEntry->addDependencyCallbacks();
+
   ef.addTextField( activeIndicatorClass_str26, 35, bufPrecision, 15 );
+  scalePrecEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scalePrecEntry );
   ef.addTextField( activeIndicatorClass_str27, 35, bufReadMin, 15 );
+  scaleMinEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMinEntry );
   ef.addTextField( activeIndicatorClass_str28, 35, bufReadMax, 15 );
+  scaleMaxEntry = ef.getCurItem();
+  limitsFromDbEntry->addInvDependency( scaleMaxEntry );
+  limitsFromDbEntry->addDependencyCallbacks();
 
   ef.addTextField( activeIndicatorClass_str46, 35, &bufHalfW );
 
@@ -1264,14 +1289,14 @@ int tX, tY;
     XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), x, y, w, h );
 
-    if ( strcmp( label, "" ) != 0 ) {
+    if ( strcmp( label.getRaw(), "" ) != 0 ) {
       if ( fs ) {
         actWin->drawGc.setFontTag( fontTag, actWin->fi );
         tX = indicatorAreaX;
         tY = y + 2;
         if ( border ) tY += 2;
         drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-         XmALIGNMENT_BEGINNING, label );
+         XmALIGNMENT_BEGINNING, label.getRaw() );
       }
     }
 
@@ -1324,14 +1349,14 @@ int tX, tY;
     XDrawRectangle( actWin->d, XtWindow(actWin->drawWidget),
      actWin->drawGc.normGC(), x, y, w, h );
 
-    if ( strcmp( label, "" ) != 0 ) {
+    if ( strcmp( label.getRaw(), "" ) != 0 ) {
       if ( fs ) {
         actWin->drawGc.setFontTag( fontTag, actWin->fi );
         tX = indicatorAreaX + indicatorAreaW;
         tY = y + (int) ( .25 * (double) fontHeight );
         if ( border ) tY += 2;
         drawText( actWin->drawWidget, &actWin->drawGc, fs, tX, tY,
-         XmALIGNMENT_END, label );
+         XmALIGNMENT_END, label.getRaw() );
       }
     }
 
@@ -1350,7 +1375,7 @@ int activeIndicatorClass::drawActive ( void ) {
 XRectangle xR = { x-1, y-1, w+2, h+2 };
 int clipStat, effHalfW;
 int tX, tY;
-char str[39+1];
+char str[PV_Factory::MAX_PV_NAME+1];
 
   if ( !init ) {
     if ( needToDrawUnconnected ) {
@@ -1661,9 +1686,9 @@ char str[39+1];
     }
 
     if ( labelType == INDICATORC_K_PV_NAME )
-      strncpy( str, readPvId->get_name(), 39 );
+      strncpy( str, readPvId->get_name(), PV_Factory::MAX_PV_NAME );
     else
-      strncpy( str, label, 39 );
+      strncpy( str, label.getExpanded(), PV_Factory::MAX_PV_NAME );
 
     if ( horizontal ) {
 
@@ -1995,7 +2020,7 @@ void activeIndicatorClass::updateDimensions ( void )
     indicatorAreaX = x;
     indicatorAreaW = w;
 
-    if ( ( strcmp( label, "" ) != 0 ) ||
+    if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
          ( labelType == INDICATORC_K_PV_NAME ) ) {
       minH += fontHeight + 5;
       indicatorY += fontHeight + 5;
@@ -2019,7 +2044,7 @@ void activeIndicatorClass::updateDimensions ( void )
       indicatorAreaW = w - indicatorStrLen - 6;
     }
 
-    if ( border && !showScale && ( ( strcmp( label, "" ) == 0 ) ||
+    if ( border && !showScale && ( ( strcmp( label.getRaw(), "" ) == 0 ) ||
      ( labelType == INDICATORC_K_PV_NAME ) ) ) {
       minH += 9;
       indicatorY += 5;
@@ -2036,7 +2061,7 @@ void activeIndicatorClass::updateDimensions ( void )
 
     indicatorH = h;
 
-    if ( ( strcmp( label, "" ) != 0 ) ||
+    if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
          ( labelType == INDICATORC_K_PV_NAME ) ) {
       indicatorH -= ( fontHeight + 5 );
       if ( border ) indicatorH -= 9;
@@ -2046,7 +2071,7 @@ void activeIndicatorClass::updateDimensions ( void )
       indicatorH -= ( fontHeight + fontHeight + 5 );
     }
 
-    if ( border && !showScale && ( ( strcmp( label, "" ) == 0 ) ||
+    if ( border && !showScale && ( ( strcmp( label.getRaw(), "" ) == 0 ) ||
      ( labelType == INDICATORC_K_PV_NAME ) ) ) {
       indicatorH -= 9;
     }
@@ -2065,7 +2090,7 @@ void activeIndicatorClass::updateDimensions ( void )
     minVertW = 2;
     minVertH = 10;
 
-    if ( ( strcmp( label, "" ) != 0 ) ||
+    if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
          ( labelType == INDICATORC_K_PV_NAME ) ) {
       minVertH += fontHeight + 5;
     }
@@ -2098,7 +2123,7 @@ void activeIndicatorClass::updateDimensions ( void )
     indicatorX = indicatorAreaX = x;
     indicatorW = indicatorAreaW = w;
 
-    if ( ( strcmp( label, "" ) != 0 ) ||
+    if ( ( strcmp( label.getRaw(), "" ) != 0 ) ||
          ( labelType == INDICATORC_K_PV_NAME ) ) {
       indicatorAreaH -= (int) ( 1.5 * (double) fontHeight ) - 5;
       indicatorH = indicatorAreaH;
@@ -2214,24 +2239,81 @@ void activeIndicatorClass::bufInvalidate ( void )
 
 }
 
+int activeIndicatorClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( label.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  label.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( nullPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  nullPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( labelTicksExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  labelTicksExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( majorTicksExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  majorTicksExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( minorTicksExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  minorTicksExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readMinExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readMinExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readMaxExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readMaxExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( precisionExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  precisionExpStr.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int activeIndicatorClass::expand1st (
   int numMacros,
   char *macros[],
   char *expansions[] )
 {
 
-int stat;
+int retStat, stat;
 
+  retStat = label.expand1st( numMacros, macros, expansions );
   stat = readPvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = nullPvExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = labelTicksExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = majorTicksExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = minorTicksExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = readMinExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = readMaxExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = precisionExpStr.expand1st( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
-  return stat;
+  return retStat;
 
 }
 
@@ -2241,24 +2323,36 @@ int activeIndicatorClass::expand2nd (
   char *expansions[] )
 {
 
-int stat;
+int retStat, stat;
 
+  retStat = label.expand2nd( numMacros, macros, expansions );
   stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = nullPvExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = labelTicksExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = majorTicksExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = minorTicksExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = readMinExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = readMaxExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
   stat = precisionExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !( stat & 1 ) ) retStat = stat;
 
-  return stat;
+  return retStat;
 
 }
 
 int activeIndicatorClass::containsMacros ( void ) {
 
 int result;
+
+  result = label.containsPrimaryMacros();
+  if ( result ) return 1;
 
   result = readPvExpStr.containsPrimaryMacros();
   if ( result ) return 1;

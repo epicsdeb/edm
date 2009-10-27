@@ -19,9 +19,9 @@ static XtTranslations g_parsedTrans;
 static char g_dragTrans[] =
   "#override\n\
   ~Ctrl~Shift<Btn2Down>: startDrag()\n\
-  Ctrl~Shift<Btn2Down>: pvInfo()\n\
-  Shift Ctrl<Btn2Up>: selectActions()\n\
-  Shift<Btn2Up>: selectDrag()";
+  Ctrl~Shift<Btn2Up>: selectActions()\n\
+  Shift Ctrl<Btn2Down>: pvInfo()\n\
+  Shift~Ctrl<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] =
 {
@@ -625,11 +625,19 @@ int edmTextupdateClass::genericEdit() // create Property Dialog
     ef.addOption("Mode", "default|decimal|hex|engineer|exp", &buf_displayMode);
     ef.addTextField("Precision", 35, &buf_precision);
     ef.addTextField("Line Width", 35, &buf_line_width);
+    lineEntry = ef.getCurItem();
     ef.addToggle("Alarm Sensitive Line", &buf_alarm_sensitive_line);
+    alarmSensLineEntry = ef.getCurItem();
+    lineEntry->addDependency( alarmSensLineEntry );
+    lineEntry->addDependencyCallbacks();
     ef.addColorButton("Fg Color", actWin->ci, &textCb, &bufTextColor);
     ef.addToggle("Alarm Sensitive Text", &buf_alarm_sensitive);
     ef.addToggle("Filled?", &bufIsFilled);
+    fillEntry = ef.getCurItem();
     ef.addColorButton("Bg Color", actWin->ci, &fillCb, &bufFillColor);
+    fillColorEntry = ef.getCurItem();
+    fillEntry->addDependency( fillColorEntry );
+    fillEntry->addDependencyCallbacks();
     ef.addTextField("Color PV", 35, bufColorPvName, PV_Factory::MAX_PV_NAME);
     ef.addFontMenu("Font", actWin->fi, &fm, fontTag );
     fm.setFontAlignment(alignment);
@@ -923,6 +931,26 @@ int edmTextupdateClass::containsMacros()
 {
     return pv_name.containsPrimaryMacros() ||
         color_pv_name.containsPrimaryMacros();
+}
+
+int edmTextupdateClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[]
+) {
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( color_pv_name.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  color_pv_name.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( pv_name.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  pv_name.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
 }
 
 int edmTextupdateClass::expand1st(int numMacros, char *macros[],

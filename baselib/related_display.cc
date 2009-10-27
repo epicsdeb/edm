@@ -1823,7 +1823,11 @@ char title[32], *ptr;
   for ( i=0; i<NUMPVS; i++ ) {
     ef.addTextField( relatedDisplayClass_str15, 35, buf->bufDestPvName[i],
      PV_Factory::MAX_PV_NAME );
+    pvEntry[i] = ef.getCurItem();
     ef.addTextField( relatedDisplayClass_str16, 35, buf->bufSource[i], 39 );
+    valEntry[i] = ef.getCurItem();
+    pvEntry[i]->addDependency( valEntry[i] );
+    pvEntry[i]->addDependencyCallbacks();
   }
 
   ef.addColorButton( relatedDisplayClass_str8, actWin->ci, &fgCb, &buf->bufFgColor );
@@ -2564,6 +2568,55 @@ char *relatedDisplayClass::getRelatedDisplayMacros (
   }
 
   return symbolsExpStr[index].getExpanded();
+
+}
+
+int relatedDisplayClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+int i;
+expStringClass tmpStr;
+
+  tmpStr.setRaw( colorPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpString.setRaw( tmpStr.getExpanded() );
+
+  for ( i=0; i<NUMPVS; i++ ) {
+
+    tmpStr.setRaw( destPvExpString[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    destPvExpString[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( sourceExpString[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    sourceExpString[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  for ( i=0; i<maxDsps; i++ ) {
+
+    tmpStr.setRaw( symbolsExpStr[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    symbolsExpStr[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( label[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    label[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( displayFileName[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    displayFileName[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  tmpStr.setRaw( buttonLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  buttonLabel.setRaw( tmpStr.getExpanded() );
+
+  return 1;
 
 }
 

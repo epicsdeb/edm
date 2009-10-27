@@ -168,6 +168,12 @@ double dxValue, dyValue;
 char fname[255+1], *envPtr;
 FILE *tmp;
 
+time_t curSeconds;
+edmTime base( (const unsigned long) ( xyo->curSec ),
+ (const unsigned long) xyo->curNsec );
+
+  curSeconds = base.getSec() + xyo->timeOffset;
+
   // try EDMDUMPFILES, then EDMTMPFILES, else use /tmp
   envPtr = getenv( environment_str14 );
   if ( envPtr ) {
@@ -306,6 +312,29 @@ FILE *tmp;
 
 	while ( n != t ) {
 
+          if ( ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) ||
+               ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+
+            if ( xyo->xAxisTimeFormat == XYGC_K_AXIS_TIME_FMT_SEC ) {
+              // for chronological plot, x type is double
+              dxValue = ( (double *) xyo->xPvData[i] )[n];
+	    }
+	    else {
+              dxValue = ( (double *) xyo->xPvData[i] )[n] + (double) curSeconds;
+	    }
+
+	  }
+	  else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) {
+
+            dxValue = (double) index;
+
+	  }
+	  else {
+
+            dxValue = (double) index;
+
+	  }
+
           switch ( xyo->yPvType[i] ) {
           case ProcessVariable::specificType::flt:
             dyValue = (double) ( (float *) xyo->yPvData[i] )[n];
@@ -350,7 +379,7 @@ FILE *tmp;
             break;
           }
 
-          fprintf( tmp, "%-d, %-g\n", index, dyValue );
+          fprintf( tmp, "%-19.13g, %-g\n", dxValue, dyValue );
 
 	  index++;
 	  n++;
@@ -392,7 +421,7 @@ FILE *tmp;
             dxValue = ( (double *) xyo->xPvData[i] )[n];
             break;
           case ProcessVariable::specificType::shrt:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
             }
             else {
@@ -400,7 +429,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::chr:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (char *) xyo->xPvData[i] )[n];
             }
             else {
@@ -408,7 +437,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::integer:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
             }
             else {
@@ -416,7 +445,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::enumerated:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
             }
             else {
@@ -510,7 +539,7 @@ FILE *tmp;
             dxValue = ( (double *) xyo->xPvData[i] )[n];
             break;
           case ProcessVariable::specificType::shrt:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
             }
             else {
@@ -518,7 +547,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::chr:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (char *) xyo->xPvData[i] )[n];
             }
             else {
@@ -526,7 +555,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::integer:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
             }
             else {
@@ -534,7 +563,7 @@ FILE *tmp;
             }
             break;
           case ProcessVariable::specificType::enumerated:
-            if (  xyo->ySigned[i] ) {
+            if (  xyo->xSigned[i] ) {
               dxValue = (double) ( (short *) xyo->xPvData[i] )[n];
             }
             else {
@@ -2604,7 +2633,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::shrt:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
             }
             else {
@@ -2614,7 +2643,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::chr:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_int();
             }
             else {
@@ -2624,7 +2653,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::integer:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
             }
             else {
@@ -2634,7 +2663,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::enumerated:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
             }
             else {
@@ -2666,7 +2695,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::shrt:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
             }
             else {
@@ -2676,7 +2705,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::chr:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_char_array()[ii];
             }
             else {
@@ -2686,7 +2715,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::integer:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
             }
             else {
@@ -2696,7 +2725,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::enumerated:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
             }
             else {
@@ -3038,7 +3067,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::shrt:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
             }
             else {
@@ -3048,7 +3077,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::chr:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_int();
             }
             else {
@@ -3058,7 +3087,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::integer:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
             }
             else {
@@ -3068,7 +3097,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::enumerated:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int();
             }
             else {
@@ -3100,7 +3129,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::shrt:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
             }
             else {
@@ -3110,7 +3139,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::chr:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (char *) xyo->yPvData[i] )[ii] = (char) pv->get_char_array()[ii];
             }
             else {
@@ -3120,7 +3149,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::integer:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
             }
             else {
@@ -3130,7 +3159,7 @@ int ctl;
             break;
 
           case ProcessVariable::specificType::enumerated:
-            if ( xyo->xSigned[i] ) {
+            if ( xyo->ySigned[i] ) {
               ( (short *) xyo->yPvData[i] )[ii] = (short) pv->get_int_array()[ii];
             }
             else {
@@ -3743,6 +3772,17 @@ time_t t1, t2;
     plotInfo[i] = NULL;
     plotInfoSize[i] = 0;
     forceVector[i] = 0;
+    xSigned[i] = 0;
+    ySigned[i] = 0;
+    traceType[i] = XYGC_K_TRACE_XY;
+    plotStyle[i] = XYGC_K_PLOT_STYLE_LINE;
+    plotSymbolType[i] = XYGC_K_SYMBOL_TYPE_NONE;
+    plotUpdateMode[i] = XYGC_K_UPDATE_ON_X_AND_Y;
+    plotColor[i] = 0;
+    lineThk[i] = 1;
+    opMode[i] = XYGC_K_SCOPE_MODE;
+    y2Scale[i] = 0;
+    lineStyle[i] = LineSolid;
   }
   trigPv = NULL;
   resetPv = NULL;
@@ -3853,9 +3893,9 @@ int i, yi;
   numTraces = source->numTraces;
 
   for ( i=0; i<XYGC_K_MAX_TRACES; i++ ) {
-    forceVector[i] = 0;
+    xSigned[i] = source->xSigned[i];
+    ySigned[i] = source->ySigned[i];
     plotStyle[i] = source->plotStyle[i];
-    forceVector[i] = source->forceVector[i];
     plotSymbolType[i] = source->plotSymbolType[i];
     plotUpdateMode[i] = source->plotUpdateMode[i];
     plotColor[i] = source->plotColor[i];
@@ -3874,6 +3914,7 @@ int i, yi;
     plotBufSize[i] = 0;
     plotInfo[i] = NULL;
     plotInfoSize[i] = 0;
+    forceVector[i] = 0;
   }
 
   trigPv = NULL;
@@ -5496,9 +5537,16 @@ int i, yi;
   ef.addTextField( "Update Delay (ms)", 35, &eBuf->bufUpdateTimerValue );
   ef.addToggle( "Border", &eBuf->bufBorder );
   ef.addToggle( "Plot Area Border", &eBuf->bufPlotAreaBorder );
+
   ef.addToggle( "Auto Scale Inward", &eBuf->bufAutoScaleBothDirections );
+  scaleInwardEntry = ef.getCurItem();
   ef.addTextField( "Auto Scale Rate (ms)", 35, &eBuf->bufAutoScaleTimerMs );
+  scaleInwardTimerEntry = ef.getCurItem();
+  scaleInwardEntry->addDependency( scaleInwardTimerEntry );
   ef.addTextField( "Auto Scale Thresh (%)", 35, &eBuf->bufAutoScaleThreshPct );
+  scaleInwardThreshEntry = ef.getCurItem();
+  scaleInwardEntry->addDependency( scaleInwardThreshEntry );
+  scaleInwardEntry->addDependencyCallbacks();
 
   ef.addEmbeddedEf( "X/Y/Trace Data", "... ", &efTrace );
 
@@ -5770,9 +5818,15 @@ int i, yi;
    PV_Factory::MAX_PV_NAME );
   ef.addTextField( "Trigger PV", 35, eBuf->bufTrigPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addTextField( "Reset PV", 35, eBuf->bufResetPvName,
    PV_Factory::MAX_PV_NAME );
+  resetPvEntry = ef.getCurItem();
   ef.addOption( "Reset Mode", "if not zero|if zero", &eBuf->bufResetMode );
+  resetModeEntry = ef.getCurItem();
+  resetPvEntry->addDependency( resetModeEntry );
+  resetPvEntry->addDependencyCallbacks();
+
   ef.addFontMenuNoAlignInfo( "Font", actWin->fi, &fm, fontTag );
 
   return 1;
@@ -7189,6 +7243,58 @@ void xyGraphClass::bufInvalidate ( void ) {
 
 }
 
+int xyGraphClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] ) {
+
+int i;
+expStringClass tmpStr;
+
+  tmpStr.setRaw( graphTitle.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  graphTitle.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( xLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  xLabel.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( yLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  yLabel.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( y2Label.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  y2Label.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( traceCtlPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  traceCtlPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( trigPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  trigPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( resetPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  resetPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  for ( i=0; i<numTraces; i++ ) {
+
+    tmpStr.setRaw( xPvExpStr[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    xPvExpStr[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( yPvExpStr[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    yPvExpStr[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  return 1;
+
+}
+
 int xyGraphClass::expand1st (
   int numMacros,
   char *macros[],
@@ -7575,6 +7681,8 @@ XmString str;
           curY1Min[yi] = log10( curY1Min[yi] );
           curY1Max[yi] = log10( curY1Max[yi] );
         }
+        adjCurY1Min[yi] = curY1Min[yi];
+        adjCurY1Max[yi] = curY1Max[yi];
       }
 
       curXNumLabelTicks = xNumLabelIntervals.value();
@@ -7974,7 +8082,9 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
        curY1Max[yi], curY1NumLabelTicks[yi] ) + 4;
     }
     else {
-      ly1 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      //ly1 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      // curY1NumLabelTicks[yi] ) + 4;
+      ly1 = yScaleWidth( fontTag, fs, adjCurY1Min[yi], adjCurY1Max[yi],
        curY1NumLabelTicks[yi] ) + 4;
     }
   }
@@ -7987,7 +8097,9 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
        curY1Max[yi], curY1NumLabelTicks[yi] ) + 2;
     }
     else {
-      ly2 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      //ly2 = yScaleWidth( fontTag, fs, curY1Min[yi], curY1Max[yi],
+      // curY1NumLabelTicks[yi] ) + 2;
+      ly2 = yScaleWidth( fontTag, fs, adjCurY1Min[yi], adjCurY1Max[yi],
        curY1NumLabelTicks[yi] ) + 2;
     }
   }
@@ -8004,6 +8116,7 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
     }
     else if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) &&
               ( xAxisTimeFormat == XYGC_K_AXIS_TIME_FMT_MMDDYY_HHMMSS ) ) {
+      lx = xTimeScaleMargin( fontTag, fs, curXMin, curXMax ) + 1;
       hx += fontHeight;
     }
     else {
@@ -8012,11 +8125,11 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
   }
 
   if ( y1Axis[0] && !y1Axis[1] ) {
-    ly2 = ly1;
+    ly2 = 10;
   }
 
   if ( !y1Axis[0] && y1Axis[1] ) {
-    ly1 = ly2;
+    ly1 = 10;
   }
 
   if ( ly1 < lx ) ly1 = lx;
@@ -8060,7 +8173,9 @@ int lx, hx, ly1, ly2, bInc, tInc, xlInc, ylInc, y2lInc, yi;
     y2lInc = fontHeight + 1;
 
   plotAreaX = ly1 + bInc + ylInc;
+
   plotAreaW = w - bInc - bInc - ylInc - ly1 - ly2 - y2lInc;
+
   plotAreaY = 0 + bInc + (int) ( 1.5 * tInc );
   plotAreaH = h - bInc - bInc - (int) ( 1.5 * tInc ) -
    (int) ( 1.5 * xlInc ) - (int) ( 1.5 * hx );
@@ -8407,41 +8522,43 @@ struct tm ts;
           dxValue = pow(10,dxValue);
         }
 
-        sprintf( xBuf, "%-.4g", dxValue );
+        sprintf( xBuf, "%-.6g", dxValue );
 
       }
 
       yi = 0;
       strcpy( y1Buf, "" );
-      if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      //if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      if ( numYTraces[yi] > 0 ) {
         dyValue = ( plotAreaH - pmY + y1Offset[yi][lowestYScaleIndex[yi]] )
          / y1Factor[yi][lowestYScaleIndex[yi]] + curY1Min[yi];
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           dyValue = pow(10,dyValue);
         }
-        sprintf( y1Buf, "%-.4g", dyValue );
+        sprintf( y1Buf, " %-.6g", dyValue );
       }
 
       yi = 1;
       strcpy( y2Buf, "" );
-      if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      //if ( y1Axis[yi] && ( numYTraces[yi] > 0 ) ) {
+      if ( numYTraces[yi] > 0 ) {
         dyValue2 = ( plotAreaH - pmY + y1Offset[yi][lowestYScaleIndex[yi]] )
          / y1Factor[yi][lowestYScaleIndex[yi]] + curY1Min[yi];
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           dyValue2 = pow(10,dyValue2);
         }
         if ( strcmp( y1Buf, "" ) != 0 ) {
-          sprintf( y2Buf, ",%-.4g", dyValue2 );
+          sprintf( y2Buf, ", %-.6g", dyValue2 );
 	}
 	else {
-          sprintf( y2Buf, "%-.4g", dyValue2 );
+          sprintf( y2Buf, " %-.6g (y2)", dyValue2 );
 	}
       }
  
       if ( msgDialogPopedUp ) {
         msgDialog.popdown();
       }
-      sprintf( buf, "(%s,%s%s)", xBuf, y1Buf, y2Buf );
+      sprintf( buf, "[ %s,%s%s ]", xBuf, y1Buf, y2Buf );
       msgDialog.popup( buf, this->x+_x-be->x+actWin->xPos(),
        this->y+_y-be->y+actWin->yPos() );
       msgDialogPopedUp = 1;
@@ -9889,6 +10006,29 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           }
 	}
       }
+      // from pv limits but not all chronological
+      else {
+        if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else {
+          get_scale_params1( curXMin, curXMax,
+           &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
+        }
+      }
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
         curY1NumLabelTicks[yi] = y1NumLabelIntervals[yi].value();
@@ -10465,6 +10605,29 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
             curXMax = adjCurXMax;
           }
 	}
+      }
+      // from pv limits but not all chronological
+      else {
+        if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
+          get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+        }
+        else {
+          get_scale_params1( curXMin, curXMax,
+           &adjCurXMin, &adjCurXMax,
+           &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
+           format );
+          if ( xAxisSmoothing == XYGC_K_NO_SMOOTHING ) {
+            adjCurXMin = curXMin;
+            adjCurXMax = curXMax;
+          }
+        }
       }
 
       for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
@@ -11124,19 +11287,6 @@ void xyGraphClass::drawXScale ( void ) {
     }
     else {
 
-#if 0
-      drawXLinearScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-       curXMin, curXMax,
-       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-       actWin->fi, fontTag, fs, 1,
-       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-       0 );
-#endif
-
-#if 1
       if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
         curXNumLabelTicks = xNumLabelIntervals.value();
         if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
@@ -11153,7 +11303,6 @@ void xyGraphClass::drawXScale ( void ) {
        actWin->fi, fontTag, fs, 1,
        !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
        0 );
-#endif
 
     }
 
@@ -11308,8 +11457,8 @@ int yi;
 
   if ( xLabelGrid || xMajorGrid || xMinorGrid ) {
 
-  if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
-       ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
+    if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
+         ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
 
       drawXLog10Scale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
        plotAreaX, plotAreaY+plotAreaH, plotAreaW,
@@ -11324,36 +11473,51 @@ int yi;
     }
     else {
 
-#if 0
-      drawXLinearScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-       curXMin, curXMax,
-       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-       actWin->fi, fontTag, fs, 1,
-       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-       0 );
-#endif
+      if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME ) &&
+           ( xAxisTimeFormat != XYGC_K_AXIS_TIME_FMT_SEC ) ) {
 
-#if 1
-      if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
-        curXNumLabelTicks = xNumLabelIntervals.value();
-        if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
-        curXMajorsPerLabel = xNumMajorPerLabel.value();
-        curXMinorsPerMajor = xNumMinorPerMajor.value();
+        {
+
+          time_t t;
+
+          edmTime base( (const unsigned long) ( curSec ),
+           (const unsigned long) curNsec );
+
+          t = base.getSec() + timeOffset;
+
+          drawXLinearTimeScale ( actWin->d, pixmap, &actWin->executeGc, xAxis,
+           plotAreaX, plotAreaY+plotAreaH, plotAreaW,
+           t, curXMin, curXMax, xAxisTimeFormat,
+           curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
+           actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
+           xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
+           actWin->fi, fontTag, fs, 1,
+           !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
+           0 );
+
+        }
+
       }
+      else {
 
-      drawXLinearScale2 ( actWin->d, pixmap, &actWin->executeGc, xAxis,
-       plotAreaX, plotAreaY+plotAreaH, plotAreaW,
-       curXMin, curXMax, adjCurXMin, adjCurXMax,
-       curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
-       actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
-       xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
-       actWin->fi, fontTag, fs, 1,
-       !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
-       0 );
-#endif
+        if ( xGridMode == XYGC_K_USER_SPECIFIED ) {
+          curXNumLabelTicks = xNumLabelIntervals.value();
+          if ( curXNumLabelTicks < 1 ) curXNumLabelTicks = 1;
+          curXMajorsPerLabel = xNumMajorPerLabel.value();
+          curXMinorsPerMajor = xNumMinorPerMajor.value();
+        }
+
+        drawXLinearScale2 ( actWin->d, pixmap, &actWin->executeGc, xAxis,
+         plotAreaX, plotAreaY+plotAreaH, plotAreaW,
+         curXMin, curXMax, adjCurXMin, adjCurXMax,
+         curXNumLabelTicks, curXMajorsPerLabel, curXMinorsPerMajor,
+         actWin->ci->pix(fgColor), actWin->executeGc.getBaseBG(), xLabelGrid,
+         xMajorGrid, xMinorGrid, plotAreaH, actWin->ci->pix(gridColor),
+         actWin->fi, fontTag, fs, 1,
+         !kpXMinEfDouble.isNull(), !kpXMaxEfDouble.isNull(),
+         0 );
+
+      }
 
     }
 

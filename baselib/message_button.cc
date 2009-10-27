@@ -1483,9 +1483,17 @@ char title[32], *ptr, *envPtr, saveLock = 0;
 
   ef.addTextField( activeMessageButtonClass_str28, 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeMessageButtonClass_str29, &eBuf->bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeMessageButtonClass_str30, 30, eBuf->bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeMessageButtonClass_str31, 30, eBuf->bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   if ( envPtr ) {
     if ( strcmp( envPtr, "TRUE" ) == 0 ) {
@@ -2094,6 +2102,12 @@ int stat;
 
   if ( strcmp( sourceReleasePvExpString.getExpanded(), "" ) == 0 ) return;
 
+  if ( destPvId ) {
+    if ( !destPvId->have_write_access() ) {
+      return;
+    }
+  }
+
   if ( destIsAckS ) {
 
     destV.s = (short) atol( sourceReleasePvExpString.getExpanded() );
@@ -2156,6 +2170,12 @@ void activeMessageButtonClass::btnUp (
     return;
   }
 
+  if ( destPvId ) {
+    if ( !destPvId->have_write_access() ) {
+      return;
+    }
+  }
+
   if ( usePassword ) {
     *action = 0;
     return;
@@ -2199,6 +2219,12 @@ char labelValue[39+1];
   smartDrawAllActive();
 
   if ( strcmp( labelValue, "" ) == 0 ) return;
+
+  if ( destPvId ) {
+    if ( !destPvId->have_write_access() ) {
+      return;
+    }
+  }
 
   if ( destIsAckS ) {
 
@@ -2263,6 +2289,12 @@ void activeMessageButtonClass::btnDown (
     return;
   }
 
+  if ( destPvId ) {
+    if ( !destPvId->have_write_access() ) {
+      return;
+    }
+  }
+
   if ( usePassword ) {
 
     if ( !ef.formIsPoppedUp() ) {
@@ -2319,11 +2351,13 @@ void activeMessageButtonClass::pointerIn (
 
   if ( !enabled || !active || !visibility ) return;
 
-  if ( !destPvId->have_write_access() ) {
-    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
-  }
-  else {
-    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+  if ( destPvId ) {
+    if ( !destPvId->have_write_access() ) {
+      actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
+    }
+    else {
+      actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+    }
   }
 
   activeGraphicClass::pointerIn( _x, _y, buttonState );
@@ -2352,6 +2386,46 @@ int activeMessageButtonClass::getButtonActionRequest (
 
   *down = 1;
   *up = 1;
+
+  return 1;
+
+}
+
+int activeMessageButtonClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( destPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  destPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( sourcePressPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  sourcePressPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( sourceReleasePvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  sourceReleasePvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( onLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  onLabel.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( offLabel.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  offLabel.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpString.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( colorPvExpString.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpString.setRaw( tmpStr.getExpanded() );
 
   return 1;
 

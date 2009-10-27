@@ -70,7 +70,9 @@ activeMenuButtonClass *mbto = (activeMenuButtonClass *) client;
 int i;
 short value;
 
-  if ( !mbto->controlPvId->have_write_access() ) return;
+  if ( mbto->controlPvId ) {
+    if ( !mbto->controlPvId->have_write_access() ) return;
+  }
 
   if ( mbto->stateStringPvId ) {
 
@@ -1094,9 +1096,17 @@ char title[32], *ptr;
 
   ef.addTextField( activeMenuButtonClass_str30, 35, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", activeMenuButtonClass_str31, &bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( activeMenuButtonClass_str32, 35, bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( activeMenuButtonClass_str33, 35, bufMaxVisString, 39 );
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
 
   return 1;
 
@@ -1465,6 +1475,34 @@ int blink = 0;
   actWin->executeGc.restoreFg();
 
   updateBlink( blink );
+
+  return 1;
+
+}
+
+int activeMenuButtonClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( controlPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( visPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( colorPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colorPvExpStr.setRaw( tmpStr.getExpanded() );
 
   return 1;
 
@@ -1839,6 +1877,10 @@ void activeMenuButtonClass::btnUp (
 
   if ( !controlExists ) return;
 
+  if ( controlPvId ) {
+    if ( !controlPvId->have_write_access() ) return;
+  }
+
   if ( buttonNumber == 1 ) {
 
     XmMenuPosition( popUpMenu, be );
@@ -1863,6 +1905,10 @@ void activeMenuButtonClass::btnDown (
 
   if ( !controlExists ) return;
 
+  if ( controlPvId ) {
+    if ( !controlPvId->have_write_access() ) return;
+  }
+
   if ( buttonNumber == 1 ) {
     buttonPressed = 1;
   }
@@ -1877,11 +1923,13 @@ void activeMenuButtonClass::pointerIn (
 
   if ( !enabled || !init || !visibility ) return;
 
-  if ( !controlPvId->have_write_access() ) {
-    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
-  }
-  else {
-    actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+  if ( controlPvId ) {
+    if ( !controlPvId->have_write_access() ) {
+      actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_NO );
+    }
+    else {
+      actWin->cursor.set( XtWindow(actWin->executeWidget), CURSOR_K_DEFAULT );
+    }
   }
 
   activeGraphicClass::pointerIn( _x, _y, buttonState );

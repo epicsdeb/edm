@@ -330,6 +330,15 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *ctlLabelTypeEntry, *ctlLabelEntry;
+
+entryListBase *rdLabelTypeEntry, *rdLabelEntry;
+
+entryListBase *rdPvEntry, *rdPvColorEntry, *rdPvAlarmSensEntry;
+
+entryListBase *limitsFromDbEntry, *precEntry, *scaleMinEntry,
+ *scaleMaxEntry;
+
 Widget frameWidget, sliderWidget;
 
 int valueFormX, valueFormY, valueFormW, valueFormH, valueFormMaxH;
@@ -502,6 +511,11 @@ int drawActiveControlText ( void );
 int eraseActiveReadText ( void );
 
 int drawActiveReadText ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

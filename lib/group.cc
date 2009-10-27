@@ -1100,10 +1100,17 @@ activeGraphicListPtr cur;
   ef.addTextField( "Y", 30, &bufY );
   ef.addTextField( "Visibility PV", 30, eBuf->bufVisPvName,
    PV_Factory::MAX_PV_NAME );
+  invisPvEntry = ef.getCurItem();
   ef.addOption( " ", "Not Visible if|Visible if", &bufVisInverted );
+  visInvEntry = ef.getCurItem();
+  invisPvEntry->addDependency( visInvEntry );
   ef.addTextField( ">=", 30, bufMinVisString, 39 );
+  minVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( minVisEntry );
   ef.addTextField( "and <", 30, bufMaxVisString, 39 );
-
+  maxVisEntry = ef.getCurItem();
+  invisPvEntry->addDependency( maxVisEntry );
+  invisPvEntry->addDependencyCallbacks();
   ef.finished( agc_edit_ok, agc_edit_apply, agc_edit_cancel, this );
   actWin->currentEf = &ef;
   ef.popup();
@@ -2817,6 +2824,35 @@ activeGraphicListPtr cur;
   }
 
   return 0;
+
+}
+
+int activeGroupClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+activeGraphicListPtr head = (activeGraphicListPtr) voidHead;
+activeGraphicListPtr cur;
+
+  if ( deleteRequest ) return 1;
+
+  tmpStr.setRaw( visPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  visPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  cur = head->flink;
+  while ( cur != head ) {
+
+    cur->node->expandTemplate( numMacros, macros, expansions );
+
+    cur = cur->flink;
+
+  }
+
+  return 1;
 
 }
 

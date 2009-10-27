@@ -161,9 +161,18 @@ typedef struct editBufTag {
   char bufControlPvName[PV_Factory::MAX_PV_NAME+1];
   char bufReadPvName[PV_Factory::MAX_PV_NAME+1];
   char bufNullPvName[PV_Factory::MAX_PV_NAME+1];
+  char bufLabel[PV_Factory::MAX_PV_NAME+1];
 } editBufType, *editBufPtr;
 
 editBufPtr eBuf;
+
+entryListBase *labelTypeEntry, *labelEntry;
+
+entryListBase *showScaleEntry, *labelTicksEntry, *majorTicksEntry,
+ *minorTicksEntry, *scaleFormatEntry;
+
+entryListBase *limitsFromDbEntry, *scalePrecEntry, *scaleMinEntry,
+ *scaleMaxEntry;
 
 int bufX, bufY, bufW, bufH;
 
@@ -188,7 +197,7 @@ ProcessVariable *readPvId, *nullPvId;
 int initialReadConnection, initialNullConnection;
 int oldStat, oldSev;
 
-expStringClass controlPvExpStr, readPvExpStr, nullPvExpStr;
+expStringClass controlPvExpStr, readPvExpStr, nullPvExpStr, label;
 
 unsigned char pvNotConnectedMask;
 
@@ -199,7 +208,6 @@ int init, active, activeMode;
 int indicatorColorMode, fgColorMode;
 pvColorClass indicatorColor, fgColor, bgColor;
 colorButtonClass indicatorCb, fgCb, bgCb;
-char label[39+1];
 int labelType;
 int border;
 int showScale;
@@ -214,7 +222,6 @@ expStringClass precisionExpStr;
 
 int bufIndicatorColorMode, bufFgColorMode;
 int bufIndicatorColor, bufFgColor, bufBgColor;
-char bufLabel[39+1];
 int bufLabelType;
 int bufBorder;
 int bufShowScale;
@@ -228,7 +235,7 @@ char bufPrecision[15+1];
 int needErase, needDraw, needFullDraw, needDrawCheck, needConnectInit,
  needRefresh, needInfoInit;
 int needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 public:
 
@@ -281,6 +288,11 @@ int deactivate ( int pass );
 void updateDimensions ( void );
 
 void bufInvalidate ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

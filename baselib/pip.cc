@@ -936,20 +936,42 @@ int i;
   ef.addTextField( activePipClass_str7, 35, &buf->bufY );
   ef.addTextField( activePipClass_str8, 35, &buf->bufW );
   ef.addTextField( activePipClass_str9, 35, &buf->bufH );
+
   ef.addOption( "Display Source", "String PV|Form|Menu",
    &buf->bufDisplaySource );
+  disSrcEntry = ef.getCurItem();
+  disSrcEntry->setNumValues( 3 );
+
   ef.addTextField( activePipClass_str11, 35, buf->bufReadPvName,
    PV_Factory::MAX_PV_NAME );
+  pvNameEntry = ef.getCurItem();
+
   ef.addTextField( "Label PV", 35, buf->bufLabelPvName,
    PV_Factory::MAX_PV_NAME );
+  labelPvNameEntry = ef.getCurItem();
+
   ef.addTextField( activePipClass_str12, 35, buf->bufFileName, 127 );
+  fileNameEntry = ef.getCurItem();
+  disSrcEntry->addDependency( 1, fileNameEntry );
+  disSrcEntry->addInvDependency( 1, pvNameEntry );
+
   ef.addToggle( "Center", &buf->bufCenter );
+
   ef.addToggle( "Set Size", &buf->bufSetSize );
+  setSizeEntry = ef.getCurItem();
   ef.addTextField( "Size Ofs", 35, &buf->bufSizeOfs );
+  sizeOfsEntry = ef.getCurItem();
+  setSizeEntry->addDependency( sizeOfsEntry );
+  setSizeEntry->addDependencyCallbacks();
+
   ef.addToggle( "Disable Scroll Bars", &buf->bufNoScroll );
   ef.addToggle( "Ignore Multiplexors", &buf->bufIgnoreMultiplexors );
 
   ef.addEmbeddedEf( "Menu Info", "...", &ef1 );
+  menuBtnEntry = ef.getCurItem();
+  disSrcEntry->addDependency( 2, menuBtnEntry );
+  disSrcEntry->addDependency( 2, labelPvNameEntry );
+  disSrcEntry->addDependencyCallbacks();
 
   ef1->create( actWin->top, actWin->appCtx->ci.getColorMap(),
    &actWin->appCtx->entryFormX,
@@ -1556,6 +1578,48 @@ char *activePipClass::getRelatedDisplayMacros (
   }
 
   return symbolsExpStr[index].getExpanded();
+
+}
+
+int activePipClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+int i;
+expStringClass tmpStr;
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( labelPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  labelPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( fileNameExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  fileNameExpStr.setRaw( tmpStr.getExpanded() );
+
+
+  for ( i=0; i<numDsps; i++ ) {
+
+    tmpStr.setRaw( symbolsExpStr[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    symbolsExpStr[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( label[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    label[i].setRaw( tmpStr.getExpanded() );
+
+    tmpStr.setRaw( displayFileName[i].getRaw() );
+    tmpStr.expand1st( numMacros, macros, expansions );
+    displayFileName[i].setRaw( tmpStr.getExpanded() );
+
+  }
+
+  return 1;
 
 }
 

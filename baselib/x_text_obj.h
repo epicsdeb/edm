@@ -140,6 +140,10 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
+entryListBase *fillEntry, *fillColorEntry, *fillAlarmSensEntry;
+
 pvColorClass fgColor;
 int fgColorMode;
 
@@ -180,7 +184,7 @@ int lineThk;
 
 int needConnectInit, needAlarmUpdate, needVisUpdate, needRefresh,
  needPropertyUpdate, needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 int curFgColorIndex, curBgColorIndex, curStatus, curSeverity;
 static const int alarmPvConnection = 1;
@@ -266,6 +270,11 @@ int drawActive ( void );
 int eraseActive ( void );
 
 int eraseUnconditional ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

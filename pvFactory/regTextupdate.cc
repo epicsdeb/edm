@@ -238,7 +238,7 @@ int edmRegTextupdateClass::drawActive()
     }
 
     redraw_text(actWin->d,
-                XtWindow(actWin->executeWidget),
+                drawable(actWin->executeWidget),
                 actWin->executeGc,
                 actWin->executeGc.normGC(),
                 text, len);

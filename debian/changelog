@@ -1,3 +1,9 @@
+edm (1.12.20-1) unstable; urgency=low
+
+  * New Upstream Version
+
+ -- Michael Davidsaver <mdavidsaver@controldev32.nsls2.bnl.gov>  Tue, 27 Oct 2009 10:51:41 -0400
+
 edm (1.12.4-3) unstable; urgency=low
 
   * Give SONAMES to all plugin libraries

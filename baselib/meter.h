@@ -187,6 +187,13 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *labelTypeEntry, *labelEntry;
+
+entryListBase *showScaleEntry, *scaleFormatEntry, *scalePrecEntry, *scaleColorEntry,
+ *scaleColorModeEntry, *labelIntEntry, *majorIntEntry, *minorIntEntry;
+
+entryListBase *scaleLimFromDbEntry, *scaleMinEntry, *scaleMaxEntry;
+
 int scaleLimitsFromDb;
 
 int opComplete;
@@ -248,7 +255,7 @@ int shadowMode;
 
 int needErase, needDraw, needConnectInit, needRefresh, needInfoInit;
 int needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 public:
 
@@ -309,6 +316,11 @@ int deactivate ( int pass );
 void updateDimensions ( void );
 
 void bufInvalidate ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

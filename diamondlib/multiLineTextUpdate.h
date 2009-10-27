@@ -95,6 +95,7 @@ public:
     
     // Macro support
     int containsMacros ();
+    int expandTemplate (int numMacros, char *macros[], char *expansions[]);
     int expand1st (int numMacros, char *macros[], char *expansions[]);
     int expand2nd (int numMacros, char *macros[], char *expansions[]);
     
@@ -162,6 +163,9 @@ protected:
     // Returns 1 if PV is valid
     bool get_current_values (char *text, size_t &len);
 
+    entryListBase *lineEntry, *alarmSensLineEntry;
+    entryListBase *fillEntry, *fillColorEntry;
+
     void redraw_text (Display *dis,
                       Drawable drw,
                       gcClass &gcc,
@@ -183,6 +187,7 @@ protected:
     // CA callbacks
     static void pv_conn_state_callback (ProcessVariable *pv, void *userarg);
     static void pv_value_callback (ProcessVariable *pv, void *userarg);
+    static void access_security_change (ProcessVariable *pv, void *userarg);
 };
 
 class edmmultiLineTextEntryClass : public edmmultiLineTextUpdateClass

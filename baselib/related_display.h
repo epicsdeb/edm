@@ -224,10 +224,12 @@ int numDsps, dspIndex;
 
 bufPtr buf;
 
+entryListBase *pvEntry[NUMPVS], *valEntry[NUMPVS];
+
 activeWindowClass *aw;
 int useFocus, needClose, needConnect, needUpdate, needRefresh;
 int needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 int topShadowColor;
 int botShadowColor;
@@ -381,6 +383,11 @@ char *getRelatedDisplayName (
 char *getRelatedDisplayMacros (
   int index
 );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

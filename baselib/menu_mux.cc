@@ -1049,9 +1049,14 @@ char title[32], *ptr;
   ef.addTextField( menuMuxClass_str5, 35, &eBuf->bufY );
   ef.addTextField( menuMuxClass_str6, 35, &eBuf->bufW );
   ef.addTextField( menuMuxClass_str7, 35, &eBuf->bufH );
+
   ef.addTextField( menuMuxClass_str17, 35, eBuf->bufControlPvName,
    PV_Factory::MAX_PV_NAME );
+  pvNameEntry = ef.getCurItem();
   ef.addTextField( menuMuxClass_str18, 35, eBuf->bufInitialState, 30 );
+  iniStateEntry = ef.getCurItem();
+  pvNameEntry->addInvDependency( iniStateEntry );
+  pvNameEntry->addDependencyCallbacks();
 
   ef.addColorButton( menuMuxClass_str8, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
   ef.addToggle( menuMuxClass_str10, &eBuf->bufFgColorMode );
@@ -1393,6 +1398,26 @@ char string[MMUX_MAX_STRING_SIZE+1];
   actWin->executeGc.restoreFg();
 
   updateBlink( blink );
+
+  return 1;
+
+}
+
+int menuMuxClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( controlPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  controlPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( initialStateExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  initialStateExpStr.setRaw( tmpStr.getExpanded() );
 
   return 1;
 

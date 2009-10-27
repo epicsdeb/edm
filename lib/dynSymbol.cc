@@ -874,18 +874,39 @@ char title[32], *ptr;
    PV_Factory::MAX_PV_NAME );
 
   ef.addToggle( activeDynSymbolClass_str13, &bufUseGate );
+  useGateEntry = ef.getCurItem();
+
   ef.addToggle( activeDynSymbolClass_str41, &bufGateOnMouseOver );
+  gateOnMouseEntry = ef.getCurItem();
+  useGateEntry->addDependency( gateOnMouseEntry );
+
   ef.addTextField( activeDynSymbolClass_str14, 27, eBuf->bufGateUpPvName,
    PV_Factory::MAX_PV_NAME );
+  gateUpPvEntry = ef.getCurItem();
+  useGateEntry->addDependency( gateUpPvEntry );
+
   ef.addOption( activeDynSymbolClass_str15, activeDynSymbolClass_str16,
    &bufGateUpValue );
+  gateUpValEntry = ef.getCurItem();
+  useGateEntry->addDependency( gateUpValEntry );
+
   ef.addTextField( activeDynSymbolClass_str17, 27, eBuf->bufGateDownPvName,
    PV_Factory::MAX_PV_NAME );
+  gateDnPvEntry = ef.getCurItem();
+  useGateEntry->addDependency( gateDnPvEntry );
+
   ef.addOption( activeDynSymbolClass_str18, activeDynSymbolClass_str19,
    &bufGateDownValue );
+  gateDnValEntry = ef.getCurItem();
+  useGateEntry->addDependency( gateDnValEntry );
+  useGateEntry->addDependencyCallbacks();
 
   ef.addToggle( activeDynSymbolClass_str20, &bufContinuous );
+  contEntry = ef.getCurItem();
   ef.addTextField( activeDynSymbolClass_str21, 27, &bufRate );
+  rateEntry = ef.getCurItem();
+  contEntry->addDependency( rateEntry );
+  contEntry->addDependencyCallbacks();
 
   ef.addTextField( activeDynSymbolClass_str22, 27, &bufInitialIndex );
 
@@ -894,12 +915,17 @@ char title[32], *ptr;
   ef.addToggle( activeDynSymbolClass_str11, &bufUseOriginalSize );
 
   ef.addToggle( activeDynSymbolClass_str35, &bufUseOriginalColors );
-
+  presColorEntry = ef.getCurItem();
   ef.addColorButton(activeDynSymbolClass_str36, actWin->ci, &fgCb,
    &bufFgColor );
+  fgColorEntry = ef.getCurItem();
+  presColorEntry->addInvDependency( fgColorEntry );
 
   ef.addColorButton(activeDynSymbolClass_str37, actWin->ci, &bgCb,
    &bufBgColor );
+  bgColorEntry = ef.getCurItem();
+  presColorEntry->addInvDependency( bgColorEntry );
+  presColorEntry->addDependencyCallbacks();
 
   return 1;
 
@@ -3111,6 +3137,46 @@ int i;
     }
 
   }
+
+}
+
+int activeDynSymbolClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+activeGraphicListPtr head;
+activeGraphicListPtr cur;
+int i;
+
+  if ( deleteRequest ) return 1;
+
+  tmpStr.setRaw( gateUpPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  gateUpPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( gateDownPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  gateDownPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  for ( i=0; i<numStates; i++ ) {
+
+    head = (activeGraphicListPtr) voidHead[i];
+
+    cur = head->flink;
+    while ( cur != head ) {
+
+      cur->node->expandTemplate( numMacros, macros, expansions );
+
+      cur = cur->flink;
+
+    }
+
+  }
+
+  return 1;
 
 }
 

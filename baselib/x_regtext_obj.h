@@ -136,6 +136,10 @@ pvConnectionClass connection;
 
 int bufInvalid;
 
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
+entryListBase *fillEntry, *fillColorEntry, *fillAlarmSensEntry;
+
 //----------------------------------
     char regExpStr[39+1], bufRegExp[39+1];
 
@@ -227,6 +231,11 @@ char * getProcessedText(char *text);
 int eraseActive ( void );
 
 int eraseUnconditional ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

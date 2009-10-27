@@ -216,6 +216,8 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *pvNameEntry, *iniStateEntry;
+
 int controlV, curControlV;
 
 int topShadowColor;
@@ -261,10 +263,10 @@ Widget popUpMenu, pullDownMenu, pb[MAX_ENUM_STATES];
 
 int needConnectInit, needDisconnect, needInfoInit, needUpdate, needDraw,
  needToDrawUnconnected, needToEraseUnconnected;
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 int initialConnection;
 
-int retryTimer;
+XtIntervalId retryTimer;
 
 int buttonPressed;
 
@@ -321,6 +323,11 @@ int erase ( void );
 int drawActive ( void );
 
 int eraseActive ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

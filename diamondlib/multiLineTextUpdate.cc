@@ -19,9 +19,9 @@ static XtTranslations g_parsedTrans;
 static char g_dragTrans[] =
   "#override\n\
   ~Ctrl~Shift<Btn2Down>: startDrag()\n\
-  Ctrl~Shift<Btn2Down>: pvInfo()\n\
-  Shift Ctrl<Btn2Up>: selectActions()\n\
-  Shift<Btn2Up>: selectDrag()";
+  Ctrl~Shift<Btn2Up>: selectActions()\n\
+  Shift Ctrl<Btn2Down>: pvInfo()\n\
+  Shift~Ctrl<Btn2Up>: selectDrag()";
 
 static XtActionsRec g_dragActions[] =
 {
@@ -180,6 +180,7 @@ edmmultiLineTextUpdateClass::~edmmultiLineTextUpdateClass ()
     if (data_pv)
     {
         data_pv->remove_conn_state_callback (pv_conn_state_callback, this);
+        data_pv->remove_access_security_callback(access_security_change, this);
         data_pv->remove_value_callback (pv_value_callback, this);
         data_pv->release ();
         data_pv = 0;
@@ -644,11 +645,19 @@ int edmmultiLineTextUpdateClass::genericEdit () // create Property Dialog
     ef.addOption ("Mode", "default|decimal|hex|engineer|exp", &buf_displayMode);
     ef.addTextField ("Precision", 35, &buf_precision);
     ef.addTextField ("Line Width", 35, &buf_line_width);
+    lineEntry = ef.getCurItem();
     ef.addToggle ("Alarm Sensitive Line", &buf_alarm_sensitive_line);
+    alarmSensLineEntry = ef.getCurItem();
+    lineEntry->addDependency( alarmSensLineEntry );
+    lineEntry->addDependencyCallbacks();
     ef.addColorButton ("Fg Colour", actWin->ci, &textCb, &bufTextColour);
     ef.addToggle ("Alarm Sensitive Text", &buf_alarm_sensitive);
     ef.addToggle ("Filled?", &bufIsFilled);
+    fillEntry = ef.getCurItem();
     ef.addColorButton ("Bg Colour", actWin->ci, &fillCb, &bufFillColour);
+    fillColorEntry = ef.getCurItem();
+    fillEntry->addDependency( fillColorEntry );
+    fillEntry->addDependencyCallbacks();
     ef.addTextField ("Colour PV", 35, bufColourPvName, PV_Factory::MAX_PV_NAME);
     ef.addFontMenu ("Font", actWin->fi, &fm, fontTag );
     fm.setFontAlignment (alignment);
@@ -954,6 +963,26 @@ int edmmultiLineTextUpdateClass::containsMacros ()
         colour_pv_name.containsPrimaryMacros ();
 }
 
+int edmmultiLineTextUpdateClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[]
+) {
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( colour_pv_name.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  colour_pv_name.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( data_pv_name.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  data_pv_name.setRaw( tmpStr.getExpanded() );
+
+  return 1;
+
+}
+
 int edmmultiLineTextUpdateClass::expand1st (int numMacros, char *macros[],
                                             char *expansions[])
 {
@@ -1001,6 +1030,7 @@ int edmmultiLineTextUpdateClass::setupPVs (int pass, void *ptr)
             if (data_pv)
             {
                 data_pv->add_conn_state_callback (pv_conn_state_callback, this);
+                data_pv->add_access_security_callback(access_security_change, this);
                 data_pv->add_value_callback (pv_value_callback, this);
             }
         }
@@ -1098,6 +1128,7 @@ int edmmultiLineTextUpdateClass::removeCallbacks (int pass)
         {
             data_pv->remove_conn_state_callback (pv_conn_state_callback,
                                                  this);
+            data_pv->remove_access_security_callback(access_security_change, this);
             data_pv->remove_value_callback (pv_value_callback, this);
             data_pv->release ();
             data_pv = 0;
@@ -1294,6 +1325,28 @@ void edmmultiLineTextUpdateClass::pv_value_callback (ProcessVariable *pv,
         me->actWin->addDefExeNode (me->aglPtr);
     }
     me->actWin->appCtx->proc->unlock ();
+}
+
+void edmmultiLineTextUpdateClass::access_security_change (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+edmmultiLineTextUpdateClass *me = (edmmultiLineTextUpdateClass *)userarg;
+
+  if ( me->data_pv ) {
+    if ( me->data_pv->have_write_access() ) {
+      if ( me->widget ) XtVaSetValues( me->widget,
+       XmNeditable, True,
+       NULL );
+    }
+    else {
+      if ( me->widget ) XtVaSetValues( me->widget,
+       XmNeditable, False,
+       NULL );
+    }
+  }
+
 }
 
 void edmmultiLineTextUpdateClass::executeDeferred ()
@@ -1539,10 +1592,13 @@ int edmmultiLineTextEntryClass::drawActive ()
                        XmNforeground,
                        (XtArgVal)textColour.getPixel (actWin->ci),
                        NULL);
-        if (data_pv->have_write_access ())
+        if (data_pv->have_write_access ()) {
             actWin->cursor.set (XtWindow (widget), CURSOR_K_DEFAULT);
-        else
+	}
+        else {
             actWin->cursor.set (XtWindow (widget), CURSOR_K_NO);
+            XtVaSetValues (widget, XmNeditable, False, NULL);
+	}
     }
     else
     {

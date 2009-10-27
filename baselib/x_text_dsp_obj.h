@@ -51,7 +51,7 @@
 #define XTDC_K_FILE_NAME 2
 
 #define XTDC_MAJOR_VERSION 4
-#define XTDC_MINOR_VERSION 4
+#define XTDC_MINOR_VERSION 5
 #define XTDC_RELEASE 0
 
 #ifdef __x_text_dsp_obj_cc
@@ -155,6 +155,10 @@ static void pvInfo (
    XEvent *e,
    String *params,
    Cardinal numParams );
+
+static void xtdo_access_security_change (
+  ProcessVariable *pv,
+  void *userarg );
 
 static void xtdo_monitor_connect_state (
   ProcessVariable *pv,
@@ -369,6 +373,10 @@ friend void pvInfo (
    String *params,
    Cardinal numParams );
 
+friend void xtdo_access_security_change (
+  ProcessVariable *pv,
+  void *userarg );
+
 friend void xtdo_monitor_connect_state (
   ProcessVariable *pv,
   void *userarg );
@@ -542,6 +550,23 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *nullPvEntry, *nullCondEntry, *nullColorEntry;
+
+entryListBase *limitsFromDbEntry, *precisionEntry;
+
+entryListBase *editableEntry, *keypadEntry;
+
+entryListBase *isWidgetEntry, *charModeEntry, *inFocUpdEntry, *chgValOnFocEntry,
+ *autoSelEntry, *updPvOnDropEntry, *isPwEntry;
+
+entryListBase *dateEntry, *cvtDateToFileEntry;
+
+entryListBase *fileEntry, *returnEntry, *defDirEntry, *patEntry;
+
+entryListBase *chgCbEntry;
+
+entryListBase *useDspBgEntry, *bgColorEntry;
+
 int numDecimals, formatType, colorMode,
  pvType, pvCount, svalPvType, noSval, svalPvCount;
 char format[15+1];
@@ -612,8 +637,8 @@ int widget_value_changed;
 
 int needConnectInit, needInfoInit, needErase, needDraw, needRefresh,
  needUpdate, deferredCount, needToDrawUnconnected, needToEraseUnconnected,
- needFgPvPut, initialConnection;
-int unconnectedTimer;
+ needFgPvPut, needAccessSecurityCheck, initialConnection;
+XtIntervalId unconnectedTimer;
 
 keypadClass kp;
 int kpInt;
@@ -646,6 +671,8 @@ int pwLength;
 int characterMode;
 
 int noExecuteClipMask;
+
+int writeDisabled;
 
 public:
 
@@ -719,6 +746,11 @@ int drawActive ( void );
 int eraseActive ( void );
 
 void bufInvalidate ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

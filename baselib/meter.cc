@@ -544,6 +544,9 @@ static int labelTypeEnum[3] = {
   minor = METERC_MINOR_VERSION;
   release = METERC_RELEASE;
 
+  strncpy( literalLabel, readPvLabelExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+  literalLabel[PV_Factory::MAX_PV_NAME] = 0;
+
   tag.init();
   tag.loadW( "beginObjectProperties" );
   tag.loadW( "major", &major );
@@ -1223,27 +1226,57 @@ char title[32], *ptr;
   ef.addTextField( activeMeterClass_str7, 35, &eBuf->bufH );
   ef.addTextField( activeMeterClass_str9, 35, eBuf->bufReadPvName,
    PV_Factory::MAX_PV_NAME );
+
   ef.addOption( activeMeterClass_str10, activeMeterClass_str11, &eBuf->bufLabelType );
+  labelTypeEntry = ef.getCurItem();
+  labelTypeEntry->setNumValues( 3 );
   ef.addTextField( activeMeterClass_str12, 35, eBuf->bufLiteralLabel,
    PV_Factory::MAX_PV_NAME );
+  labelEntry = ef.getCurItem();
+  labelTypeEntry->addInvDependency( 0, labelEntry );
+  labelTypeEntry->addDependencyCallbacks();
+
   ef.addColorButton( activeMeterClass_str14, actWin->ci,&eBuf->labelCb,&eBuf->bufLabelColor);
   ef.addTextField(activeMeterClass_str15, 35, &eBuf->bufMeterAngle);
   ef.addToggle( activeMeterClass_str45, &eBuf->bufTrackDelta );
+
   ef.addToggle( activeMeterClass_str16, &eBuf->bufShowScale );
+  showScaleEntry = ef.getCurItem();
   ef.addOption( activeMeterClass_str17, activeMeterClass_str43,
    eBuf->bufScaleFormat, 15 );
-  //ef.addTextField( activeMeterClass_str19, 35, &eBuf->bufScalePrecision );
+  scaleFormatEntry = ef.getCurItem();
+  showScaleEntry->addDependency( scaleFormatEntry );
   ef.addTextField(activeMeterClass_str19, 35, eBuf->bufScalePrecision, 15 );
+  scalePrecEntry = ef.getCurItem();
+  showScaleEntry->addDependency( scalePrecEntry );
+
   ef.addToggle( activeMeterClass_str20, &eBuf->bufScaleLimitsFromDb );
-  //ef.addTextField(activeMeterClass_str21, 35, &eBuf->bufScaleMin);
+  scaleLimFromDbEntry = ef.getCurItem();
   ef.addTextField(activeMeterClass_str21, 35, eBuf->bufScaleMin, 15 );
-  //ef.addTextField(activeMeterClass_str22, 35, &eBuf->bufScaleMax );
+  scaleMinEntry = ef.getCurItem();
+  scaleLimFromDbEntry->addInvDependency( scaleMinEntry );
   ef.addTextField(activeMeterClass_str22, 35, eBuf->bufScaleMax, 15 );
+  scaleMaxEntry = ef.getCurItem();
+  scaleLimFromDbEntry->addInvDependency( scaleMaxEntry );
+  scaleLimFromDbEntry->addDependencyCallbacks();
+
   ef.addColorButton( activeMeterClass_str24, actWin->ci,&eBuf->scaleCb,&eBuf->bufScaleColor);
+  scaleColorEntry = ef.getCurItem();
+  showScaleEntry->addDependency( scaleColorEntry );
   ef.addToggle( activeMeterClass_str25, &eBuf->bufScaleColorMode );
+  scaleColorModeEntry = ef.getCurItem();
+  showScaleEntry->addDependency( scaleColorModeEntry );
   ef.addTextField(activeMeterClass_str44, 35, eBuf->bufLabelIntervals, 15 );
+  labelIntEntry = ef.getCurItem();
+  showScaleEntry->addDependency( labelIntEntry );
   ef.addTextField(activeMeterClass_str26, 35, eBuf->bufMajorIntervals, 15 );
+  majorIntEntry = ef.getCurItem();
+  showScaleEntry->addDependency( majorIntEntry );
   ef.addTextField(activeMeterClass_str27, 35, eBuf->bufMinorIntervals, 15 );
+  minorIntEntry = ef.getCurItem();
+  showScaleEntry->addDependency( minorIntEntry );
+  showScaleEntry->addDependencyCallbacks();
+
   ef.addToggle(activeMeterClass_str28, &eBuf->bufNeedleType);  
   ef.addColorButton( activeMeterClass_str29, actWin->ci, &eBuf->fgCb, &eBuf->bufFgColor );
   ef.addToggle( activeMeterClass_str30, &eBuf->bufFgColorMode );
@@ -2513,6 +2546,54 @@ void activeMeterClass::bufInvalidate ( void )
 
 }
 
+int activeMeterClass::expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] )
+{
+
+expStringClass tmpStr;
+
+  tmpStr.setRaw( readPvExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( scaleMinExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  scaleMinExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( scaleMaxExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  scaleMaxExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( scalePrecExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  scalePrecExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( labIntExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  labIntExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( majorIntExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  majorIntExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( minorIntExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  minorIntExpStr.setRaw( tmpStr.getExpanded() );
+
+  tmpStr.setRaw( readPvLabelExpStr.getRaw() );
+  tmpStr.expand1st( numMacros, macros, expansions );
+  readPvLabelExpStr.setRaw( tmpStr.getExpanded() );
+
+  strncpy( literalLabel, readPvLabelExpStr.getRaw(), PV_Factory::MAX_PV_NAME );
+  literalLabel[PV_Factory::MAX_PV_NAME] = 0;
+
+  return 1;
+
+}
+
+
 int activeMeterClass::expand1st (
   int numMacros,
   char *macros[],
@@ -2520,6 +2601,12 @@ int activeMeterClass::expand1st (
 {
 
 int stat, retStat = 1;
+
+  stat = readPvLabelExpStr.expand1st( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+  strncpy( literalLabel, readPvLabelExpStr.getExpanded(),
+   PV_Factory::MAX_PV_NAME );
+  literalLabel[PV_Factory::MAX_PV_NAME] = 0;
 
   stat = readPvExpStr.expand1st( numMacros, macros, expansions );
   if ( !(stat & 1 ) ) retStat = stat;
@@ -2554,6 +2641,12 @@ int activeMeterClass::expand2nd (
 
 int stat, retStat = 1;
 
+  stat = readPvLabelExpStr.expand2nd( numMacros, macros, expansions );
+  if ( !(stat & 1 ) ) retStat = stat;
+  strncpy( literalLabel, readPvLabelExpStr.getExpanded(),
+   PV_Factory::MAX_PV_NAME );
+  literalLabel[PV_Factory::MAX_PV_NAME] = 0;
+
   stat = readPvExpStr.expand2nd( numMacros, macros, expansions );
   if ( !(stat & 1 ) ) retStat = stat;
 
@@ -2572,10 +2665,8 @@ int stat, retStat = 1;
   stat = majorIntExpStr.expand2nd( numMacros, macros, expansions );
   if ( !(stat & 1 ) ) retStat = stat;
 
-
   stat = minorIntExpStr.expand2nd( numMacros, macros, expansions );
   if ( !(stat & 1 ) ) retStat = stat;
-
 
   return retStat;
 
@@ -2586,6 +2677,9 @@ int activeMeterClass::containsMacros ( void ) {
 int result;
 
  return 1;
+
+  result = readPvLabelExpStr.containsPrimaryMacros();
+  if ( result ) return 1;
 
   result = readPvExpStr.containsPrimaryMacros();
   if ( result ) return 1;

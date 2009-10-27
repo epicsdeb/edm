@@ -106,6 +106,8 @@ typedef struct editBufTag {
 
 editBufPtr eBuf;
 
+entryListBase *invisPvEntry, *visInvEntry, *minVisEntry, *maxVisEntry;
+
 int bufX, bufY;
 ProcessVariable *visPvId;
 expStringClass visPvExpStr;
@@ -124,7 +126,7 @@ pvConnectionClass connection;
 int needConnectInit, needVisUpdate, needRefresh, needToDrawUnconnected,
  needToEraseUnconnected;
 
-int unconnectedTimer;
+XtIntervalId unconnectedTimer;
 
 public:
 
@@ -359,6 +361,11 @@ int initDefExeNode (
 void executeDeferred ( void );
 
 int containsMacros ( void );
+
+int expandTemplate (
+  int numMacros,
+  char *macros[],
+  char *expansions[] );
 
 int expand1st (
   int numMacros,

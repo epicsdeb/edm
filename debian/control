@@ -2,19 +2,30 @@ Source: edm
 Section: contrib/x11
 Priority: extra
 Maintainer: Michael Davidsaver <mdavidsaver@bnl.gov>
-Build-Depends: debhelper (>= 7), epics-dev, epics-extensions-dev, libgif-dev, libpng-dev, libz-dev, libreadline-dev, libmotif-dev, libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
+Build-Depends: debhelper (>= 7), 
+               epics-dev (>= 3.14.10-6), epics-dev (<< 3.14.11),
+               epics-extensions-dev,
+               libgif-dev, libpng-dev, libz-dev, libreadline-dev, libmotif-dev,
+               libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
 Standards-Version: 3.7.3
 Homepage: http://ics-web.sns.ornl.gov/edm/
 
 Package: edm
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, epics-libs, netpbm, cups-bsd | lpr | lprng
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         epics-libs,
+         netpbm, cups-bsd | lpr | lprng
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system
 
 Package: edm-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, edm, epics-dev, epics-extensions-dev, libgif-dev, libpng-dev, libz-dev, libreadline-dev, lesstif2-dev, libx11-dev, libxmu-dev, libxtst-dev
+Depends: ${shlibs:Depends}, ${misc:Depends}, edm (= ${binary:Version}),
+         epics-dev (>= 3.14.10-6), epics-dev (<< 3.14.11),
+         epics-extensions-dev,
+         libgif-dev, libpng-dev, libz-dev, libreadline-dev, lesstif2-dev,
+         libx11-dev, libxmu-dev, libxtst-dev
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system.
+ .
  Development libraries and headers

@@ -9,7 +9,8 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-SOV=1.12.4
+# chop out the source version from Changelog (ie 1.12.20)
+SOV=$(shell dpkg-parsechangelog -c1 |grep Version |sed -e 's|Version: ||' | head -n1| cut -f 1 -d '-')
 
 EPICS_HOST_ARCH:=$(shell /usr/epics/base/startup/EpicsHostArch)
 

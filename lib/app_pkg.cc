@@ -2164,7 +2164,7 @@ char *sysMacros[] = {
   }
   else {
 
-    strcpy( buf, "/etc/edm/" );
+    strcpy( buf, env_default_str5 );
 
   }
 

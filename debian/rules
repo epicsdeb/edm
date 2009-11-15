@@ -1,149 +1,157 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
-# Sample debian/rules that uses debhelper.
-# This file was originally written by Joey Hess and Craig Small.
-# As a special exception, when this file is copied by dh-make into a
-# dh-make output file, you may use that output file without restriction.
-# This special exception was added by Craig Small in version 0.37 of dh-make.
 
-# Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
-
-# chop out the source version from Changelog (ie 1.12.20)
-SOV=$(shell dpkg-parsechangelog -c1 |grep Version |sed -e 's|Version: ||' | head -n1| cut -f 1 -d '-')
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/makefile.mk
+include /usr/share/cdbs/1/rules/utils.mk
 
 EPICS_HOST_ARCH:=$(shell /usr/epics/base/startup/EpicsHostArch)
 
-ENV=EPICS_HOST_ARCH=$(EPICS_HOST_ARCH)
-CONFIG=INSTALL_LOCATION_EXTENSIONS=$(CURDIR)/build/inst USE_RPATH=NO SHRLIB_VERSION=$(SOV)
+# chop out the source version from Changelog (ie 1.12.20)
+SOV=$(shell echo "$(DEB_NOEPOCH_VERSION)"| cut -f 1 -d '-')
 
+ENV=EPICS_HOST_ARCH=$(EPICS_HOST_ARCH)
+
+DEB_MAKE_ENVVARS = PATH="$(CURDIR)/bin/$(EPICS_HOST_ARCH):$$PATH" \
+LD_LIBRARY_PATH="$(CURDIR)/lib/$(EPICS_HOST_ARCH):$$LD_LIBRARY_PATH"
+
+DEB_MAKE_MAKEVARS = EPICS_HOST_ARCH=$(EPICS_HOST_ARCH) USE_RPATH=NO \
+SHRLIB_VERSION=$(SOV) ABS_INSTALL_DIR=/usr/epics/base
+
+# Prevent CFLAGS and similar from being passed to EPICS since
+# this will break cross-builds of things.
+DEB_MAKE_INVOKE  = $(DEB_MAKE_ENVVARS) $(MAKE) -C $(DEB_BUILDDIR) $(DEB_MAKE_MAKEVARS)
+
+# The Extensions build system wants source to be in a subdirectory
+# so we need to more it.
 BLOB=$(wildcard *)
 SRC=$(filter-out debian,$(filter-out build,$(BLOB)))
 
-build: build-stamp
+DEB_BUILDDIR = build/src/edm
 
-binbuild=build/inst/bin/$(EPICS_HOST_ARCH)
-libbuild=build/inst/lib/$(EPICS_HOST_ARCH)
+post-patches:: move-src
 
-build-stamp:
-	dh_testdir
+move-src: move-src-stamp
 
-	install -d build/src/edm
-	cp -r $(SRC) build/src/edm
+move-src-stamp:
+	install -d $(DEB_BUILDDIR)
+	cp -r $(SRC) $(DEB_BUILDDIR)
 	ln -s /usr/epics/extensions/configure build/configure
-
-	$(ENV) $(MAKE) -C build/src/edm $(CONFIG)
-
-	rm -f build/edmPvObjects
-	for pv in Epics Calc Log Loc; do \
-echo $$pv; \
-EDMPVOBJECTS=$(CURDIR)/build EDMOBJECTS=$(CURDIR)/build \
-LD_LIBRARY_PATH=$(CURDIR)/$(libbuild):$$LD_LIBRARY_PATH $(binbuild)/edm -addpv $(CURDIR)/$(libbuild)/lib$$pv.so.$(SOV); \
-done
-
-	rm -f build/edmObjects
-	for obj in $(CURDIR)/$(libbuild)/lib*.so.$(SOV); do \
-echo $$obj; \
-EDMPVOBJECTS=$(CURDIR)/build EDMOBJECTS=$(CURDIR)/build \
-LD_LIBRARY_PATH=$(CURDIR)/$(libbuild):$$LD_LIBRARY_PATH $(binbuild)/edm -add $$obj; \
-done
-
-	sed -i -e "s|$(CURDIR)/$(libbuild)|/usr/lib/edm|" build/edmObjects build/edmPvObjects
 
 	touch $@
 
-clean: 
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp configure-stamp
-
-	# Add here commands to clean up after the build process.
+clean::
 	rm -rf build
+	rm -f move-src-stamp
 
-	dh_clean 
+DEB_MAKE_CLEAN_TARGET =
+DEB_MAKE_BUILD_TARGET = all
+DEB_MAKE_INSTALL_TARGET = all
+DEB_MAKE_CHECK_TARGET =
 
-devbindir=debian/edm-dev/usr/epics/base/bin/$(EPICS_HOST_ARCH)
-devlibdir=debian/edm-dev/usr/epics/base/lib/$(EPICS_HOST_ARCH)
+# Basic EDM libraries
+edmlibs += EdmBase
+edmlibs += cfcaa62e-8199-11d3-a77f-00104b8742df
+edmlibs += 114135a4-6f6c-11d3-95bc-00104b8742df
+# PV Plugins
+#  Note: Epics must be listed first
+edmpvplug += Epics Calc Loc Log
+# Widget Plugins
+edmplug += 57d79238-2924-420b-ba67-dfbecdf03fcd
+edmplug += 7e1b4e6f-239d-4650-95e6-a040d41ba633
+edmplug += cf322683-513e-4570-a44b-7cdd7cae0de5
+edmplug += EdmDiamond EdmTriumf Indicator
+edmplug += MultSegRamp PV TwoDProfileMonitor
 
-install: build
-	dh_testdir
-	dh_testroot
-	dh_clean -k 
-	dh_installdirs
+# Build Rules
 
-	install -d debian/edm/etc/edm
-	install build/edmPvObjects debian/edm/etc/edm/
-	install build/edmObjects debian/edm/etc/edm/
+binbuild=$(CURDIR)/build/bin/$(EPICS_HOST_ARCH)
+libbuild=$(CURDIR)/build/lib/$(EPICS_HOST_ARCH)
 
-	install helpFiles/* debian/edm/etc/edm/
-	install edmMain/colors.list debian/edm/etc/edm/
-	install edmMain/fonts.list debian/edm/etc/edm/
-	install edmMain/edmPrintDef debian/edm/etc/edm/
-	chmod 0644 debian/edm/etc/edm/*
+common-build-arch:: build-obj-stamp
 
-	install -d debian/edm/usr/bin
-	cp build/inst/bin/$(EPICS_HOST_ARCH)/* debian/edm/usr/bin/
-	install -d debian/edm/usr/lib/edm
-	install build/inst/lib/$(EPICS_HOST_ARCH)/libEdmBase.so.$(SOV) debian/edm/usr/lib/
-	# these are not really plugins
-	install build/inst/lib/$(EPICS_HOST_ARCH)/lib114135a4-6f6c-11d3-95bc-00104b8742df.so.$(SOV) debian/edm/usr/lib/
-	install build/inst/lib/$(EPICS_HOST_ARCH)/libcfcaa62e-8199-11d3-a77f-00104b8742df.so.$(SOV) debian/edm/usr/lib/
-	# the reset are
-	cp build/inst/lib/$(EPICS_HOST_ARCH)/*.so.$(SOV) debian/edm/usr/lib/edm/
-
-	install -d $(devlibdir)
-
-	cp -r build/inst/include debian/edm-dev/usr/epics/base/
-	cp build/inst/lib/$(EPICS_HOST_ARCH)/*.so $(devlibdir)
-	cp build/inst/lib/$(EPICS_HOST_ARCH)/*.a $(devlibdir)
-
-	for ll in $(wildcard $(devlibdir)/*.so); do \
-echo "A $$ll"; \
-rm -f $(devlibdir)/`basename $$ll`; \
-ln -s `basename $$ll`.$(SOV) $(devlibdir)/`basename $$ll`; \
+build-obj-stamp:
+	rm -f build/edmPvObjects
+	for pv in $(edmpvplug); do \
+echo $$pv; \
+EDMPVOBJECTS=$(CURDIR)/build EDMOBJECTS=$(CURDIR)/build \
+LD_LIBRARY_PATH=$(libbuild):$$LD_LIBRARY_PATH $(binbuild)/edm -addpv $(libbuild)/lib$$pv.so.$(SOV); \
 done
 
-	for ll in $(wildcard debian/edm/usr/lib/edm/*.so.$(SOV)); do \
-echo "B $$ll"; \
-rm -f $(devlibdir)/`basename $$ll`; \
-ln -s ../../../../lib/edm/`basename $$ll` $(devlibdir)/; \
+	rm -f build/edmObjects
+	for obj in $(edmplug); do \
+echo $$obj; \
+EDMPVOBJECTS=$(CURDIR)/build EDMOBJECTS=$(CURDIR)/build \
+LD_LIBRARY_PATH=$(libbuild):$$LD_LIBRARY_PATH $(binbuild)/edm -add $(libbuild)/lib$$obj.so.$(SOV); \
 done
 
+	sed -i -e "s|$(libbuild)|/usr/lib/edm|" build/edmObjects build/edmPvObjects
 
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
+	touch $@
 
-# Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs 
-	dh_installdocs
-	dh_installexamples
-#	dh_install
-#	dh_installmenu
-#	dh_installdebconf	
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_python
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
-	dh_installman
-	dh_link
-	dh_strip -Xusr/epics
-	dh_compress
-	dh_fixperms
-#	dh_perl
-	dh_makeshlibs
-	dh_installdeb
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(CURDIR)/debian/edm/usr/lib/edm dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
+clean::
+	rm -f build-obj-stamp
 
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
+# Install Rules
+
+instroot=$(CURDIR)/debian/tmp
+bindir=$(instroot)/usr/bin
+libdir=$(instroot)/usr/lib
+confdir=$(instroot)/etc
+datadir=$(instroot)/usr/share/edm
+docdir=$(instroot)/usr/share/doc/edm
+
+epicsroot=$(instroot)/usr/epics/base
+epicslibs=$(epicsroot)/lib/$(EPICS_HOST_ARCH)
+epicsincl=$(epicsroot)/include
+
+common-install-arch::
+	install -d $(bindir)
+	install -d $(libdir)/edm
+	install -d $(epicsincl)
+	install -d $(datadir)
+	install -d $(confdir)/edm
+	install -d $(epicslibs)
+
+	install -m 755 -t $(bindir) build/bin/$(EPICS_HOST_ARCH)/*
+
+	cp -r $(CURDIR)/build/include/edm $(epicsincl)/
+	chmod -R 644 $(epicsincl)/edm
+
+	install -m 644 -t $(epicslibs) build/lib/$(EPICS_HOST_ARCH)/*
+
+	# Basic libraries go in /usr/lib
+	for ff in $(edmlibs);do \
+		mv $(epicslibs)/lib$$ff.so.$(SOV) $(libdir); \
+		rm -f $(epicslibs)/lib$$ff.so; \
+		ln -s ../../../../lib/lib$$ff.so.$(SOV) $(epicslibs)/lib$$ff.so; \
+	done
+
+	# Plugins go in /usr/lib/edm
+	for ff in $(edmpvplug) $(edmplug);do \
+		mv $(epicslibs)/lib$$ff.so.$(SOV) $(libdir)/edm; \
+		rm -f $(epicslibs)/lib$$ff.so; \
+		ln -s ../../../../lib/edm/lib$$ff.so.$(SOV) $(epicslibs)/lib$$ff.so; \
+	done
+
+	install -m 644 -t $(confdir)/edm build/edmPvObjects build/edmObjects
+
+	cp -r $(CURDIR)/helpFiles $(datadir)/
+	find $(datadir)/helpFiles -type f -exec chmod -x {} \;
+
+	install -m 644 -t $(confdir)/edm edmMain/fonts.list
+	install -m 644 -t $(confdir)/edm edmMain/edmPrintDef
+
+common-install-indep::
+	install -d $(docdir)
+	install -d $(confdir)/edm
+
+	cp -r $(CURDIR)/doc $(docdir)/html
+	find $(docdir)/html -type f -exec chmod -x {} \;
+	install -m 644 -t $(docdir) edmMain/colors.list
+	install -m 644 -t $(docdir) edmMain/fonts.list
+	install -m 644 -t $(docdir) edmMain/edmPrintDef
+	install -d $(docdir)/contrib
+	install -m 755 -t $(docdir)/contrib contrib/fontparse.py
+
+	install -m 644 -t $(confdir)/edm edmMain/colors.list

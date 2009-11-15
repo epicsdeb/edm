@@ -7,25 +7,47 @@ Build-Depends: debhelper (>= 7),
                epics-extensions-dev,
                libgif-dev, libpng-dev, libz-dev, libreadline-dev, libmotif-dev,
                libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0
 Homepage: http://ics-web.sns.ornl.gov/edm/
 
 Package: edm
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
-         epics-libs,
-         netpbm, cups-bsd | lpr | lprng
+         epics-libs (>= 3.14.10-6), epics-libs (<< 3.14.11),
+         xfonts-75dpi,
+         netpbm, cups-bsd | lpr | lprng,
+         edm-color,
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system
 
+Package: edm-color-default
+Architecture: all
+Depends: edm (= ${binary:Version})
+Provides: edm-color
+Description: The Extensible Display Manager
+ A display manager (GUI) for the EPICS control system
+ .
+ This is the default colors.list which is distributed with EDM.
+
 Package: edm-dev
+Section: contrib/devel
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, edm (= ${binary:Version}),
+Depends: ${shlibs:Depends}, ${misc:Depends},
+         edm (= ${binary:Version}),
          epics-dev (>= 3.14.10-6), epics-dev (<< 3.14.11),
          epics-extensions-dev,
-         libgif-dev, libpng-dev, libz-dev, libreadline-dev, lesstif2-dev,
-         libx11-dev, libxmu-dev, libxtst-dev
+         libgif-dev, libpng-dev, libz-dev, libreadline-dev, libmotif-dev,
+         libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system.
  .
  Development libraries and headers
+
+Package: edm-doc
+Section: contrib/doc
+Architecture: all
+Depends: edm (= ${binary:Version})
+Description: The Extensible Display Manager
+ A display manager (GUI) for the EPICS control system.
+ .
+ The EDM Manual in html form.

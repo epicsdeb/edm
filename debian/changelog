@@ -1,3 +1,14 @@
+edm (1.12.20-2) unstable; urgency=low
+
+  * Move help files from /etc to /usr/share/edm
+  * Revise fonts list for Debian
+  * Add package edm-doc w/ html version of EDM manual
+  * add package edm-color-default w/ the default colors.list.
+  * Fix SONAMES
+  * Update dependencies
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Mon, 16 Nov 2009 09:29:10 -0500
+
 edm (1.12.20-1) unstable; urgency=low
 
   * New Upstream Version

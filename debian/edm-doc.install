@@ -1,1 +1,5 @@
-usr/share/doc/edm
+usr/share/doc/edm/colors.list
+usr/share/doc/edm/html
+usr/share/doc/edm/contrib
+usr/share/doc/edm/fonts.list
+usr/share/doc/edm/edmPrintDef

@@ -1,4 +1,4 @@
-TOP = ../../..
+TOP = ./..
 ifdef EPICS_HOST_ARCH
   include $(TOP)/configure/CONFIG
    

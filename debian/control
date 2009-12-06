@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Michael Davidsaver <mdavidsaver@bnl.gov>
 Build-Depends: debhelper (>= 7), cdbs,
                epics-dev (>= 3.14.10-6), epics-dev (<< 3.14.11),
-               epics-extensions-dev,
+               epics-extensions-dev (>= 20091204),
                libgif-dev, libpng-dev, libz-dev, libreadline-dev, libmotif-dev,
                libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
 Standards-Version: 3.8.0
@@ -14,16 +14,18 @@ Package: edm
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          epics-libs (>= 3.14.10-6), epics-libs (<< 3.14.11),
-         xfonts-75dpi,
          netpbm, cups-bsd | lpr | lprng,
          edm-color,
+Recommended: xfonts-75dpi
+Suggests: edm-color-default (= ${binary:Version})
+          edm-doc (= ${binary:Version})
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system
 
 Package: edm-color-default
 Architecture: all
-Depends: edm (= ${binary:Version})
 Provides: edm-color
+Conflicts: edm (<< 1.12.24-1)
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system
  .
@@ -46,7 +48,6 @@ Description: The Extensible Display Manager
 Package: edm-doc
 Section: contrib/doc
 Architecture: all
-Depends: edm (= ${binary:Version})
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system.
  .

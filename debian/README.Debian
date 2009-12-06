@@ -1,6 +1,7 @@
 edm for Debian
 --------------
 
-<possible notes regarding this package - if none, delete this file>
+Configuration files including the font and color lists, and the printer def
+are placed in /etc/edm.
 
  -- Michael Davidsaver <mdavidsaver@bnl.gov>  Mon, 22 Jun 2009 13:24:45 -0400

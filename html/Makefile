@@ -1,4 +1,4 @@
-TOP = ../../..
+TOP = ./..
 ifneq ($(wildcard $(TOP)/config)x,x)
   # New Makefile.Host config file location
   include $(TOP)/config/CONFIG_EXTENSIONS

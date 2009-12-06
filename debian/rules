@@ -45,6 +45,8 @@ edmlibs += 114135a4-6f6c-11d3-95bc-00104b8742df
 #  Note: Epics must be listed first
 edmpvplug += Epics Calc Loc Log
 # Widget Plugins
+#  EdmBase is linked and loaded at runtime...
+edmplug += EdmBase
 edmplug += 57d79238-2924-420b-ba67-dfbecdf03fcd
 edmplug += 7e1b4e6f-239d-4650-95e6-a040d41ba633
 edmplug += cf322683-513e-4570-a44b-7cdd7cae0de5
@@ -74,6 +76,7 @@ LD_LIBRARY_PATH=$(libbuild):$$LD_LIBRARY_PATH $(binbuild)/edm -add $(libbuild)/l
 done
 
 	sed -i -e "s|$(libbuild)|/usr/lib/edm|" edmObjects edmPvObjects
+	sed -i -e "s|edm/libEdmBase|libEdmBase|" edmObjects
 
 	touch $@
 

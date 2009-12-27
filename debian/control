@@ -3,7 +3,7 @@ Section: contrib/x11
 Priority: extra
 Maintainer: Michael Davidsaver <mdavidsaver@bnl.gov>
 Build-Depends: debhelper (>= 7), cdbs,
-               epics-dev (>= 3.14.10-6), epics-dev (<< 3.14.11),
+               epics-dev (>= 3.14.10-10), epics-dev (<< 3.14.11),
                epics-extensions-dev (>= 20091204),
                libgif-dev, libpng-dev, libz-dev, libreadline-dev, libmotif-dev,
                libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
@@ -13,7 +13,6 @@ Homepage: http://ics-web.sns.ornl.gov/edm/
 Package: edm
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
-         epics-libs (>= 3.14.10-6), epics-libs (<< 3.14.11),
          netpbm, cups-bsd | lpr | lprng,
          edm-color,
 Recommended: xfonts-75dpi
@@ -36,7 +35,7 @@ Section: contrib/devel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          edm (= ${binary:Version}),
-         epics-dev (>= 3.14.10-6), epics-dev (<< 3.14.11),
+         epics-dev (>= 3.14.10-10), epics-dev (<< 3.14.11),
          epics-extensions-dev,
          libgif-dev, libpng-dev, libz-dev, libreadline-dev, libmotif-dev,
          libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev

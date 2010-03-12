@@ -4419,6 +4419,12 @@ static void displayParamInfo ( void ) {
   fprintf( stderr, "\n" );
   fprintf( stderr, global_str127 );
   fprintf( stderr, "\n" );
+  fprintf( stderr, global_str143 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str144 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str145 );
+  fprintf( stderr, "\n" );
 
 }
 
@@ -6807,6 +6813,36 @@ char *envPtr, text[255+1];
   }
   else {
     snprintf( text, 255, "  %s=[]", "CALC_ENV" );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str32 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str32, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str32 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str33 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str33, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str33 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str34 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str34, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str34 );
   }
   text[255] = 0;
   postMessage( text );

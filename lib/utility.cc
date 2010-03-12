@@ -23,6 +23,25 @@
 
 static int g_serverSocketFd = -1;
 
+int useAppTopParent ( void ) {
+
+static int useAppTop = -1;
+char *envPtr;
+
+  if ( useAppTop == -1 ) {
+    envPtr = getenv( environment_str34 );
+    if ( envPtr ) {
+      useAppTop = 1;
+    }
+    else {
+      useAppTop = 0;
+    }
+  }
+
+  return useAppTop;
+
+}
+
 int debugMode ( void ) {
 
 int val;
@@ -118,7 +137,7 @@ mode_t curMode;
 
     close( 2 );
     curMode = umask( 0 );
-    fd = open( g_diagFileName, O_CREAT|O_WRONLY );
+    fd = open( g_diagFileName, O_CREAT|O_WRONLY, 0777 );
     umask( curMode );
     fprintf( stderr, time_string );
     fprintf( stderr, "host %s, pid %-d - ", hostName, procPid );

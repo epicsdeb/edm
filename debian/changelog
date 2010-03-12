@@ -1,3 +1,10 @@
+edm (1.12.28-1) unstable; urgency=low
+
+  * New Upstream Version
+  * debian/edm.1 - add manpage for edm
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Fri, 12 Mar 2010 16:35:06 -0500
+
 edm (1.12.24-2) unstable; urgency=low
 
   * Update dependencies

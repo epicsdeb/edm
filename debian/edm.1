@@ -1,0 +1,226 @@
+.TH "EDM" "1" "March 2010" "edm " "User Commands"
+.SH "NAME"
+edm \- The Extensible Display Manager for EPICS 
+.SH "DESCRIPTION"
+EDM is a tool to create operator interface (OPI) displays
+dynamically.  It provides a panel on which GUI widgets
+can be placed.  These widgets can be linked to
+Process Variables in the EPICS distributed control system.
+.SH "SYNOPSIS"
+.PP 
+edm [\-x] [\-m "m1=str1,m2=str2,..."] <display\-file1 display\-file2 ...>
+.SH "OPTIONS"
+.TP 
+\fB\-x\fR
+Open all displays in execute rather than edit mode
+.TP 
+\fB\-noedit\fR
+Remove capability to put display in edit mode, used
+with \fB\-x\fR to produce execute only operation
+.TP 
+\fB\-ro\fR
+Read\-only mode (when the \fB\-server\fR option is in use,
+this option affects the primary server only;
+clients inherit this attribute from the server)
+.TP 
+\fB\-noscrl\fR
+Disable scroll bars
+.TP 
+\fB\-m\fR
+Introduces list of macros/expansions
+.IP 
+e.g. \fB\-m\fR "facility=beamline\-5,section=z"
+.TP 
+\fB\-ctl\fR
+Takes name of string process variable, writing
+a display file name to this string causes edm
+to open the display in execute mode
+.IP 
+Writing "* SHUTDOWN *" to the pv invokes a remote
+shutdown; edm writes its pid back into the same pv
+.TP 
+\fB\-color\fR
+Set Colormode \- index (default) or rgb
+.TP 
+\fB\-cmap\fR
+Use private colormap if necessary
+.TP 
+\fB\-restart\fR
+Takes pid number, restart from last shutdown
+.TP 
+\fB\-convert\fR
+Convert input file to new version and exit
+.TP 
+\fB\-server\fR
+Communicate with or become a
+display file server which can
+manage multiple displays
+.TP 
+\fB\-port\fR #
+Use specified TCP/IP port number (default=19000)
+.TP 
+\fB\-local\fR
+Do not communicate with the display
+file server (default)
+.TP 
+\fB\-one\fR
+Allow only one edm instance (all instances must be launched
+with the same command line parameters)
+.TP 
+\fB\-open\fR
+Request edm server to open files (\fB\-open\fR file?x?y opens file at x,y)
+.TP 
+\fB\-close\fR
+Request edm server to close specified window names
+.TP 
+\fB\-move\fR
+Request edm server to move specified window names (\fB\-move\fR name?x?y)
+.TP 
+\fB\-raise\fR
+Request edm server to raise specified window names
+.TP 
+\fB\-lower\fR
+Request edm server to lower specified window names
+.TP 
+\fB\-iconify\fR
+Request edm server to iconify specified window names
+.HP
+\fB\-deiconify\fR Request edm server to deiconify specified window names
+.TP 
+\fB\-xwdsnap\fR
+Request edm server to raise and snapshot specified window names
+.TP 
+\fB\-eolc\fR
+Exit when last screen is closed
+.HP
+\fB\-noautomsg\fR Disable message window auto open
+.TP 
+\fB\-crawl\fR
+Search all edl files and dump all pv name and file path pairs
+to stdout; write info and status to stderr
+.TP 
+\fB\-verbose\fR
+Show crawler progress info
+.TP 
+\fB\-ul\fR
+Takes name of user written shareable library
+.PP 
+COMPONENT MANAGEMENT
+.PP 
+edm (\fB\-add\fR|\-remove|\-show) <component library file pathname>
+.TP 
+\fB\-add\fR
+Add all library components to edmObjects
+.TP 
+\fB\-remove\fR
+Remove all library components from edmObjects
+.TP 
+\fB\-show\fR
+Show all components in specified library
+.IP 
+e.g. edm \fB\-add\fR /usr/lib/someEdmComponents.so
+.PP 
+PV COMPONENT MANAGEMENT
+.PP 
+edm (\fB\-addpv\fR|\-removepv|\-showpv) <pv component library file pathname>
+.TP 
+\fB\-addpv\fR
+Add all library components to edmPvObjects
+.TP 
+\fB\-removepv\fR
+Remove all library components from edmPvObjects
+.TP 
+\fB\-showpv\fR
+Show all components in specified library
+.SH "ENVIRONMENT VARIABLES"
+.PP 
+EDMFILES                Location of fonts.list and colors.list
+.PP 
+EDMHELPFILES            Location of edm help displays
+.PP 
+EDMOBJECTS              Location of edmObjects, the edm component
+                        object file
+.PP 
+EDMPVOBJECTS            Location of edmPvObjects, the edm pv component
+                        object file
+.PP 
+EDMDATAFILES            Location of display files given as
+                        a colon seperated list
+.IP 
+e.g. /usr/displays:/usr/more:/usr/yetMore
+.IP 
+The list is searched left to right in the same manner as PATH.  When the 'Save As...' dialog is invoked it will open to the last directory in this list.  If EDMDATAFILES is not set then default path is ./
+.PP 
+EDMSERVERS              Comma separated list of server names
+.IP 
+<server1>[:merit],<server2>[:merit]...
+e.g. node1:2,node2:1.5,node3
+(node1 is preffered 2/1.5, 2/1 over nodes 2 & 3)
+.PP 
+EDMTMPFILES             Location of autosave and other temp files
+                        (default: /tmp)
+.PP 
+EDMHTTPDOCROOT          URL list for http access; | is the list element
+                        separator
+.PP 
+EDMUSERLIB              Location of user shared library file
+.PP 
+EDMUSEPIXMAP            Double buffer output and consume many more cpu
+                        resources if defined
+.PP 
+EDMPRINTDEF             Location of edmPrintDef file
+.PP 
+EDMCOLORFILE            Location of colors.list
+                         (normally given by EDMFILES)
+.PP 
+EDMFONTFILE             Location of fonts.list
+                         (normally given by EDMFILES)
+.PP 
+EDMFILTERS              See user's manual
+.PP 
+EDMTMPUMASK             UMASK for temporary files
+.PP 
+EDMDUMPFILES            Location of dumped data files
+.PP 
+EDMACTIONS              See user's manual
+.PP 
+EDMPUTLOGGER            See user's manual
+.PP 
+EDMMAXVERSIONS          See user's manual
+.PP 
+EDMCLEAREPICSDEFAULT    For put\-logging, see user's manual
+.PP 
+EDMCOMMENTS             Name of file containing comments to be inserted
+                        in new edl file
+.PP 
+EDMCOLORMODE            Value is index or rgb \- for editing edm help
+                        files
+.PP 
+EDMPRINTER              Default printer
+.PP 
+EDMSUPERVISORMODE       See user's manual
+.PP 
+EDMGENDOC               See user's manual
+.PP 
+EDMDEBUGMODE            See user's manual
+.PP 
+EDMDIAGNOSTICMODE       See user's manual
+.PP 
+EDMXSYNC                See user's manual
+.SH "AUTHOR"
+.IP 
+edm Copyright (C) 1999 John W. Sinclair
+.IP 
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+.IP 
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+.IP 
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.

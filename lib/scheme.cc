@@ -76,6 +76,12 @@ unsigned int pixel;
   else {
 
     f = fopen( "./default.scheme", "r" );
+
+  }
+
+  if (!f) {
+
+    f = fopen( "/etc/edm/default.scheme", "r" );
     if ( !f ) return 0;
 
   }

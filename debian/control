@@ -15,7 +15,7 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          netpbm, cups-bsd | lpr | lprng,
          edm-color,
-Recommended: xfonts-75dpi
+Recommend: xfonts-75dpi
 Suggests: edm-color-default (= ${binary:Version})
           edm-doc (= ${binary:Version})
 Description: The Extensible Display Manager

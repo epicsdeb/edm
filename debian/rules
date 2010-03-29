@@ -124,6 +124,7 @@ install/edm::
 	done
 
 	install -m 644 -t $(confdir)/edm edmPvObjects edmObjects
+	install -m 644 -t $(confdir)/edm setup/calc.list
 
 	cp -r $(CURDIR)/helpFiles $(datadir)/
 	find $(datadir)/helpFiles -type f -exec chmod -x {} \;

@@ -176,6 +176,7 @@ CALC_PV_Factory::CALC_PV_Factory()
     }
     else
     {
+        bool foundcalc=false;
         if (! parseFile(CALC_FILENAME))
         {
             const char *path=getenv("EDMFILES");
@@ -188,8 +189,17 @@ CALC_PV_Factory::CALC_PV_Factory()
                     sprintf(name, "%s/%s", path, CALC_FILENAME);
                     parseFile(name);
                     free(name);
+                    foundcalc=true;
                 }
             }
+        }
+        else
+        {
+            foundcalc=true;
+        }
+        if (! foundcalc)
+        {
+            parseFile("/etc/" CALC_FILENAME);
         }
     }
 }

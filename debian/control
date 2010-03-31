@@ -5,7 +5,7 @@ Maintainer: Michael Davidsaver <mdavidsaver@bnl.gov>
 Build-Depends: debhelper (>= 7), cdbs,
                epics-dev (>= 3.14.10-10), epics-dev (<< 3.14.11),
                epics-extensions-dev (>= 20091204),
-               libgif-dev, libpng-dev, libz-dev, libreadline-dev, libmotif-dev,
+               libgif-dev, libpng-dev, libz-dev, libreadline5-dev, libmotif-dev,
                libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
 Standards-Version: 3.8.0
 Homepage: http://ics-web.sns.ornl.gov/edm/
@@ -37,7 +37,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          edm (= ${binary:Version}),
          epics-dev (>= 3.14.10-10), epics-dev (<< 3.14.11),
          epics-extensions-dev,
-         libgif-dev, libpng-dev, libz-dev, libreadline-dev, libmotif-dev,
+         libgif-dev, libpng-dev, libz-dev, libreadline5-dev, libmotif-dev,
          libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system.

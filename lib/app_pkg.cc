@@ -24,6 +24,7 @@
 #include <unistd.h>
 
 #include <X11/Intrinsic.h>
+#include <sys/wait.h>
 
 typedef struct libRecTag {
   struct libRecTag *flink;
@@ -34,6 +35,44 @@ typedef struct libRecTag {
 } libRecType, *libRecPtr;
 
 static int g_needXtInit = 1;
+
+static int checkDisplay (
+  char *dspName
+) {
+
+char *envPtr;
+char cmd[1023+1];
+int result;
+
+  result = 0; // success
+
+  envPtr = getenv( "EDMCHECKDISPLAY" );
+  if ( envPtr ) {
+
+    if ( !dspName ) return result;
+    if ( strcmp( dspName, "" ) == 0 ) return result;
+
+    if ( debugMode() ) {
+      fprintf( stderr, "checking display %s with %s\n", dspName, envPtr );
+    }
+
+    snprintf( cmd, 1023, "%s %s", envPtr, dspName );
+
+    result = system( cmd );
+
+    if ( result ) {
+      result = result >> 8;
+    }
+
+    if ( debugMode() ) {
+      fprintf( stderr, "return value = %-d\n", result );
+    }
+
+  }
+
+  return result;
+
+}
 
 static int ignoreIconic ( void ) {
 
@@ -2594,6 +2633,52 @@ activeWindowListPtr cur;
 
 }
 
+void appContextClass::requestSelectedReload ( void )
+{
+
+  reloadFlag = 3;
+
+}
+
+void appContextClass::reloadSelected ( void )
+{
+
+activeWindowListPtr cur;
+
+  // walk activeWindowList and reload
+  cur = head->flink;
+  while ( cur != head ) {
+    if ( !cur->requestDelete && cur->node.reloadRequestFlag ) {
+      cur->requestActivate = 0;
+      cur->requestActivateClear = 0;
+      cur->requestReactivate = 0;
+      cur->requestOpen = 1;
+      requestFlag++;
+      cur->requestPosition = 1;
+      cur->requestImport = 0;
+      cur->requestRefresh = 0;
+      cur->requestActiveRedraw = 0;
+      cur->requestIconize = 0;
+      cur->requestConvertAndExit = 0;
+      cur->x = cur->node.x;
+      cur->y = cur->node.y;
+      if ( cur->node.mode == AWC_EXECUTE ) {
+        cur->node.returnToEdit( 0 );
+        cur->node.noRaise = 1;
+        processAllEvents( app, display );
+        cur->requestActivate = 1;
+        cur->requestActivateClear = 1;
+        requestFlag++;
+      }
+      cur->node.reloadRequestFlag = 0;
+      cur->node.reloadSelf();
+    }
+    cur = cur->flink;
+  }
+  processAllEvents( app, display );
+
+}
+
 void appContextClass::refreshAll ( void )
 {
 
@@ -4849,8 +4934,34 @@ err_return:
       XtAppSetFallbackResources(app, fbr);
     }
 
+    int i;
+    char dspName[63+1];
+    strcpy( dspName, "" );
+    for ( i=0; i<argCount; i++ ) {
+      if ( strcmp( args[i], "-display" ) == 0 ) {
+        if ( i+1 < argCount ) {
+          strncpy( dspName, args[i+1], 63 );
+	  dspName[63] = 0;
+	  break;
+	}
+      }
+    }
+
+    int result = 0;
+    result = checkDisplay( dspName );
+    if ( result ) {
+      fprintf( stderr, appContextClass_str145, dspName );
+      exitFlag = 1;
+      return 0; // error
+    }
+
     display = XtOpenDisplay( app, NULL, NULL, "edm", NULL, 0, &argCount,
      args );
+    if ( !display ) {
+      fprintf( stderr, appContextClass_str146 );
+      exitFlag = 1;
+      return 0; // error
+    }
 
     if ( executeOnOpen ) {
       appTop = XtVaAppCreateShell( NULL, "edm", applicationShellWidgetClass,
@@ -5793,6 +5904,10 @@ char msg[127+1];
   }
   else if ( reloadFlag == 1 ) {
     reloadAll();
+    reloadFlag = 2;
+  }
+  else if ( reloadFlag == 3 ) {
+    reloadSelected();
     reloadFlag = 2;
   }
 

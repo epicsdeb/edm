@@ -13,11 +13,10 @@ Homepage: http://ics-web.sns.ornl.gov/edm/
 Package: edm
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
-         netpbm, cups-bsd | lpr | lprng,
-         edm-color,
-Recommend: xfonts-75dpi
-Suggests: edm-color-default (= ${binary:Version})
-          edm-doc (= ${binary:Version})
+         netpbm, edm-color-default | edm-color,
+Recommends: xfonts-75dpi, cups-bsd | lpr | lprng,
+           edm-color-default (= ${source:Version})
+Suggests: edm-doc (= ${source:Version})
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system
 

@@ -3,8 +3,8 @@ Section: contrib/x11
 Priority: extra
 Maintainer: Michael Davidsaver <mdavidsaver@bnl.gov>
 Build-Depends: debhelper (>= 7), cdbs,
-               epics-dev (>= 3.14.10-10), epics-dev (<< 3.14.11),
-               epics-extensions-dev (>= 20091204),
+               epics-dev (>= 3.14.11-2),
+               epics-extensions-dev (>= 20091204.1),
                libgif-dev, libpng-dev, libz-dev, libreadline5-dev, libmotif-dev,
                libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
 Standards-Version: 3.8.0
@@ -34,7 +34,7 @@ Section: contrib/devel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          edm (= ${binary:Version}),
-         epics-dev (>= 3.14.10-10), epics-dev (<< 3.14.11),
+         epics-dev (>= 3.14.11-2),
          epics-extensions-dev,
          libgif-dev, libpng-dev, libz-dev, libreadline5-dev, libmotif-dev,
          libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev

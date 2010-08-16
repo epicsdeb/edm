@@ -1,2 +1,2 @@
-usr/epics/base/include/edm
-usr/epics/base/lib/linux-*
+usr/lib/epics/include/edm
+usr/lib/epics/lib/linux-*

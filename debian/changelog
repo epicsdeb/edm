@@ -1,3 +1,9 @@
+edm (1.12.33-2) unstable; urgency=low
+
+  * Install in /usr/lib/epics
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Mon, 16 Aug 2010 17:55:12 -0400
+
 edm (1.12.33-1) unstable; urgency=low
 
   * New Upstream Version

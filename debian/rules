@@ -83,7 +83,7 @@ done
 clean::
 	rm -f build-obj-stamp configure
 	rm -f edmPvObjects edmObjects
-	rm -rf bin include lib/$(EPICS_HOST_ARCH)
+	rm -rf bin include lib/linux-*
 	find . -name 'O.*' -type d|xargs rm -rf
 
 # Install Rules

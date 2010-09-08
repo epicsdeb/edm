@@ -1,3 +1,10 @@
+edm (1.12.36-1) unstable; urgency=low
+
+  * New Upstream Version
+  * Fixes bug with scaler XY plots seen with sscanRecord
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Wed, 08 Sep 2010 15:35:30 -0400
+
 edm (1.12.33-2) unstable; urgency=low
 
   * Install in /usr/lib/epics

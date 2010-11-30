@@ -1,3 +1,11 @@
+edm (1.12.36-2) unstable; urgency=low
+
+  * update dependencies
+      Remove explicit dependency on libreadline (implicit in epics-dev)
+      Demote cups/lpr from Recommends to Suggests
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Tue, 30 Nov 2010 17:32:31 -0500
+
 edm (1.12.36-1) unstable; urgency=low
 
   * New Upstream Version

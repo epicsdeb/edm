@@ -5,7 +5,7 @@ Maintainer: Michael Davidsaver <mdavidsaver@bnl.gov>
 Build-Depends: debhelper (>= 7), cdbs,
                epics-dev (>= 3.14.11-2),
                epics-extensions-dev (>= 20091204.1),
-               libgif-dev, libpng-dev, libz-dev, libreadline5-dev, libmotif-dev,
+               libgif-dev, libpng-dev, libz-dev, libmotif-dev,
                libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
 Standards-Version: 3.8.0
 Homepage: http://ics-web.sns.ornl.gov/edm/
@@ -14,9 +14,10 @@ Package: edm
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          netpbm, edm-color-default | edm-color,
-Recommends: xfonts-75dpi, cups-bsd | lpr | lprng,
+Recommends: xfonts-75dpi,
            edm-color-default (= ${source:Version})
-Suggests: edm-doc (= ${source:Version})
+Suggests: cups-bsd | lpr | lprng,
+          edm-doc (= ${source:Version}),
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system
 

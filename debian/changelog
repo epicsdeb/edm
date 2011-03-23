@@ -1,3 +1,10 @@
+edm (1.12.36-3) unstable; urgency=low
+
+  * edm-dev: remove dependency on libreadline5-dev
+      Reported by Ralph Lange
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Wed, 23 Mar 2011 09:31:06 -0400
+
 edm (1.12.36-2) unstable; urgency=low
 
   * update dependencies

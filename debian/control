@@ -37,7 +37,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          edm (= ${binary:Version}),
          epics-dev (>= 3.14.11-2),
          epics-extensions-dev,
-         libgif-dev, libpng-dev, libz-dev, libreadline5-dev, libmotif-dev,
+         libgif-dev, libpng-dev, libz-dev, libmotif-dev,
          libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system.

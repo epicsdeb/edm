@@ -56,6 +56,10 @@ int logDiagnostic (
   char *text
 );
 
+void disableBadWindowErrors ( int arg );
+
+int badWindowErrorsDisabled ( void );
+
 char *getEnvironmentVar (
   char *name
 );
@@ -102,6 +106,9 @@ void processAllEventsWithSync (
 void processAllEvents (
   XtAppContext app,
   Display *d );
+
+void trimWhiteSpace (
+  char *str );
 
 int isLegalInteger (
   char *str );

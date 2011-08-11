@@ -6,7 +6,7 @@ ifdef EPICS_HOST_ARCH
 
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
    
-   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1
+   USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-long-long
 
    USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
 
@@ -63,6 +63,7 @@ ifdef EPICS_HOST_ARCH
    LIB_SRCS += bar.cc
    LIB_SRCS += x_text_dsp_obj.cc
    LIB_SRCS += button.cc
+   LIB_SRCS += mpStrobe.cc
    LIB_SRCS += menu_button.cc
    LIB_SRCS += message_button.cc
    LIB_SRCS += exit_button.cc

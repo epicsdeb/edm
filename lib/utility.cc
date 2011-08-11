@@ -209,6 +209,20 @@ mode_t curMode;
 
 }
 
+static int g_badWindowErrorsAreDisabled = 0;
+
+void disableBadWindowErrors ( int arg ) {
+
+  g_badWindowErrorsAreDisabled = arg;
+
+}
+
+int badWindowErrorsDisabled ( void ) {
+
+  return g_badWindowErrorsAreDisabled;
+
+}
+
 char *getEnvironmentVar (
   char *name
 ) {
@@ -695,19 +709,16 @@ void processAllEvents (
 
 }
 
-static void trimWhiteSpace (
+void trimWhiteSpace (
   char *str )
 {
 
-char buf[127+1];
 int first, last, i, ii, l;
 
   l = strlen(str);
-  if ( l > 126 ) l = 126;
 
-  ii = 0;
+  i = ii = 0;
 
-  i = 0;
   while ( ( i < l ) && isspace( str[i] ) ) {
     i++;
   }
@@ -721,14 +732,21 @@ int first, last, i, ii, l;
 
   last = i;
 
-  for ( i=first; i<=last; i++ ) {
-    buf[ii] = str[i];
-    ii++;
+  if ( first > 0 ) {
+
+    for ( i=first; i<=last; i++ ) {
+      str[ii] = str[i];
+      ii++;
+    }
+
+    str[ii] = 0;
+
   }
+  else if ( last < l-1 ) {
 
-  buf[ii] = 0;
+    str[last+1] = 0;
 
-  strcpy( str, buf );
+  }
 
 }
 

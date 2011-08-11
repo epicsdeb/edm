@@ -1,3 +1,9 @@
+edm (1.12.57-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Thu, 11 Aug 2011 12:11:55 -0400
+
 edm (1.12.36-3) unstable; urgency=low
 
   * edm-dev: remove dependency on libreadline5-dev

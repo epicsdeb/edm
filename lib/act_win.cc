@@ -50,6 +50,74 @@ int i;
 
 }
 
+static void mon_pv (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+}
+
+static void update_pv (
+  ProcessVariable *pv,
+  void *userarg
+) {
+
+}
+
+static char *getPvValSync (
+  char *name
+) {
+
+
+// get pv value synchronously
+
+char *val = NULL;
+char buf[255+1];
+int len;
+ProcessVariable *pvId = NULL;
+
+  pvId = the_PV_Factory->create( name );
+  if ( pvId ) {
+
+    pvId->add_conn_state_callback( mon_pv, NULL );
+    pvId->add_value_callback( update_pv, NULL );
+    pend_io( 5.0 );
+    pend_event( 0.0001 );
+
+    if ( pvId->is_valid() ) {
+
+      if ( pvId->get_type().type == ProcessVariable::Type::real ) {
+        snprintf( buf, 255, "%-g", pvId->get_double() );
+        len = strlen( buf );
+      }
+      else if ( pvId->get_type().type == ProcessVariable::Type::integer ) {
+        snprintf( buf, 255, "%-d", pvId->get_int() );
+        len = strlen( buf );
+      }
+      else {
+        len = pvId->get_string( buf, 255 );
+        len = strlen( buf );
+      }
+
+      if ( len ) {
+        val = new char[len+1];
+        strncpy( val, buf, len );
+        val[len] = 0;
+      }
+
+    }
+
+    pvId->remove_value_callback( mon_pv, NULL );
+    pvId->remove_conn_state_callback( mon_pv, NULL );
+    pvId->release();
+    pvId = NULL;
+
+  }
+
+  return val;
+
+}
+
 static void showObjectDimensions (
   XtPointer client,
   XtIntervalId *id
@@ -11188,6 +11256,8 @@ int i;
 
   reloadRequestFlag = 0;
 
+  frozen = false;
+
 }
 
 void activeWindowClass::initCopy ( void ) {
@@ -17359,6 +17429,8 @@ char *envPtr;
 
   }
 
+  frozen = false;
+
   mode = AWC_EXECUTE;
   waiting = 0; // for deferred screen close action
 
@@ -17429,6 +17501,8 @@ char *envPtr;
 
     } while ( nTries && !( opStat & 1 ) );
 
+    pend_io( 5.0 );
+    pend_event( 0.01 );
     processAllEvents( appCtx->appContext(), d );
 
   }
@@ -17670,6 +17744,8 @@ pvDefPtr pvDefCur;
     appCtx->postMessage( activeWindowClass_str193 );
     return 0;
   }
+
+  frozen = false;
 
   windowState = AWC_START_DEACTIVATE;
 
@@ -20372,33 +20448,37 @@ int activeWindowClass::processObjects ( void )
 activeGraphicListPtr cur, next;
 int workToDo = 0;
 
-  appCtx->proc->lock();
-  cur = defExeHead->defExeFlink;
-  appCtx->proc->unlock();
-
-  if ( !cur ) {
-    return 0;
-  }
-
-  if ( cur != defExeHead ) {
-    needCopy = 1;
-    workToDo = 1;
-  }
-
-  while ( cur != defExeHead ) {
-
-    if ( pixmapX0 > cur->node->getX0() ) pixmapX0 = cur->node->getX0();
-    if ( pixmapX1 < cur->node->getX1() ) pixmapX1 = cur->node->getX1();
-    if ( pixmapY0 > cur->node->getY0() ) pixmapY0 = cur->node->getY0();
-    if ( pixmapY1 < cur->node->getY1() ) pixmapY1 = cur->node->getY1();
+  if( !( this->frozen ) ) {
 
     appCtx->proc->lock();
-    next = cur->defExeFlink;
+    cur = defExeHead->defExeFlink;
     appCtx->proc->unlock();
 
-    cur->node->executeDeferred();
+    if ( !cur ) {
+      return 0;
+    }
 
-    cur = next;
+    if ( cur != defExeHead ) {
+      needCopy = 1;
+      workToDo = 1;
+    }
+
+    while ( cur != defExeHead ) {
+
+      if ( pixmapX0 > cur->node->getX0() ) pixmapX0 = cur->node->getX0();
+      if ( pixmapX1 < cur->node->getX1() ) pixmapX1 = cur->node->getX1();
+      if ( pixmapY0 > cur->node->getY0() ) pixmapY0 = cur->node->getY0();
+      if ( pixmapY1 < cur->node->getY1() ) pixmapY1 = cur->node->getY1();
+
+      appCtx->proc->lock();
+      next = cur->defExeFlink;
+      appCtx->proc->unlock();
+
+      cur->node->executeDeferred();
+
+      cur = next;
+
+    }
 
   }
 
@@ -20569,15 +20649,37 @@ void activeWindowClass::storeFileName (
   char *inName )
 {
 
-  strncpy( fileName, inName, 255 );
-  getFileName( displayName, inName, 127 );
-  getFilePrefix( prefix, inName, 127 );
-  getFilePostfix( postfix, inName, 127 );
+char nameWithSubs[1024+1];
 
-  strncpy( fileNameForSym, inName, 255 );
-  getFileName( displayNameForSym, inName, 127 );
-  getFilePrefix( prefixForSym, inName, 127 );
-  getFilePostfix( postfixForSym, inName, 127 );
+  this->substituteSpecial( 1024, inName, nameWithSubs );
+
+  strncpy( fileName, nameWithSubs, 255 );
+  fileName[255] = 0;
+  getFileName( displayName, nameWithSubs, 127 );
+  displayName[127] = 0;
+  getFilePrefix( prefix, nameWithSubs, 127 );
+  prefix[127] = 0;
+  getFilePostfix( postfix, nameWithSubs, 127 );
+  postfix[127] = 0;
+
+  strncpy( fileNameForSym, nameWithSubs, 255 );
+  fileNameForSym[255] = 0;
+  getFileName( displayNameForSym, nameWithSubs, 127 );
+  displayNameForSym[127] = 0;
+  getFilePrefix( prefixForSym, nameWithSubs, 127 );
+  prefixForSym[127] = 0;
+  getFilePostfix( postfixForSym, nameWithSubs, 127 );
+  postfixForSym[127] = 0;
+  
+  //strncpy( fileName, inName, 255 );
+  //getFileName( displayName, inName, 127 );
+  //getFilePrefix( prefix, inName, 127 );
+  //getFilePostfix( postfix, inName, 127 );
+
+  //strncpy( fileNameForSym, inName, 255 );
+  //getFileName( displayNameForSym, inName, 127 );
+  //getFilePrefix( prefixForSym, inName, 127 );
+  //getFilePostfix( postfixForSym, inName, 127 );
 
 }
 
@@ -20593,10 +20695,23 @@ void activeWindowClass::storeFileNameForSymbols (
   char *inName )
 {
 
-  strncpy( fileNameForSym, inName, 255 );
-  getFileName( displayNameForSym, inName, 127 );
-  getFilePrefix( prefixForSym, inName, 127 );
-  getFilePostfix( postfixForSym, inName, 127 );
+char nameWithSubs[1024+1];
+
+  this->substituteSpecial( 1024, inName, nameWithSubs );
+
+  strncpy( fileNameForSym, nameWithSubs, 255 );
+  fileNameForSym[255] = 0;
+  getFileName( displayNameForSym, nameWithSubs, 127 );
+  displayNameForSym[127] = 0;
+  getFilePrefix( prefixForSym, nameWithSubs, 127 );
+  prefixForSym[127] = 0;
+  getFilePostfix( postfixForSym, nameWithSubs, 127 );
+  postfixForSym[127] = 0;
+
+  //strncpy( fileNameForSym, inName, 255 );
+  //getFileName( displayNameForSym, inName, 127 );
+  //getFilePrefix( prefixForSym, inName, 127 );
+  //getFilePostfix( postfixForSym, inName, 127 );
 
 }
 
@@ -21037,8 +21152,8 @@ void activeWindowClass::substituteSpecial (
   char *bufOut )
 {
 
-char param[1023+1], tmp[1023+1], dspName[127+1], *envPtr, *ptr;
-int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
+char param[1023+1], tmp[1023+1], dspName[127+1], *envPtr, *ptr, *pvVal;
+int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar, isPvVal;
 
   state = 1; // copying
 
@@ -21157,6 +21272,43 @@ int i, len, iIn, iOut, p0, p1, more, state, winid, isEnvVar;
           Strncat( bufOut, dspName, max );
           iOut = strlen( bufOut );
           if ( iOut >= max ) iOut = max - 1;
+	}
+        else if ( strncmp( param, "<val:", 5 ) == 0 ) {
+
+          isPvVal = 1;
+          strncpy( tmp, param, 1023 );
+          tmp[1023] = 0;
+
+          ptr = strstr( tmp, ">" );
+          if ( ptr ) {
+            *ptr = 0;
+            pvVal = NULL;
+            pvVal = getPvValSync( &tmp[5] );
+            if ( pvVal ) {
+              bufOut[iOut] = 0;
+              Strncat( bufOut, pvVal, max );
+              delete[] pvVal;
+              pvVal = NULL;
+              iOut = strlen( bufOut );
+              if ( iOut >= max ) iOut = max - 1;
+            }
+            else {
+              isPvVal = 0;
+            }
+          }
+          else {
+            isPvVal = 0;
+          }
+
+          if ( !isPvVal ) {
+
+            bufOut[iOut] = 0;
+            Strncat( bufOut, param, max );
+            iOut = strlen( bufOut );
+            if ( iOut >= max ) iOut = max - 1;
+
+          }
+
 	}
         else { // maybe an env var
 
@@ -21761,6 +21913,18 @@ activeWindowClass *aw;
   }
 
   return 0;
+
+}
+
+void activeWindowClass::freeze ( bool flag) {
+
+  this->frozen = flag;
+
+}
+
+bool activeWindowClass::is_frozen(void){
+
+  return this->frozen;
 
 }
 

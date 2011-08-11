@@ -27,6 +27,7 @@
 #define SMALL_SYM_ARRAY_SIZE 10
 #define SMALL_SYM_ARRAY_LEN 31
 
+#include "utility.h"
 #include "related_display.h"
 #include "app_pkg.h"
 #include "act_win.h"
@@ -210,6 +211,7 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
   rdo->eraseSelectBoxCorners();
   rdo->erase();
 
+  trimWhiteSpace( rdo->buf->bufDisplayFileName[0] );
   rdo->displayFileName[0].setRaw( rdo->buf->bufDisplayFileName[0] );
   if ( blank( rdo->displayFileName[0].getRaw() ) ) {
     rdo->closeAction[0] = 0;
@@ -237,7 +239,9 @@ relatedDisplayClass *rdo = (relatedDisplayClass *) client;
   }
 
   for ( i=ii; i<rdo->maxDsps; i++ ) {
+    rdo->displayFileName[i].setRaw( rdo->buf->bufDisplayFileName[i] );
     if ( !blank( rdo->buf->bufDisplayFileName[i] ) ) {
+      trimWhiteSpace( rdo->buf->bufDisplayFileName[i] );
       rdo->displayFileName[ii].setRaw( rdo->buf->bufDisplayFileName[i] );
       rdo->closeAction[ii] = rdo->buf->bufCloseAction[i];
       rdo->setPostion[ii] = rdo->buf->bufSetPostion[i];
@@ -2732,7 +2736,7 @@ void relatedDisplayClass::popupDisplay (
 
 activeWindowListPtr cur;
 int i, ii, dup, numDeleted, l, stat, newX, newY;
-char name[127+1], symbolsWithSubs[maxSymbolLen+1];
+char name[127+1], symbolsWithSubs[maxSymbolLen+1], nameWithSubs[maxSymbolLen+1];
 pvValType destV;
 unsigned int crc;
 char *tk, *context, buf[maxSymbolLen+1], *fileTk, *fileContext, fileBuf[maxSymbolLen+1],
@@ -2751,6 +2755,8 @@ char *newValues[100];
 int numNewMacros, max, numFound;
 
 char prefix[127+1];
+
+activeWindowClass *aw0, *aw1;
 
   focus = useFocus;
   //if ( numDsps > 1 ) {
@@ -3173,9 +3179,27 @@ char prefix[127+1];
 done:
 
   if ( !actWin->isEmbedded ) {
+
     if ( !focus && !button3Popup && closeAction[index] ) {
       actWin->closeDeferred( 2 );
     }
+
+  }
+  else {
+
+    aw1 = NULL;
+    aw0 = actWin->parent;
+    while ( aw0 ) {
+
+      aw1 = aw0;
+      aw0 = aw0->parent;
+
+    }
+
+    if ( aw1 && !focus && !button3Popup && closeAction[index] ) {
+      aw1->closeDeferred( 2 );
+    }
+
   }
 
 }

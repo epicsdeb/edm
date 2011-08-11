@@ -200,14 +200,16 @@ int n, l;
 
     if ( axtdo->changeValOnLoseFocus ) {
 
-      buf = XmTextGetString( axtdo->tf_widget );
-      strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
-      axtdo->entryValue[XTDC_K_MAX] = 0;
-      XtFree( buf );
-      strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
-      axtdo->curValue[XTDC_K_MAX] = 0;
-      strncpy( string, axtdo->entryValue, XTDC_K_MAX );
-      string[XTDC_K_MAX] = 0;
+      if ( axtdo->pvType == ProcessVariable::specificType::text ) {
+        buf = XmTextGetString( axtdo->tf_widget );
+        strncpy( axtdo->entryValue, buf, XTDC_K_MAX );
+        axtdo->entryValue[XTDC_K_MAX] = 0;
+        XtFree( buf );
+        strncpy( axtdo->curValue, axtdo->entryValue, XTDC_K_MAX );
+        axtdo->curValue[XTDC_K_MAX] = 0;
+        strncpy( string, axtdo->entryValue, XTDC_K_MAX );
+        string[XTDC_K_MAX] = 0;
+      }
     
       if ( axtdo->pvExists ) {
 
@@ -1749,7 +1751,8 @@ activeXTextDspClass *axtdo = (activeXTextDspClass *) userarg;
 
     axtdo->noSval = 0;
     axtdo->bufInvalidate();
-    axtdo->needRefresh = 1;
+    //axtdo->needRefresh = 1;
+    axtdo->needUpdate = 1;
     axtdo->actWin->addDefExeNode( axtdo->aglPtr );
 
   }
@@ -1775,7 +1778,8 @@ int index;
     index = axtdo->actWin->ci->evalRule( axtdo->fgColor.pixelIndex(), val );
     axtdo->fgColor.changeIndex( index, axtdo->actWin->ci );
     axtdo->bufInvalidate();
-    axtdo->needRefresh = 1;
+    //axtdo->needRefresh = 1;
+    axtdo->needUpdate = 1;
     axtdo->actWin->addDefExeNode( axtdo->aglPtr );
 
   }

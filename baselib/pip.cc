@@ -26,6 +26,7 @@
 #include "pip.h"
 #include <sys/stat.h>
 #include <unistd.h>
+#include "utility.h"
 #include "app_pkg.h"
 #include "act_win.h"
 
@@ -158,6 +159,7 @@ int i, ii;
   pipo->eraseSelectBoxCorners();
   pipo->erase();
 
+  trimWhiteSpace( pipo->buf->bufDisplayFileName[0] );
   pipo->displayFileName[0].setRaw( pipo->buf->bufDisplayFileName[0] );
   if ( blank( pipo->displayFileName[0].getRaw() ) ) {
     pipo->propagateMacros[0] = 1;
@@ -178,6 +180,7 @@ int i, ii;
 
   for ( i=ii; i<pipo->maxDsps; i++ ) {
     if ( !blank( pipo->buf->bufDisplayFileName[i] ) ) {
+      trimWhiteSpace( pipo->buf->bufDisplayFileName[i] );
       pipo->displayFileName[ii].setRaw( pipo->buf->bufDisplayFileName[i] );
       pipo->propagateMacros[ii] = pipo->buf->bufPropagateMacros[i];
       pipo->label[ii].setRaw( pipo->buf->bufLabel[i] );
@@ -211,6 +214,7 @@ int i, ii;
 
   pipo->labelPvExpStr.setRaw( pipo->buf->bufLabelPvName );
 
+  trimWhiteSpace( pipo->buf->bufFileName );
   pipo->fileNameExpStr.setRaw( pipo->buf->bufFileName );
 
   pipo->displaySource = pipo->buf->bufDisplaySource;
@@ -1868,7 +1872,7 @@ void activePipClass::openEmbeddedByIndex (
 
 activeWindowListPtr cur;
 int i, l, stat;
-char symbolsWithSubs[maxSymbolLen+1];
+char symbolsWithSubs[maxSymbolLen+1], nameWithSubs[maxSymbolLen+1];
 int useSmallArrays, symbolCount, maxSymbolLength;
 char smallNewMacros[SMALL_SYM_ARRAY_SIZE+1][SMALL_SYM_ARRAY_LEN+1+1];
 char smallNewValues[SMALL_SYM_ARRAY_SIZE+1][SMALL_SYM_ARRAY_LEN+1+1];
@@ -2133,6 +2137,7 @@ void activePipClass::executeDeferred ( void ) {
 
 int iv;
 char v[39+1];
+char nameWithSubs[maxSymbolLen+1];
 int i, nc, nu, nmc, nmu, nd, nfo, nimfo, ncto, nmap, nunmap, okToClose, stat;
 activeWindowListPtr cur;
 Window root, child;

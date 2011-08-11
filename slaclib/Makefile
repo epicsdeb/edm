@@ -1,23 +1,34 @@
-TOP = ./..
+TOP = ../../..
 ifdef EPICS_HOST_ARCH
   include $(TOP)/configure/CONFIG
 
    SHARED_LIBRARIES = YES
-
+   
    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
-   USR_CFLAGS_Linux = $(USR_CXXFLAGS_Linux)
-
-   
    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-long-long
-   USR_CFLAGS_Darwin = $(USR_CXXFLAGS_Darwin)
-   
-   USR_CXXFLAGS_solaris += -DSINGLE_THREADED=1 -D__epics__=1
-   USR_CFLAGS_solaris = $(USR_CXXFLAGS_solaris)
-   USR_LIBS_solaris += Xm Xt X11 Xmu
-   USR_SYS_LIBS_solaris = pthread dl
-
+   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
    USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
-   USR_LIBS_hpux11_11_mt = cfcaa62e-8199-11d3-a77f-00104b8742df pthread
+
+   EdmSlac_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+   EdmSlac_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+   EdmSlac_LIBS += Com
+
+   EdmSlac_LIBS_Linux += Xm Xt Xp Xtst X11
+   EdmSlac_SYS_LIBS_Linux += pthread dl
+
+   EdmSlac_LIBS_Darwin += Xm Xt Xp Xtst X11
+   EdmSlac_SYS_LIBS_Darwin += pthread dl
+
+   EdmSlac_LIBS_solaris +=  Xm Xt Xmu X11 Xext
+   EdmSlac_SYS_LIBS_solaris +=  pthread dl rt
+
+   USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
+   USR_SYS_LIBS_hpux11_11_mt = pthread
+
+   LIBRARY = Slac 
+
+   INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
+   USR_INCLUDES += -I../../util -I../../lib
 
    USR_INCLUDES += -I$(MOTIF_INC) -I$(X11_INC)
 
@@ -27,7 +38,7 @@ ifdef EPICS_HOST_ARCH
    X11_DIR =  $(X11_LIB)
    Xmu_DIR =  $(X11_LIB)
    Xtst_DIR = $(X11_LIB)
-  
+
    # ELW added following two lines for
    # Red Hat 7.0 LINUX
    Xp_DIR =   $(X11_LIB)
@@ -40,27 +51,10 @@ ifdef EPICS_HOST_ARCH
    Xlib_DIR = $(X11_LIB)
    HCLXmu_DIR = $(X11_LIB)
    
-  
-   LIBRARY = PV
+   LIB_SRCS += freeze_button.cc
+   LIB_SRCS += slacWidgets.cc
 
-   USR_LIBS += cfcaa62e-8199-11d3-a77f-00104b8742df
-   USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
-
-   PV_LIBS_DEFAULT += ca Com
-   PV_LIBS_Darwin += -nil-
-
-   INSTALL_INCLUDE = $(INSTALL_LOCATION)/include/edm
-   USR_INCLUDES += -I../../util -I../../lib
-
-   LIB_SRCS   += textupdate.cc
-   LIB_SRCS   += SciPlot.cc
-   LIB_SRCS   += strip_data.cc
-   LIB_SRCS   += strip.cc
-   LIB_SRCS   += regTextupdate.cc
-   LIB_SRCS   += byte.cc
-   LIB_SRCS   += pv_register.cc
-   
-  include $(TOP)/configure/RULES
+   include $(TOP)/configure/RULES
    
 else
    ifneq ($(wildcard $(TOP)/config)x,x)
@@ -74,4 +68,3 @@ else
      include $(EPICS)/config/RULES_ARCHS
    endif
 endif
-

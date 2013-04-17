@@ -105,6 +105,13 @@ ProcessVariable *LOC_PV_Factory::create(const char *PV_name)
     if (entry != processvariables.end()) {
         pv = (*entry)->pv;
         pv->reference();
+        if ( !pv->is_valid() ) {
+          tk = strtok_r( NULL, "=~", &ctx );
+          if ( tk ) {
+            pv->setAttributes( tk );
+	    strcpy( pv->units, "" );
+	  }
+	}
     }
     else {
         LocHashTableItem *n_item = new LocHashTableItem();
@@ -113,8 +120,10 @@ ProcessVariable *LOC_PV_Factory::create(const char *PV_name)
         n_item->pv = pv;
         processvariables.insert(n_item);
         tk = strtok_r( NULL, "=~", &ctx );
-        pv->setAttributes( tk );
-	strcpy( pv->units, "" );
+        if ( tk ) {
+          pv->setAttributes( tk );
+	  strcpy( pv->units, "" );
+	}
     }
     return pv;
 }
@@ -153,7 +162,7 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
   bufLen = 0;
 
   if ( !string ) return 0;
-  if ( strlen(string) < 3 ) return 0;
+  if ( strlen(string) < 1 ) return 0;
 
   i = 0;
 
@@ -161,16 +170,36 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
 
   switch ( dataType ) {
 
-  case 'd':
-  case 'i':
   case 's':
 
     status = 0;
     severity = 0;
 
-    i++;
-    strncpy( buf, &string[i], MAX_BUF_CHARS );
-    buf[MAX_BUF_CHARS] = 0;
+    if ( &string[i] ) i++;
+    if ( &string[i] ) {
+      strncpy( buf, &string[i], MAX_BUF_CHARS );
+      buf[MAX_BUF_CHARS] = 0;
+    }
+    else {
+      strcpy( buf, "" );
+    }
+    bufLen = strlen( buf );
+    break;
+
+  case 'd':
+  case 'i':
+
+    status = 0;
+    severity = 0;
+
+    if ( &string[i] ) i++;
+    if ( &string[i] ) {
+      strncpy( buf, &string[i], MAX_BUF_CHARS );
+      buf[MAX_BUF_CHARS] = 0;
+    }
+    else {
+      strcpy( buf, "0" );
+    }
     bufLen = strlen( buf );
     break;
 
@@ -179,18 +208,46 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
     status = 0;
     severity = 0;
 
-    i++;
-    strncpy( tmp, &string[i], MAX_BUF_CHARS );
-    tmp[MAX_BUF_CHARS] = 0;
+    if ( &string[i] ) i++;
+    if ( &string[i] ) {
 
-    ctx = NULL;
-    tk = strtok_r( tmp, ",;", &ctx );
-    if ( tk ) {
-      strncpy( buf, tk, MAX_BUF_CHARS );
-      buf[MAX_BUF_CHARS] = 0;
-      bufLen = strlen( buf );
+      strncpy( tmp, &string[i], MAX_BUF_CHARS );
+      tmp[MAX_BUF_CHARS] = 0;
+
+      ctx = NULL;
+      tk = strtok_r( tmp, ",;", &ctx );
+      if ( tk ) {
+        strncpy( buf, tk, MAX_BUF_CHARS );
+        buf[MAX_BUF_CHARS] = 0;
+        bufLen = strlen( buf );
+      }
+      else {
+        strcpy( buf, "0" );
+        bufLen = strlen( buf );
+        numEnumStates = 2;
+        enums[0] = new char[2];
+        strcpy( enums[0], "0" );
+        enums[1] = new char[2];
+        strcpy( enums[1], "1" );
+        break;
+      }
+
+      numEnumStates = 0;
+      tk = strtok_r( NULL, ",;", &ctx );
+
+      while ( tk ) {
+
+        enums[numEnumStates] = new char[strlen(tk)+1];
+        strcpy( enums[numEnumStates], tk );
+        if ( numEnumStates < MAX_ENUM_NUM ) numEnumStates++;
+
+        tk = strtok_r( NULL, ",;", &ctx );
+
+      }
+
     }
     else {
+
       strcpy( buf, "0" );
       bufLen = strlen( buf );
       numEnumStates = 2;
@@ -199,18 +256,6 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
       enums[1] = new char[2];
       strcpy( enums[1], "1" );
       break;
-    }
-
-    numEnumStates = 0;
-    tk = strtok_r( NULL, ",;", &ctx );
-
-    while ( tk ) {
-
-      enums[numEnumStates] = new char[strlen(tk)+1];
-      strcpy( enums[numEnumStates], tk );
-      if ( numEnumStates < MAX_ENUM_NUM ) numEnumStates++;
-
-      tk = strtok_r( NULL, ",;", &ctx );
 
     }
 
@@ -222,14 +267,26 @@ char tmp[PV_Factory::MAX_PV_NAME+1], *tk, *ctx;
     severity = 0;
 
     dataType = 's';
-    strncpy( buf, &string[i], MAX_BUF_CHARS );
-    buf[MAX_BUF_CHARS] = 0;
+
+    if ( &string[i] ) i++;
+    if ( &string[i] ) {
+      strncpy( buf, &string[i], MAX_BUF_CHARS );
+      buf[MAX_BUF_CHARS] = 0;
+    }
+    else {
+      strcpy( buf, "" );
+    }
     bufLen = strlen( buf );
+
     break;
 
   }
 
   //fprintf( stderr, "LOC_ProcessVariable::setAttributes, string = [%s]\n", string );
+
+  is_connected = true;
+  have_ctrlinfo = true;
+  do_conn_state_callbacks();
 
   return 1;
 
@@ -249,8 +306,8 @@ LOC_ProcessVariable::LOC_ProcessVariable(const char *_name)
     lower_warning_limit = -DBL_MAX;
     upper_ctrl_limit = 100.0;
     lower_ctrl_limit = -100.0;
-    is_connected = true;
-    have_ctrlinfo = true;
+    is_connected = false;
+    have_ctrlinfo = false;
     strcpy( buf, "" );
     bufLen = 0;
     //fprintf( stderr,"LOC_ProcessVariable %s created\n", get_name());
@@ -287,7 +344,7 @@ void LOC_ProcessVariable::value_callback (
 bool LOC_ProcessVariable::is_valid() const
 {
 
-  return true;
+  return ( is_connected && have_ctrlinfo );
 
 }
 
@@ -393,6 +450,13 @@ const char *LOC_ProcessVariable::get_char_array() const
 {
 
   return (char *) NULL;
+
+}
+
+const short *LOC_ProcessVariable::get_short_array() const
+{
+
+  return (short *) NULL;
 
 }
 

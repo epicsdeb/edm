@@ -554,6 +554,11 @@ int i;
 
   setBlinkFunction( (void *) doBlink );
 
+  doAccSubs( alarmPvExpStr );
+  doAccSubs( visPvExpStr );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
+
 }
 
 int activeLineClass::createInteractive (
@@ -2125,6 +2130,27 @@ int i, index;
 
 }
 
+int activeLineClass::drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 ) {
+
+int delta = lineWidth/2;
+
+  if ( arrows != ARROW_NONE ) {
+    delta += 6;
+  }
+
+  if ( intersects( x0-delta, y0-delta, x1+delta, y1+delta ) ) {
+    bufInvalidate();
+    drawActive();
+  }
+
+  return 1;
+
+}
+
 int activeLineClass::drawActive ( void )
 {
 
@@ -2134,7 +2160,6 @@ XPoint arrowXPoints[8];
   if ( !init ) {
     if ( needToDrawUnconnected ) {
       actWin->executeGc.saveFg();
-      //actWin->executeGc.setFG( lineColor.getDisconnected() );
       actWin->executeGc.setFG( lineColor.getDisconnectedIndex(), &blink );
       actWin->executeGc.setLineWidth( 1 );
       actWin->executeGc.setLineStyle( LineSolid );
@@ -3930,6 +3955,55 @@ void activeLineClass::getPvs (
   *n = 2;
   pvs[0] = alarmPvId;
   pvs[1] = visPvId;
+
+}
+
+char *activeLineClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return alarmPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return visPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return minVisString;
+  }
+  else if ( i == 3 ) {
+    return maxVisString;
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+void activeLineClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    alarmPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    visPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 3 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
 
 }
 

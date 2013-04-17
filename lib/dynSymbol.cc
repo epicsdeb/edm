@@ -289,7 +289,7 @@ static void dynSymbol_colorUpdate (
 
 activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  if ( dso->active ) {
+  if ( pv->is_valid() ) {
 
     dso->curColorV = pv->get_double();
 
@@ -337,11 +337,9 @@ static void dynSymbol_gateUpUpdate (
 
 activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  //fprintf( stderr, "dynSymbol_gateUpUpdate, value = %-d\n", pv->get_int() );
+  if ( pv->is_valid() ) {
 
-  if ( pv->get_int() == dso->gateUpValue ) {
-
-    if ( dso->active ) {
+    if ( pv->get_int() == dso->gateUpValue ) {
       dso->needGateUp = 1;
       dso->actWin->appCtx->proc->lock();
       dso->actWin->addDefExeNode( dso->aglPtr );
@@ -387,9 +385,9 @@ static void dynSymbol_gateDownUpdate (
 
 activeDynSymbolClass *dso = (activeDynSymbolClass *) userarg;
 
-  if ( pv->get_int() == dso->gateDownValue  ) {
+  if ( pv->is_valid() ) {
 
-    if ( dso->active ) {
+    if ( pv->get_int() == dso->gateDownValue  ) {
       dso->needGateDown = 1;
       dso->actWin->appCtx->proc->lock();
       dso->actWin->addDefExeNode( dso->aglPtr );
@@ -749,6 +747,11 @@ int i;
   bgColor = source->bgColor;
   colorPvExpStr.setRaw( source->colorPvExpStr.rawString );
   eBuf = NULL;
+
+  doAccSubs( dynSymbolFileName, 127 );
+  doAccSubs( colorPvExpStr );
+  doAccSubs( gateUpPvExpStr );
+  doAccSubs( gateDownPvExpStr );
 
 }
 
@@ -3192,6 +3195,7 @@ int i;
 
   if ( deleteRequest ) return 1;
 
+  colorPvExpStr.expand1st( numMacros, macros, expansions );
   gateUpPvExpStr.expand1st( numMacros, macros, expansions );
   gateDownPvExpStr.expand1st( numMacros, macros, expansions );
 
@@ -3226,6 +3230,7 @@ int i;
 
   if ( deleteRequest ) return 1;
 
+  colorPvExpStr.expand1st( numMacros, macros, expansions );
   gateUpPvExpStr.expand2nd( numMacros, macros, expansions );
   gateDownPvExpStr.expand2nd( numMacros, macros, expansions );
 
@@ -3311,11 +3316,11 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
       gateUpPvId->add_value_callback( dynSymbol_gateUpUpdate,
        this );
 
-    }
+      if ( ( gateDownPvConnected || !gateDownExists ) &&
+           ( colorPvConnected || !colorExists ) ) {
+        active = 1;
+      }
 
-    if ( ( gateDownPvConnected || !gateDownExists ) &&
-         ( colorPvConnected || !colorExists ) ) {
-      active = 1;
     }
 
   }
@@ -3329,11 +3334,11 @@ int stat, i, nguc, ngdc, ngu, ngd, nr, ne, nd, ncolori, ncr;
       gateDownPvId->add_value_callback( dynSymbol_gateDownUpdate,
        this );
 
-    }
+      if ( ( gateUpPvConnected || !gateUpExists ) &&
+           ( colorPvConnected || !colorExists ) ) {
+        active = 1;
+      }
 
-    if ( ( gateUpPvConnected || !gateUpExists ) &&
-         ( colorPvConnected || !colorExists ) ) {
-      active = 1;
     }
 
   }
@@ -4345,6 +4350,43 @@ void activeDynSymbolClass::getPvs (
   pvs[0] = gateUpPvId;
   pvs[1] = gateDownPvId;
   pvs[2] = colorPvId;
+
+}
+
+char *activeDynSymbolClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return colorPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return gateUpPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return gateDownPvExpStr.getRaw();
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+void activeDynSymbolClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    colorPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    gateUpPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    gateDownPvExpStr.setRaw( string );
+  }
 
 }
 

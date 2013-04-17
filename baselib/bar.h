@@ -30,7 +30,7 @@
 
 #define BARC_MAJOR_VERSION 4
 #define BARC_MINOR_VERSION 1
-#define BARC_RELEASE 0
+#define BARC_RELEASE 1
 
 #define BARC_K_PV_NAME 0
 #define BARC_K_LITERAL 1
@@ -404,6 +404,16 @@ void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
 
 char *crawlerGetFirstPv ( void );
 

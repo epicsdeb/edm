@@ -67,6 +67,66 @@
 
 #include "main.str"
 
+void doCmdPut (
+  char *cmd
+) {
+
+char *ctx, *buf, *name, *typ, *val, *other;
+int l = strlen( cmd );
+
+  //fprintf( stderr, "l = %-d\n", l );
+  //fprintf( stderr, "cmd = %s\n", cmd );
+
+  if ( l > 1000 ) return;
+
+  buf = new char[l+1];
+  strcpy( buf, cmd );
+
+  //fprintf( stderr, "l = %-d, buf = %s\n", l, buf );
+
+  ctx = NULL;
+  name = strtok_r( buf, "=:", &ctx );
+  if ( !name ) {
+    delete[] buf;
+    return;
+  }
+  //fprintf( stderr, "name = [%s]\n", name );
+
+  typ = strtok_r( NULL, "=:", &ctx );
+  if ( !typ ) {
+    delete[] buf;
+    return;
+  }
+  //fprintf( stderr, "typ = [%s]\n", typ );
+
+  val = strtok_r( NULL, "=:", &ctx );
+  if ( !val ) {
+    delete[] buf;
+    return;
+  }
+  //fprintf( stderr, "val = [%s]\n", val );
+
+  ProcessVariable *pv = the_PV_Factory->create( name );
+  if ( pv->is_valid() ) {
+    //fprintf( stderr, "valid\n" );
+    if ( strcmp( typ, "s" ) == 0 ) {
+      pv->putText( val );
+    }
+    else  if ( strcmp( typ, "i" ) == 0 ) {
+      int iv = strtol( val, &other, 0 );
+      pv->put( iv );
+    }
+    else {
+      double dv = strtod( val, &other );
+      pv->put( dv );
+    }
+    pv->release();
+  }
+
+  delete[] buf;
+
+}
+
 void setServerSocketFd (
   int fd
 );
@@ -107,6 +167,7 @@ typedef struct main_que_tag { /* locked queue header */
 #define OPEN 4
 #define CONTROL 5
 #define QUERY_DISPLAY 6
+#define PUT 7
 
 typedef struct argsTag {
   int argc;
@@ -128,7 +189,8 @@ static char g_restartId[31+1];
 static int g_displayIndex = 0;
 
 #define MAXDSPNAMES 255
-static char g_displayNames[MAXDSPNAMES+1][31+1];
+static char g_displayNames[MAXDSPNAMES+1][63+1];
+static char g_defaultDisplay[63+1];
 
 //#include "alloc.h"
 #ifdef DIAGNOSTIC_ALLOC
@@ -142,7 +204,7 @@ static int xIoErrorHandler (
   Display *d )
 {
 
-  printf( "xIoErrorHandler\n" );
+  fprintf( stderr, "xIoErrorHandler\n" );
 
   return 0;
 
@@ -214,16 +276,17 @@ static void addDisplayToList (
 ) {
 
 int i, n, found;
-char dspName[31+1];
+char dspName[63+1];
 
-  strcpy( dspName, ":0.0" );
+  strncpy( dspName, g_defaultDisplay, 63 );
+  dspName[63] = 0;
 
   for ( i=0; i<argc; i++ ) {
     if ( strcmp( argv[i], "-display" ) == 0 ) {
       n = i+1;
       if ( n < argc ) {
-        strncpy( dspName, argv[n], 31 );
-        dspName[31] = 0;
+        strncpy( dspName, argv[n], 63 );
+        dspName[63] = 0;
       }
     }
   }
@@ -241,8 +304,8 @@ char dspName[31+1];
 
   if ( !found ) {
     if ( g_displayIndex < MAXDSPNAMES ) {
-      strncpy( g_displayNames[g_displayIndex], dspName, 31 );
-      g_displayNames[g_displayIndex][31] = 0;
+      strncpy( g_displayNames[g_displayIndex], dspName, 63 );
+      g_displayNames[g_displayIndex][63] = 0;
       g_displayIndex++;
     }
   }
@@ -257,10 +320,10 @@ static void addDisplayToListByName (
 ) {
 
 int i, found;
-char dspName[31+1];
+char dspName[63+1];
 
-  strncpy( dspName, displayName, 31 );
-  dspName[31] = 0;
+  strncpy( dspName, displayName, 63 );
+  dspName[63] = 0;
 
   found = 0;
   for ( i=0; i<g_displayIndex; i++ ) {
@@ -273,8 +336,8 @@ char dspName[31+1];
 
   if ( !found ) {
     if ( g_displayIndex < MAXDSPNAMES ) {
-      strncpy( g_displayNames[g_displayIndex], dspName, 31 );
-      g_displayNames[g_displayIndex][31] = 0;
+      strncpy( g_displayNames[g_displayIndex], dspName, 63 );
+      g_displayNames[g_displayIndex][63] = 0;
       g_displayIndex++;
     }
   }
@@ -434,7 +497,7 @@ int i, n, ii, nn, tmp, sanity;
     }
     else {
 
-      readStringFromFile( displayName, 127, f );
+      readStringFromFile( displayName, 63, f );
 
       cptr = fgets( text, 1023, f );
       text[1023] = 0;
@@ -574,7 +637,7 @@ int i, n, ii, nn, tmp, sanity;
     }
     else {
 
-      readStringFromFile( displayName, 127, f );
+      readStringFromFile( displayName, 63, f );
 
       cptr = fgets( text, 1023, f );
       text[1023] = 0;
@@ -614,7 +677,7 @@ static int getNumCheckPointScreens (
   FILE *f
 ) {
 
-char text[32], *cptr;
+char text[31+1], *cptr;
 int n;
 
   cptr = fgets( text, 31, f );
@@ -871,10 +934,6 @@ int value, n, nIn, nOut;
     return;
   }
 
-
-
-
-
   // if not doing a -open operation, do simple load balancing
   if ( !openCmd ) {
 
@@ -1000,9 +1059,6 @@ nextHost:
 
   }
 
-
-
-
   // if we are doing a -open operation, find first server that is managing our display
   else {
 
@@ -1056,7 +1112,7 @@ nextHost:
 
       stat = connect( sockfd, (struct sockaddr *) &s, sizeof(s) );
       if ( stat ) {
-        //perror( "connect" );
+        if ( debugMode() ) perror( "connect" );
         close( sockfd );
         goto abortClose;
       }
@@ -1163,6 +1219,17 @@ nextHost1:
       max = MAX_MSG_LEN - pos;
 
       strncpy( &msg[pos], "*OPN*|", max );
+      pos = strlen(msg);
+      max = MAX_MSG_LEN - pos;
+
+    }
+    else if ( openCmd == 3 ) {
+
+      msg[0] = (char) PUT;
+      pos = 1;
+      max = MAX_MSG_LEN - pos;
+
+      strncpy( &msg[pos], "*PUT*|", max );
       pos = strlen(msg);
       max = MAX_MSG_LEN - pos;
 
@@ -1603,6 +1670,7 @@ int *portNumPtr = (int *) thread_get_app_data( h );
           break;
 
         case CONTROL:
+	case PUT:
 
           stat = thread_lock_master( h );
 
@@ -1642,7 +1710,13 @@ int *portNumPtr = (int *) thread_get_app_data( h );
           stat = thread_lock_master( h );
 
 	  num = 0;
+          if ( debugMode() ) {
+            fprintf( stderr, "searching for display name:\n" );
+	  }
 	  for ( i=0; i<g_displayIndex; i++ ) {
+            if ( debugMode() ) {
+	      fprintf( stderr, "  client request: [%s]   found: [%s]\n", &msg[1], g_displayNames[i] );
+	    }
 	    if ( strcmp( &msg[1], g_displayNames[i] ) == 0 ) {
               num = 1;
 	    }
@@ -1743,9 +1817,8 @@ static void checkParams (
 
 char buf[1023+1], mac[1023+1], exp[1023+1];
 int state = SWITCHES;
-int stat, l, nm = 0, n = 1;
-char *envPtr, *tk, *buf1;
-//Display *testDisplay;
+int l, nm = 0, n = 1;
+char *tk, *buf1;
 
   strcpy( displayName, "" );
   *local = 0;
@@ -1778,6 +1851,8 @@ char *envPtr, *tk, *buf1;
     case SWITCHES:
 
       if ( argv[n][0] == '-' ) {
+
+        //fprintf( stderr, "argv[%-d] = %s\n", n, argv[n] );
 
         if ( strcmp( argv[n], global_str9 ) == 0 ) {
           *local = 1;
@@ -1849,7 +1924,13 @@ char *envPtr, *tk, *buf1;
           *local = 0;
           *openCmd = 2; // control named window
 	}
-	else if ( strcmp( argv[n], global_str140 ) == 0 ) { // print
+	else if ( strcmp( argv[n], global_str146 ) == 0 ) { // put
+	  *oneInstance = 1;
+          *server = 1;
+          *local = 0;
+          *openCmd = 3; // control named window
+	}
+	else if ( strcmp( argv[n], global_str140 ) == 0 ) { // xwdsnap
 	  *oneInstance = 1;
           *server = 1;
           *local = 0;
@@ -1937,7 +2018,7 @@ char *envPtr, *tk, *buf1;
             *local = 1;
             return;
           }
-          strncpy( displayName, argv[n], 127 );
+          strncpy( displayName, argv[n], 63 );
         }
         else if ( strcmp( argv[n], global_str22 ) == 0 ) {
           n++;
@@ -2005,32 +2086,10 @@ char *envPtr, *tk, *buf1;
 
   if ( strcmp( displayName, "" ) == 0 ) {
 
-    envPtr = getenv("DISPLAY");
-    if ( envPtr ) strncpy( displayName, envPtr, 127 );
-
-    if ( strcmp( displayName, "" ) == 0 ) {
-
-      stat = gethostname( displayName, 127 );
-      if ( stat ) {
-        fprintf( stderr, main_str35 );
-        exit(1);
-      }
-
-      Strncat( displayName, ":0.0", 127 );
-
-    }
+    strncpy( displayName, g_defaultDisplay, 63 );
+    displayName[63] = 0;
 
   }
-
-  //fprintf( stderr, "test display [%s]\n", displayName );
-
-  //testDisplay = XOpenDisplay( displayName );
-  //if ( !testDisplay ) {
-  //  fprintf( stderr, main_str36 );
-  //  exit(1);
-  //}
-
-  //XCloseDisplay( testDisplay );
 
   return;
 
@@ -2053,7 +2112,7 @@ objBindingClass *obj;
 pvBindingClass *pvObj;
 char *tk, *buf1;
 MAIN_NODE_PTR node;
-char **argArray, displayName[255+1];
+char **argArray, displayName[63+1];
 int appendDisplay;
 float hours, seconds;
 
@@ -2081,6 +2140,15 @@ int shutdownTry = 200; // aprox 10 seconds
 
   if ( diagnosticMode() ) {
     logDiagnostic( "edm started\n" );
+  }
+
+  envPtr = getenv("DISPLAY");
+  if ( envPtr ) {
+    strncpy( g_defaultDisplay, envPtr, 63 );
+    g_defaultDisplay[63] = 0;
+  }
+  else {
+    strcpy( g_defaultDisplay, ":0.0" );
   }
 
   do {
@@ -2133,6 +2201,13 @@ int shutdownTry = 200; // aprox 10 seconds
   checkParams( argc, argv, &local, &server, &appendDisplay, displayName,
    &portNum, &restart, &oneInstance, &openCmd, &convertOnly, &crawl,
    &verbose );
+
+  if ( debugMode() ) {
+    fprintf( stderr, "server = %-d\n", server );
+    fprintf( stderr, "oneInstanceFlag = %-d\n", oneInstance );
+    fprintf( stderr, "displayName = [%s]\n", displayName );
+    fprintf( stderr, "portNum = %-d\n", portNum );
+  }
 
   // if doing a restart, read in check point file
   if ( restart ) {
@@ -2692,7 +2767,14 @@ int shutdownTry = 200; // aprox 10 seconds
       }
       //fprintf( stderr, "\n" );
 
+      // if none found, add default display
+      addDisplayToListByName( g_defaultDisplay );
+
       //fprintf( stderr, "Current list:\n" );
+      //for ( i=0; i<g_displayIndex; i++ ) {
+      //  fprintf( stderr, "  dsp = [%s]\n", g_displayNames[i] );
+      //}
+
       //cur = appArgsHead->flink;
       //while ( cur != appArgsHead ) {
       //  next = cur->flink;
@@ -2859,7 +2941,7 @@ int shutdownTry = 200; // aprox 10 seconds
 	      // a new instance of edm is starting
               first = appArgsHead->flink;
               while ( first != appArgsHead ) {
-		if ( ( strcmp( tk, ":0.0" ) == 0 ) ||
+		if ( ( strcmp( tk, g_defaultDisplay ) == 0 ) ||
                      ( strcmp( tk,
                         first->appArgs->appCtxPtr->displayName ) == 0 ) ) {
                   tk = strtok_r( NULL, "|", &buf1 );
@@ -2883,7 +2965,7 @@ int shutdownTry = 200; // aprox 10 seconds
 	      // a new instance of edm is starting
               first = appArgsHead->flink;
               while ( first != appArgsHead ) {
-		if ( ( strcmp( tk, ":0.0" ) == 0 ) ||
+		if ( ( strcmp( tk, g_defaultDisplay ) == 0 ) ||
                      ( strcmp( tk,
                         first->appArgs->appCtxPtr->displayName ) == 0 ) ) {
                   tk = strtok_r( NULL, "|", &buf1 );
@@ -2891,6 +2973,30 @@ int shutdownTry = 200; // aprox 10 seconds
                   break;
 		}
                 first = first->flink;
+	      }
+
+	    }
+	    else if ( strcmp( tk, "*PUT*" ) == 0 ) {
+
+	      //fprintf( stderr, "PUT\n" );
+
+              needConnect = 0;
+
+	      int more = 1;
+	      while ( more ) {
+                tk = strtok_r( NULL, "|", &buf1 ); // dsp
+                //if ( tk ) fprintf( stderr, "tk = %s\n", tk );
+                if ( strcmp( tk, global_str146 ) == 0 ) break; // -put
+                if ( !tk ) more = 0;
+              }
+
+	      if ( more ) {
+                tk = strtok_r( NULL, "|,", &buf1 ); // put cmd
+		while ( tk ) {
+                  //fprintf( stderr, "cmd = %s\n", tk );
+                  doCmdPut( tk );
+                  tk = strtok_r( NULL, "|,", &buf1 ); // put cmd
+		}
 	      }
 
 	    }
@@ -2906,7 +3012,7 @@ int shutdownTry = 200; // aprox 10 seconds
 	      // a new instance of edm is starting
               first = appArgsHead->flink;
               while ( first != appArgsHead ) {
-		if ( ( strcmp( tk, ":0.0" ) == 0 ) ||
+		if ( ( strcmp( tk, g_defaultDisplay ) == 0 ) ||
                      ( strcmp( tk,
                         first->appArgs->appCtxPtr->displayName ) == 0 ) ) {
                   first->appArgs->appCtxPtr->openInitialFiles();

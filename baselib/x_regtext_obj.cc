@@ -378,6 +378,13 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
   strncpy( bufRegExp, source->bufRegExp, 39 );
 //-------------------------------------
 
+  doAccSubs( alarmPvExpStr );
+  doAccSubs( visPvExpStr );
+  doAccSubs( value );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
+  doAccSubs( regExpStr, 39 );
+
 }
 
 int activeXRegTextClass::createInteractive (
@@ -1660,7 +1667,7 @@ int activeXRegTextClass::deactivate (
 
 // --------------------------------------------------------
     if ( re_valid ) {
-      fprintf( stderr, "regfree\n" );
+      //fprintf( stderr, "regfree\n" );
       regfree(&compiled_re);
     }
 // --------------------------------------------------------
@@ -2195,18 +2202,22 @@ int index, change;
 
   change = 0;
 
-  if ( curStatus != alarmPvId->get_status() ) {
-    curStatus = alarmPvId->get_status();
-    change = 1;
-  }
+  if ( alarmPvId ) {
 
-  if ( curSeverity != alarmPvId->get_severity() ) {
-    curSeverity = alarmPvId->get_severity();
-    change = 1;
+    if ( curStatus != alarmPvId->get_status() ) {
+      curStatus = alarmPvId->get_status();
+      change = 1;
+    }
+
+    if ( curSeverity != alarmPvId->get_severity() ) {
+      curSeverity = alarmPvId->get_severity();
+      change = 1;
+    }
+
   }
 
   index = actWin->ci->evalRule( fgColor.pixelIndex(),
-   alarmPvId->get_double() );
+   colorValue );
 
   if ( curFgColorIndex != index ) {
     curFgColorIndex = index;
@@ -2214,7 +2225,7 @@ int index, change;
   }
 
   index = actWin->ci->evalRule( bgColor.pixelIndex(),
-   alarmPvId->get_double() );
+   colorValue );
 
   if ( curBgColorIndex != index ) {
     curBgColorIndex = index;
@@ -2268,6 +2279,76 @@ void activeXRegTextClass::getPvs (
   *n = 2;
   pvs[0] = alarmPvId;
   pvs[1] = visPvId;
+
+}
+
+char *activeXRegTextClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return value.getRaw();
+  }
+  else if ( i == 1 ) {
+    return alarmPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return visPvExpStr.getRaw();
+  }
+  else if ( i == 3 ) {
+    return minVisString;
+  }
+  else if ( i == 4 ) {
+    return maxVisString;
+  }
+  else if ( i == 5 ) {
+    return regExpStr;
+  }
+
+  return NULL;
+
+}
+
+void activeXRegTextClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    value.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    alarmPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    visPvExpStr.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 4 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
+  else if ( i == 5 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( regExpStr, string, l );
+    regExpStr[l] = 0;
+  }
+
+  updateDimensions();
+
+  if ( autoSize && fs ) {
+    sboxW = w = stringBoxWidth;
+    sboxH = h = stringBoxHeight;
+  }
 
 }
 

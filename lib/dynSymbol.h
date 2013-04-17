@@ -31,7 +31,7 @@
 
 #define DSC_MAJOR_VERSION 4
 #define DSC_MINOR_VERSION 0
-#define DSC_RELEASE 0
+#define DSC_RELEASE 1
 
 #define DYNSYMBOL_K_NUM_STATES 64
 
@@ -546,6 +546,16 @@ void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
 
 char *crawlerGetFirstPv ( void );
 

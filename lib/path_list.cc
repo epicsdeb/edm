@@ -104,7 +104,10 @@ int i;
 int pathListClass::destroy ( void ) {
 
   popdown();
-  if ( shell ) XtDestroyWidget( shell );
+  //if ( shell ) {
+  //  XtDestroyWidget( shell );
+  //  shell = NULL;
+  //}
 
   return 1;
 
@@ -287,8 +290,10 @@ int pathListClass::popup ( void ) {
 
 int pathListClass::popdown ( void ) {
 
-  if ( shell ) XtUnmapWidget( shell );
-  windowIsOpen = 0;
+  if ( windowIsOpen ) {
+    if ( shell ) XtUnmapWidget( shell );
+    windowIsOpen = 0;
+  }
 
   return 1;
 

@@ -30,7 +30,7 @@
 #define RDC_PARENT_OFS_POS 2
 
 #define RDC_MAJOR_VERSION 4
-#define RDC_MINOR_VERSION 3
+#define RDC_MINOR_VERSION 4
 #define RDC_RELEASE 0
 
 typedef struct objAndIndexTag {
@@ -224,7 +224,10 @@ int numDsps, dspIndex;
 
 bufPtr buf;
 
-entryListBase *pvEntry[NUMPVS], *valEntry[NUMPVS];
+entryListBase *pvEntry[NUMPVS], *valEntry[NUMPVS],
+ *fileEntry[maxDsps], *labelEntry[maxDsps], *macrosEntry[maxDsps], *modeEntry[maxDsps],
+ *propagateEntry[maxDsps], *positionEntry[maxDsps], *xOfsEntry[maxDsps], *yOfsEntry[maxDsps],
+ *closeCurEntry[maxDsps], *dupsAllowedEntry[maxDsps];
 
 activeWindowClass *aw;
 int useFocus, needClose, needConnect, needUpdate, needRefresh;
@@ -469,7 +472,23 @@ void mousePointerOut (
   int _y,
   int buttonState );
 
- void executeDeferred ( void );
+void executeDeferred ( void );
+
+void getPvs (
+  int max,
+  ProcessVariable *pvs[],
+  int *n );
+
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
+
 
 char *crawlerGetFirstPv ( void );
 

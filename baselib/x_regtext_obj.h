@@ -33,7 +33,7 @@
 
 #define AXTC_MAJOR_VERSION 4
 #define AXTC_MINOR_VERSION 0
-#define AXTC_RELEASE 0
+#define AXTC_RELEASE 1
 #endif
 
 extern "C"
@@ -309,6 +309,16 @@ void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
 
 char *crawlerGetFirstPv ( void );
 

@@ -471,6 +471,10 @@ activeGraphicClass *indicatoro = (activeGraphicClass *) this;
 
   eBuf = NULL;
 
+  doAccSubs( readPvExpStr );
+  doAccSubs( nullPvExpStr );
+  doAccSubs( label );
+
   updateDimensions();
 
 }
@@ -2660,7 +2664,7 @@ double v;
     eraseActive();
     readV = v;
     updateDimensions();
-    drawActive();
+    smartDrawAllActive();
 
     if ( initialReadConnection ) {
 
@@ -2696,7 +2700,7 @@ double v;
 
     updateDimensions();
 
-    drawActive();
+    smartDrawAllActive();
 
   }
 
@@ -2711,7 +2715,7 @@ double v;
   if ( nd ) {
     readV = v;
     eraseActive();
-    drawActive();
+    smartDrawAllActive();
   }
 
 //----------------------------------------------------------------------------
@@ -2719,7 +2723,7 @@ double v;
   if ( nfd ) {
     readV = v;
     bufInvalidate();
-    drawActive();
+    smartDrawAllActive();
   }
 
 //----------------------------------------------------------------------------
@@ -2729,7 +2733,7 @@ double v;
       readV = v;
       updateIndicator();
       eraseActive();
-      drawActive();
+      smartDrawAllActive();
 
   }
 
@@ -2870,6 +2874,42 @@ void activeIndicatorClass::getPvs (
   *n = 2;
   pvs[0] = readPvId;
   pvs[1] = nullPvId;
+
+}
+
+char *activeIndicatorClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return readPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return nullPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return label.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void activeIndicatorClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    readPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    nullPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    label.setRaw( string );
+  }
 
 }
 

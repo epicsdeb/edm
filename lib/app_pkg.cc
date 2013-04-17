@@ -46,7 +46,7 @@ int result;
 
   result = 0; // success
 
-  envPtr = getenv( "EDMCHECKDISPLAY" );
+  envPtr = getenv( environment_str37 );
   if ( envPtr ) {
 
     if ( !dspName ) return result;
@@ -2346,8 +2346,8 @@ appContextClass::appContextClass (
 
   haveGroupVisInfo = 0;
 
-  getFilePaths();
-  strncpy( curPath, dataFilePrefix[0], 127 );
+  int defaultPos = getFilePaths();
+  strncpy( curPath, dataFilePrefix[defaultPos], 127 );
 
   buildSchemeList();
 
@@ -2374,6 +2374,8 @@ appContextClass::appContextClass (
 
   useStdErrFlag = 0;
   errMsgPrefix = NULL;
+
+  msgDialogOpenCount = 0;
 
 }
 
@@ -2707,9 +2709,9 @@ activeWindowListPtr cur;
 
 }
 
-void appContextClass::getFilePaths ( void ) {
+int appContextClass::getFilePaths ( void ) {
 
-int i, l, allocL, curLen, stat;
+  int i, l, allocL, curLen, stat, defaultPos = 0;
 char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
  *useHttp;
 
@@ -2818,7 +2820,7 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
 
       if ( buf ) delete[] buf;
 
-      return;
+      return defaultPos;
 
     }
 
@@ -2845,11 +2847,19 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
 
       if ( !httpPath( path ) ) {
 
-        stat = chdir( path );
-
-        if ( stat && !useHttp ) {
-          snprintf( msg, 127, appContextClass_str119, path );
-          perror( msg );
+        if ( path[0] == '=' ) {
+          stat = chdir( &path[1] );
+          if ( stat && !useHttp ) {
+            snprintf( msg, 127, appContextClass_str119, &path[1] );
+            perror( msg );
+          }
+        }
+        else {
+          stat = chdir( path );
+          if ( stat && !useHttp ) {
+            snprintf( msg, 127, appContextClass_str119, path );
+            perror( msg );
+          }
         }
 
         chdir( save );
@@ -2859,8 +2869,15 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
       if ( path[strlen(path)-1] != '/' )
        Strncat( path, "/", 127 );
 
-      dataFilePrefix[i] = new char[strlen(path)+1];
-      strcpy( dataFilePrefix[i], path );
+      if ( path[0] == '=' ) { // = means use this a default
+        dataFilePrefix[i] = new char[strlen(path)];
+        strcpy( dataFilePrefix[i], &path[1] );
+        defaultPos = i;
+      }
+      else {
+        dataFilePrefix[i] = new char[strlen(path)+1];
+        strcpy( dataFilePrefix[i], path );
+      }
 
       tk = strtok( NULL, ":" );
 
@@ -2883,6 +2900,11 @@ char *envPtr, *gotIt, *buf, save[127+1], path[127+1], msg[127+1], *tk,
   }
 
   if ( buf ) delete[] buf;
+
+  if ( defaultPos > ( numPaths - 1 ) ) defaultPos = numPaths - 1;
+  if ( defaultPos < 0 ) defaultPos = 0;
+
+  return defaultPos;
 
 }
 
@@ -3787,7 +3809,7 @@ int i, numVisible;
   fileCascade = XtVaCreateManagedWidget( "filemenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
-   XmNmnemonic, 'f',
+   XmNmnemonic, XStringToKeysym("f"),
    XmNsubMenuId, filePullDown,
    NULL );
   XmStringFree( menuStr );
@@ -3884,7 +3906,7 @@ int i, numVisible;
   viewCascade = XtVaCreateManagedWidget( "viewmenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
-   XmNmnemonic, 'v',
+   XmNmnemonic, XStringToKeysym("v"),
    XmNsubMenuId, viewPullDown,
    NULL );
   XmStringFree( menuStr );
@@ -3971,7 +3993,7 @@ int i, numVisible;
     pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
      menuBar,
      XmNlabelString, menuStr,
-     XmNmnemonic, 'v',
+     XmNmnemonic, XStringToKeysym("p"),
      XmNsubMenuId, pathPullDown,
      NULL );
     XmStringFree( menuStr );
@@ -4009,7 +4031,7 @@ int i, numVisible;
     pathCascade = XtVaCreateManagedWidget( "pathmenu", xmCascadeButtonWidgetClass,
      menuBar,
      XmNlabelString, menuStr,
-     XmNmnemonic, 'v',
+     XmNmnemonic, XStringToKeysym("p"),
      XmNsubMenuId, pathPullDown,
      NULL );
     XmStringFree( menuStr );
@@ -4044,7 +4066,7 @@ int i, numVisible;
   helpCascade = XtVaCreateManagedWidget( "helpmenu", xmCascadeButtonWidgetClass,
    menuBar,
    XmNlabelString, menuStr,
-   XmNmnemonic, 'h',
+   XmNmnemonic, XStringToKeysym("h"),
    XmNsubMenuId, helpPullDown,
    NULL );
   XmStringFree( menuStr );
@@ -4415,6 +4437,8 @@ static void displayParamInfo ( void ) {
 
   fprintf( stderr, global_str141 );
 
+  fprintf( stderr, global_str147 );
+
   fprintf( stderr, global_str97 );
 
   fprintf( stderr, global_str107 );
@@ -4515,6 +4539,14 @@ static void displayParamInfo ( void ) {
   fprintf( stderr, global_str144 );
   fprintf( stderr, "\n" );
   fprintf( stderr, global_str145 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str149 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str150 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str151 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str152 );
   fprintf( stderr, "\n" );
 
 }
@@ -4647,6 +4679,8 @@ fileListPtr curFile;
         }
         else if ( strcmp( argv[n], global_str140 ) == 0 ) {
         }
+        else if ( strcmp( argv[n], global_str146 ) == 0 ) {
+        }
         else if ( strcmp( argv[n], global_str86 ) == 0 ) {
           n++; // just ignore, not used here
           if ( n >= argc ) return 2;
@@ -4712,7 +4746,7 @@ fileListPtr curFile;
         else if ( strcmp( argv[n], global_str21 ) == 0 ) {
           n++;
           if ( n >= argc ) return 2;
-          strncpy( displayName, argv[n], 127 );
+          strncpy( displayName, argv[n], 63 );
         }
         else if ( strcmp( argv[n], global_str73 ) == 0 ) {
           n++; // just ignore, not used here
@@ -4823,7 +4857,7 @@ int appContextClass::startApplication (
 int stat, opStat;
 activeWindowListPtr cur;
 char *name, *envPtr;
-char prefix[255+1], fname[255+1], msg[127+1];
+char dspName[63+1], prefix[255+1], fname[255+1], msg[127+1];
 fileListPtr curFile;
 expStringClass expStr;
 Atom wm_delete_window;
@@ -4836,6 +4870,15 @@ XmString xmStr1;
   primaryServer = _primaryServer;
   oneInstance = _oneInstance;
   convertOnly = _convertOnly;
+
+  envPtr = getenv("DISPLAY");
+  if ( envPtr ) {
+    strncpy( dspName, envPtr, 63 );
+    dspName[63] = 0;
+  }
+  else {
+    strcpy( dspName, ":0.0" );
+  }
 
   name = argv[0];
 
@@ -4940,10 +4983,7 @@ err_return:
       XtAppSetFallbackResources(app, fbr);
     }
 
-    int i;
-    char dspName[63+1];
-    strcpy( dspName, "" );
-    for ( i=0; i<argCount; i++ ) {
+    for ( int i=0; i<argCount; i++ ) {
       if ( strcmp( args[i], "-display" ) == 0 ) {
         if ( i+1 < argCount ) {
           strncpy( dspName, args[i+1], 63 );
@@ -4961,12 +5001,16 @@ err_return:
       return 0; // error
     }
 
-    display = XtOpenDisplay( app, NULL, NULL, "edm", NULL, 0, &argCount,
-     args );
+    display = XtOpenDisplay( app, NULL, NULL, "edm", NULL, 0,
+     &argCount, args );
     if ( !display ) {
-      fprintf( stderr, appContextClass_str146 );
-      exitFlag = 1;
-      return 0; // error
+      display = XtOpenDisplay( app, dspName, NULL, "edm", NULL, 0,
+       &argCount, args );
+      if ( !display ) {
+        fprintf( stderr, appContextClass_str146 );
+        exitFlag = 1;
+        return 0; // error
+      }
     }
 
     if ( executeOnOpen ) {
@@ -5034,6 +5078,20 @@ err_return:
   //largestH = displayH;
 
   if (largestH <= 0) largestH += displayH;
+
+  {
+    char *envPtr = getenv( environment_str38 );
+    if ( envPtr ) {
+      char *err;
+      int maxPropDialogH = strtol( envPtr, &err, 0 );
+      if ( *err == '\0' ) {
+        if ( maxPropDialogH > 0 ) {
+          if ( maxPropDialogH < 400 ) maxPropDialogH = 400;
+          if ( largestH > maxPropDialogH ) largestH = maxPropDialogH;
+        }
+      }
+    }
+  }
 
   msgBox.create( appTop, "msgbox", 0, 0, 50000, NULL, NULL );
 
@@ -5153,7 +5211,8 @@ err_return:
 
   opStat = fi.initFromFile( app, display, fname );
 
-  closeNote();
+  msgDialogOpenCount = 20; // close note in applicationLoop function
+  //closeNote();
 
   if ( !( opStat & 1 ) ) {
     fprintf( stderr, appContextClass_str107 );
@@ -5516,7 +5575,8 @@ char controlCmd[31+1];
         ( strcmp( tk, global_str134 ) == 0 ) ||
         ( strcmp( tk, global_str136 ) == 0 ) ||
         ( strcmp( tk, global_str138 ) == 0 ) ||
-        ( strcmp( tk, global_str140 ) == 0 )
+        ( strcmp( tk, global_str140 ) == 0 ) ||
+        ( strcmp( tk, global_str146 ) == 0 )
       ) {
 
         state = GETTING_FILES;
@@ -5563,7 +5623,8 @@ char controlCmd[31+1];
         ( strcmp( tk, global_str134 ) != 0 ) &&
         ( strcmp( tk, global_str136 ) != 0 ) &&
         ( strcmp( tk, global_str138 ) != 0 ) &&
-        ( strcmp( tk, global_str140 ) != 0 )
+        ( strcmp( tk, global_str140 ) != 0 ) &&
+        ( strcmp( tk, global_str146 ) != 0 )
       ) {
 
         extractPosition( tk, filePart, 255, &gotPosition, &posx, &posy );
@@ -5870,7 +5931,6 @@ activeWindowListPtr cur;
 
 void appContextClass::applicationLoop ( void ) {
 
-static int msgCount = 0;
 int stat, nodeCount, actionCount, iconNodeCount,
  iconActionCount, n;
 activeWindowListPtr cur, next;
@@ -5888,7 +5948,7 @@ char msg[127+1];
 
     if ( epc.printFinished() ) {
       postNote( appContextClass_str138 );
-      msgCount = 20;
+      msgDialogOpenCount = 20;
     }
 
     if ( epc.printFailure() ) {
@@ -5897,11 +5957,11 @@ char msg[127+1];
 
   }
 
-  if ( msgCount > 0 ) {
-    if ( msgCount == 1 ) {
+  if ( msgDialogOpenCount > 0 ) {
+    if ( msgDialogOpenCount == 1 ) {
       closeNote();
     }
-    msgCount--;
+    msgDialogOpenCount--;
   }
 
   if ( reloadFlag == 2 ) {
@@ -6457,11 +6517,15 @@ int _x, _y;
   _x = XDisplayWidth( display, DefaultScreen(display) ) / 2;
   _y = XDisplayHeight( display, DefaultScreen(display) ) / 2;
 
+  // printf( "postNote - msgDialog = %-X\n", (int) &msgDialog );
+
   msgDialog.popup( msg, _x, _y );
 
 }
 
 void appContextClass::closeNote ( void ) {
+
+  // printf( "closeNote - msgDialog = %-X\n", (int) &msgDialog );
 
   msgDialog.popdown();
 
@@ -6968,6 +7032,36 @@ char *envPtr, text[255+1];
   text[255] = 0;
   postMessage( text );
 
+  envPtr = getenv( environment_str36 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str36, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str36 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str37 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str37, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str37 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str38 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str38, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str38 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
   // site specific vars
 
   snprintf( text, 255, " " );
@@ -6975,12 +7069,12 @@ char *envPtr, text[255+1];
   snprintf( text, 255, "  (Site Related)" );
   postMessage( text );
 
-  envPtr = getenv( "EDMRDDHS" );
+  envPtr = getenv( environment_str40 ); // "EDMRDDHS"
   if ( envPtr ) {
-    snprintf( text, 255, "  %s=[%s]", "EDMRDDHS", envPtr );
+    snprintf( text, 255, "  %s=[%s]", environment_str40, envPtr );
   }
   else {
-    snprintf( text, 255, "  %s=[]", "EDMRDDHS" );
+    snprintf( text, 255, "  %s=[]", environment_str40 );
   }
   text[255] = 0;
   postMessage( text );
@@ -7039,6 +7133,16 @@ char *envPtr, text[255+1];
   }
   else {
     snprintf( text, 255, "  %s=[]", environment_str31 );
+  }
+  text[255] = 0;
+  postMessage( text );
+
+  envPtr = getenv( environment_str35 );
+  if ( envPtr ) {
+    snprintf( text, 255, "  %s=[%s]", environment_str35, envPtr );
+  }
+  else {
+    snprintf( text, 255, "  %s=[]", environment_str35 );
   }
   text[255] = 0;
   postMessage( text );

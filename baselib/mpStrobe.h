@@ -29,7 +29,7 @@
 
 #define MPSC_MAJOR_VERSION 4
 #define MPSC_MINOR_VERSION 1
-#define MPSC_RELEASE 0
+#define MPSC_RELEASE 1
 
 #define MPSC_IDLE 1
 #define MPSC_PINGING 2
@@ -522,6 +522,16 @@ void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
 
 char *crawlerGetFirstPv ( void );
 

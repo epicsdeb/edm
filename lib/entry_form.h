@@ -457,7 +457,40 @@ static void ef_set_item_num (
 
 class entryFormClass {
 
+public:
+
+static const int OK = 1;
+static const int APPLY = 2;
+static const int CANCEL = 3;
+
+static const int CREATE = 10;
+static const int EDIT = 11;
+
+typedef struct callbackDataTag {
+  int op;
+  int command;
+} callbackDataType, *callbackDataPtr;
+
+callbackDataType callbackData;
+XtPointer callbackPtr;
+XtCallbackProc clientCb;
+
 private:
+
+static void ok_callback (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void apply_callback (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
+
+static void cancel_callback (
+  Widget w,
+  XtPointer client,
+  XtPointer call );
 
 friend void textEntryDependency (
   Widget w,
@@ -855,6 +888,11 @@ int finished (
   XtPointer ptr );
 
 int finished (
+  int operationType,
+  XtCallbackProc cb,
+  XtPointer ptr );
+
+int finished (
   XtCallbackProc close_cb,
   XtPointer ptr );
 
@@ -871,6 +909,18 @@ int popdown ( void );
 int popdownNoDestroy ( void );
 
 int formIsPoppedUp ( void );
+
+Widget getOkWidget ( void ) {
+  return pb_ok;
+}
+
+Widget getApplyWidget ( void ) {
+  return pb_apply;
+}
+
+Widget getCancelWidget ( void ) {
+  return pb_cancel;
+}
 
 };
 

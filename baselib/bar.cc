@@ -456,6 +456,10 @@ activeGraphicClass *baro = (activeGraphicClass *) this;
 
   eBuf = NULL;
 
+  doAccSubs( readPvExpStr );
+  doAccSubs( nullPvExpStr );
+  doAccSubs( label );
+
   updateDimensions();
 
 }
@@ -1249,8 +1253,8 @@ char title[32], *ptr;
   limitsFromDbEntry->addDependencyCallbacks();
 
   ef.addTextField( activeBarClass_str29, 35, bufBarOriginX, 15 );
-  scaleOriginEntry = ef.getCurItem();
-  showScaleEntry->addDependency( scaleOriginEntry );
+  //scaleOriginEntry = ef.getCurItem();
+  //showScaleEntry->addDependency( scaleOriginEntry );
   showScaleEntry->addDependencyCallbacks();
 
   ef.addOption( activeBarClass_str44, activeBarClass_str45,
@@ -3156,7 +3160,7 @@ double v;
     eraseActive();
     readV = v;
     updateDimensions();
-    drawActive();
+    smartDrawAllActive();
 
     if ( initialReadConnection ) {
 
@@ -3192,7 +3196,7 @@ double v;
 
     updateDimensions();
 
-    drawActive();
+    smartDrawAllActive();
 
   }
 
@@ -3206,7 +3210,7 @@ double v;
 
   if ( nd ) {
     readV = v;
-    drawActive();
+    smartDrawAllActive();
   }
 
 //----------------------------------------------------------------------------
@@ -3214,7 +3218,7 @@ double v;
   if ( nfd ) {
     readV = v;
     bufInvalidate();
-    drawActive();
+    smartDrawAllActive();
   }
 
 //----------------------------------------------------------------------------
@@ -3223,7 +3227,7 @@ double v;
 
       readV = v;
       updateBar();
-      drawActive();
+      smartDrawAllActive();
 
   }
 
@@ -3364,6 +3368,42 @@ void activeBarClass::getPvs (
   *n = 2;
   pvs[0] = readPvId;
   pvs[1] = nullPvId;
+
+}
+
+char *activeBarClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return readPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return nullPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return label.getRaw();
+  }
+
+  return NULL;
+
+}
+
+void activeBarClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    readPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    nullPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    label.setRaw( string );
+  }
 
 }
 

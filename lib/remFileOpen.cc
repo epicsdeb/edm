@@ -616,11 +616,11 @@ FILE *f;
 
 #ifdef USECURL
 char buf[255+1], name[255+1], allPaths[10239+1], plainName[255+1],
- *urlList, *tk, *context;
-int gotFile, useHttp;
+ tmpName[255+1], *urlList, *tk, *context;
+int gotFile, useHttp, f_open_successful;
 char errBuf[CURL_ERROR_SIZE+1];
 CURLcode result;
-mode_t curMode, newMode;
+mode_t curMode=0, newMode=0;
 struct stat sbuf;
 time_t tsDiff;
 static time_t expireSeconds = 0;
@@ -645,7 +645,7 @@ static int disableCache = 0;
       expireSeconds = 5;
     }
     if ( debugMode() ) fprintf( stderr, "disableCache = %-d\n", disableCache );
-    if ( debugMode() ) fprintf( stderr, "expireSeconds = %-d\n", expireSeconds );
+    if ( debugMode() ) fprintf( stderr, "expireSeconds = %-d\n", (int) expireSeconds );
   }
 #endif
 
@@ -825,6 +825,8 @@ static int disableCache = 0;
         umask( curMode );
       }
       if ( !f ) return NULL;
+      strncpy( tmpName, buf, 255 );
+      tmpName[255] = 0;
 
       strncpy( buf, fullName, 255 );
 
@@ -838,13 +840,17 @@ static int disableCache = 0;
       curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYHOST, 0 );
       strcpy( errBuf, "" );
       result = curl_easy_perform( curlH );
-      if ( debugMode() ) fprintf( stderr, "result = %-d, errno = %-d\n",
+      if ( debugMode() ) fprintf( stderr, "1 result = %-d, errno = %-d\n",
        (int) result, errno );
-      if ( debugMode() ) fprintf( stderr, "errBuf = [%s]\n", errBuf );
+      if ( debugMode() ) fprintf( stderr, "1 errBuf = [%s]\n", errBuf );
 
       fclose( f );
 
-      if ( result ) return NULL;
+      if ( result ) {
+        if ( debugMode() ) fprintf( stderr, "unlink [%s]\n", tmpName );
+        unlink( tmpName );
+        return NULL;
+      }
 
     }
 
@@ -1034,6 +1040,8 @@ static int disableCache = 0;
     tk = strtok_r( allPaths, "|", &context );
 
     gotFile = 0;
+    result = (CURLcode) -1;
+    f_open_successful = 0;
 
     while ( tk && !gotFile ) {
 
@@ -1066,6 +1074,9 @@ static int disableCache = 0;
           umask( curMode );
         }
         if ( !f ) return NULL;
+        f_open_successful = 1;
+        strncpy( tmpName, buf, 255 );
+        tmpName[255] = 0;
 
         strcpy( buf, tk );
         Strncat( buf, fullName, 255 );
@@ -1080,11 +1091,16 @@ static int disableCache = 0;
         curl_easy_setopt( curlH, CURLOPT_SSL_VERIFYHOST, 0 );
         strcpy( errBuf, "" );
         result = curl_easy_perform( curlH );
-        if ( debugMode() ) fprintf( stderr, "result = %-d, errno = %-d\n",
+        if ( debugMode() ) fprintf( stderr, "2 result = %-d, errno = %-d\n",
          (int) result, errno );
-        if ( debugMode() ) fprintf( stderr, "errBuf = [%s]\n", errBuf );
+        if ( debugMode() ) fprintf( stderr, "2 errBuf = [%s]\n", errBuf );
 
         fclose( f );
+
+        if ( result ) {
+          if ( debugMode() ) fprintf( stderr, "2 unlink [%s]\n", tmpName );
+          unlink( tmpName );
+        }
 
         gotFile = !result;
 
@@ -1103,7 +1119,9 @@ static int disableCache = 0;
 
     f = NULL;
 
-    if ( result ) return NULL;
+    if ( result ) {
+      return NULL;
+    }
 
     strncpy( buf, tmpDir, 255 );
     Strncat( buf, name, 255 );

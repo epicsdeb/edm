@@ -428,6 +428,11 @@ activeGraphicClass *ago = (activeGraphicClass *) this;
 
   setBlinkFunction( (void *) doBlink );
 
+  doAccSubs( alarmPvExpStr );
+  doAccSubs( visPvExpStr );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
+
 }
 
 activeArcClass::~activeArcClass ( void ) {
@@ -1176,6 +1181,23 @@ int index;
   efStartAngle.write( f );
   efTotalAngle.write( f );
   fprintf( f, "%-d\n", fillMode );
+
+  return 1;
+
+}
+
+int activeArcClass::drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 ) {
+
+  int delta = lineWidth/2 + 1;
+
+  if ( intersects( x0-delta, y0-delta, x1+delta, y1+delta ) ) {
+    bufInvalidate();
+    drawActive();
+  }
 
   return 1;
 
@@ -2151,6 +2173,55 @@ void activeArcClass::getPvs (
   *n = 2;
   pvs[0] = alarmPvId;
   pvs[1] = visPvId;
+
+}
+
+char *activeArcClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return alarmPvExpStr.getRaw();
+  }
+  else if ( i == 1 ) {
+    return visPvExpStr.getRaw();
+  }
+  else if ( i == 2 ) {
+    return minVisString;
+  }
+  else if ( i == 3 ) {
+    return maxVisString;
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+void activeArcClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    alarmPvExpStr.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    visPvExpStr.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 3 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
 
 }
 

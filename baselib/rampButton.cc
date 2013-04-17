@@ -22,7 +22,7 @@
 #include "app_pkg.h"
 #include "act_win.h"
 
-static void doBlink (
+static void rbtc_doBlink (
   void *ptr
 ) {
 
@@ -41,7 +41,7 @@ activeRampButtonClass *rbto = (activeRampButtonClass *) ptr;
 
 }
 
-static void unconnectedTimeout (
+static void rbtc_unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id )
 {
@@ -589,7 +589,7 @@ activeRampButtonClass::activeRampButtonClass ( void ) {
   activeMode = 0;
   eBuf = NULL;
 
-  setBlinkFunction( (void *) doBlink );
+  setBlinkFunction( (void *) rbtc_doBlink );
 
 }
 
@@ -647,7 +647,16 @@ activeGraphicClass *rbto = (activeGraphicClass *) this;
 
   connection.setMaxPvs( 5 );
 
-  setBlinkFunction( (void *) doBlink );
+  setBlinkFunction( (void *) rbtc_doBlink );
+
+  doAccSubs( destPvExpString );
+  doAccSubs( finalPvExpString );
+  doAccSubs( rampStatePvExpString );
+  doAccSubs( label );
+  doAccSubs( colorPvExpString );
+  doAccSubs( visPvExpString );
+  doAccSubs( minVisString, 39 );
+  doAccSubs( maxVisString, 39 );
 
   updateDimensions();
 
@@ -1432,7 +1441,7 @@ int opStat;
 
       if ( !unconnectedTimer ) {
         unconnectedTimer = appAddTimeOut( actWin->appCtx->appContext(),
-         2000, unconnectedTimeout, this );
+         2000, rbtc_unconnectedTimeout, this );
       }
 
       opStat = 1;
@@ -2341,6 +2350,78 @@ void activeRampButtonClass::getPvs (
   *n = 2;
   pvs[0] = destPvId;
   pvs[1] = finalPvId;
+
+}
+
+char *activeRampButtonClass::getSearchString (
+  int i
+) {
+
+  if ( i == 0 ) {
+    return destPvExpString.getRaw();
+  }
+  else if ( i == 1 ) {
+    return finalPvExpString.getRaw();
+  }
+  else if ( i == 2 ) {
+    return rampStatePvExpString.getRaw();
+  }
+  else if ( i == 3 ) {
+    return colorPvExpString.getRaw();
+  }
+  else if ( i == 4 ) {
+    return visPvExpString.getRaw();
+  }
+  else if ( i == 5 ) {
+    return label.getRaw();
+  }
+  else if ( i == 6 ) {
+    return minVisString;
+  }
+  else if ( i == 7 ) {
+    return maxVisString;
+  }
+
+  return NULL;
+
+}
+
+void activeRampButtonClass::replaceString (
+  int i,
+  int max,
+  char *string
+) {
+
+  if ( i == 0 ) {
+    destPvExpString.setRaw( string );
+  }
+  else if ( i == 1 ) {
+    finalPvExpString.setRaw( string );
+  }
+  else if ( i == 2 ) {
+    rampStatePvExpString.setRaw( string );
+  }
+  else if ( i == 3 ) {
+    colorPvExpString.setRaw( string );
+  }
+  else if ( i == 4 ) {
+    visPvExpString.setRaw( string );
+  }
+  else if ( i == 5 ) {
+    label.setRaw( string );
+  }
+  else if ( i == 6 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( minVisString, string, l );
+    minVisString[l] = 0;
+  }
+  else if ( i == 7 ) {
+    int l = max;
+    if ( 39 < max ) l = 39;
+    strncpy( maxVisString, string, l );
+    maxVisString[l] = 0;
+  }
 
 }
 

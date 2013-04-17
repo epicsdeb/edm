@@ -264,6 +264,12 @@ int draw ( void );
 
 int erase ( void );
 
+int drawActiveIfIntersects (
+  int x0,
+  int y0,
+  int x1,
+  int y1 );
+
 int drawActive ( void );
 
 int eraseActive ( void );
@@ -366,6 +372,15 @@ void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+char *getSearchString (
+  int index );
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
 
 char *crawlerGetFirstPv ( void );
 

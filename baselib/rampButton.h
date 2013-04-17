@@ -39,11 +39,11 @@
 
 #include "rampButton.str"
 
-static void doBlink (
+static void rbtc_doBlink (
   void *ptr
 );
 
-static void unconnectedTimeout (
+static void rbtc_unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
 
@@ -129,11 +129,11 @@ class activeRampButtonClass : public activeGraphicClass {
 
 private:
 
-friend void doBlink (
+friend void rbtc_doBlink (
   void *ptr
 );
 
-friend void unconnectedTimeout (
+friend void rbtc_unconnectedTimeout (
   XtPointer client,
   XtIntervalId *id );
 
@@ -458,6 +458,16 @@ void getPvs (
   int max,
   ProcessVariable *pvs[],
   int *n );
+
+char *getSearchString (
+  int i
+);
+
+void replaceString (
+  int i,
+  int max,
+  char *string
+);
 
 char *crawlerGetFirstPv ( void );
 

@@ -1,3 +1,10 @@
+edm (1.12.85-1) unstable; urgency=low
+
+  * New upstream version
+  * debian/rules: Fix EPICS_HOST_ARCH to allow 32bit build on 64 bit host
+
+ -- Ralph Lange <Ralph.Lange@helmholtz-berlin.de>  Fri, 19 Apr 2013 11:38:07 +0200
+
 edm (1.12.57-1) unstable; urgency=low
 
   * New upstream version

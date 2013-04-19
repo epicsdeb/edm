@@ -5,7 +5,13 @@ include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/makefile.mk
 include /usr/share/cdbs/1/rules/utils.mk
 
+ifeq "$(DEB_BUILD_ARCH)" "i386"
+EPICS_HOST_ARCH:=linux-x86
+else ifeq "$(DEB_BUILD_ARCH)" "amd64"
+EPICS_HOST_ARCH:=linux-x86_64
+else
 EPICS_HOST_ARCH:=$(shell /usr/lib/epics/startup/EpicsHostArch)
+endif
 
 # chop out the source version from Changelog (ie 1.12.20)
 SOV=$(shell echo "$(DEB_NOEPOCH_VERSION)"| cut -f 1 -d '-')
@@ -26,7 +32,6 @@ post-patches:: configure
 
 configure:
 	ln -s /usr/lib/epics/extensions/configure .
-
 move-src: move-src-stamp
 
 clean::

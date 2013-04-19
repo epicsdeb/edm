@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 7), cdbs,
                epics-extensions-dev (>= 20091204.1),
                libgif-dev, libpng-dev, libz-dev, libmotif-dev,
                libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
-Standards-Version: 3.8.0
+Standards-Version: 3.9.4
 Homepage: http://ics-web.sns.ornl.gov/edm/
 
 Package: edm
@@ -23,6 +23,7 @@ Description: The Extensible Display Manager
 
 Package: edm-color-default
 Architecture: all
+Depends: ${misc:Depends}
 Provides: edm-color
 Conflicts: edm (<< 1.12.24-1)
 Description: The Extensible Display Manager
@@ -47,6 +48,7 @@ Description: The Extensible Display Manager
 Package: edm-doc
 Section: contrib/doc
 Architecture: all
+Depends: ${misc:Depends}
 Description: The Extensible Display Manager
  A display manager (GUI) for the EPICS control system.
  .

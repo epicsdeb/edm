@@ -1,3 +1,12 @@
+edm (1.12.85-2) unstable; urgency=low
+
+  * Apply fix for baselib/xyplot: use nan for negative log10 axis
+  * debian/copyright: switch to machine readable format
+  * debian/control: fix minor lintian warnings
+  * debian/edm.lintian-overrides: fix version string in library name
+
+ -- Ralph Lange <Ralph.Lange@gmx.de>  Mon, 27 May 2013 15:18:07 +0200
+
 edm (1.12.85-1) unstable; urgency=low
 
   * New upstream version

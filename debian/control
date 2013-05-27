@@ -19,7 +19,7 @@ Recommends: xfonts-75dpi,
            edm-color-default (= ${source:Version})
 Suggests: cups-bsd | lpr | lprng,
           edm-doc (= ${source:Version}),
-Description: The Extensible Display Manager
+Description: Extensible Display Manager
  A display manager (GUI) for the EPICS control system
 
 Package: edm-color-default
@@ -27,7 +27,7 @@ Architecture: all
 Depends: ${misc:Depends}
 Provides: edm-color
 Conflicts: edm (<< 1.12.24-1)
-Description: The Extensible Display Manager
+Description: Extensible Display Manager
  A display manager (GUI) for the EPICS control system
  .
  This is the default colors.list which is distributed with EDM.
@@ -41,7 +41,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
          epics-extensions-dev,
          libgif-dev, libpng-dev, libz-dev, libmotif-dev,
          libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
-Description: The Extensible Display Manager
+Description: Extensible Display Manager
  A display manager (GUI) for the EPICS control system.
  .
  Development libraries and headers
@@ -50,7 +50,7 @@ Package: edm-doc
 Section: contrib/doc
 Architecture: all
 Depends: ${misc:Depends}
-Description: The Extensible Display Manager
+Description: Extensible Display Manager
  A display manager (GUI) for the EPICS control system.
  .
  The EDM Manual in html form.

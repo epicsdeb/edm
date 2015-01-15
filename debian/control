@@ -14,9 +14,12 @@ Homepage: http://ics-web.sns.ornl.gov/edm/
 Package: edm
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
-         netpbm, edm-color-default | edm-color,
+         netpbm, 
+         edm-color-default | edm-color, 
+         edm-font-default | edm-font
 Recommends: xfonts-75dpi,
-           edm-color-default (= ${source:Version})
+           edm-color-default (= ${source:Version}),
+           edm-font-default (= ${source:Version})
 Suggests: cups-bsd | lpr | lprng,
           edm-doc (= ${source:Version}),
 Description: Extensible Display Manager
@@ -26,7 +29,19 @@ Package: edm-color-default
 Architecture: all
 Depends: ${misc:Depends}
 Provides: edm-color
-Conflicts: edm (<< 1.12.24-1)
+Replaces: edm-color
+Conflicts: edm (<< 1.12.24-1), edm-color
+Description: Extensible Display Manager
+ A display manager (GUI) for the EPICS control system
+ .
+ This is the default colors.list which is distributed with EDM.
+
+Package: edm-font-default
+Architecture: all
+Depends: ${misc:Depends}
+Provides: edm-font
+Replaces: edm-font
+Conflicts: edm (<= 1.12.85-2), edm-font
 Description: Extensible Display Manager
  A display manager (GUI) for the EPICS control system
  .

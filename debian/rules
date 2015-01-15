@@ -134,12 +134,15 @@ install/edm::
 	cp -r $(CURDIR)/helpFiles $(datadir)/
 	find $(datadir)/helpFiles -type f -exec chmod -x {} \;
 
-	install -m 644 -t $(confdir)/edm edmMain/fonts.list
 	install -m 644 -t $(confdir)/edm edmMain/edmPrintDef
 
 install/edm-color-default::
 	install -d debian/tmp/etc/edm
 	install -m 644 edmMain/colors.list debian/tmp/etc/edm/
+
+install/edm-font-default::
+	install -d debian/tmp/etc/edm
+	install -m 644 edmMain/fonts.list debian/tmp/etc/edm/
 
 install/edm-doc::
 	install -d debian/tmp/usr/share/doc/edm/contrib

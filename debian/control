@@ -45,7 +45,7 @@ Conflicts: edm (<= 1.12.85-2), edm-font
 Description: Extensible Display Manager
  A display manager (GUI) for the EPICS control system
  .
- This is the default colors.list which is distributed with EDM.
+ This is the default fonts.list which is distributed with EDM.
 
 Package: edm-dev
 Section: contrib/devel

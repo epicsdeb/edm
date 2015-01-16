@@ -1,3 +1,10 @@
+edm (1.12.85-5) unstable; urgency=low
+
+  * Stricter dep. from edm to edm-font-default and edm-color-default
+    to help with upgrades.
+
+ -- Michael Davidsaver <mdavidsaver@bnl.gov>  Fri, 16 Jan 2015 11:50:35 -0500
+
 edm (1.12.85-4) unstable; urgency=low
 
   * debian/control: typo fixed

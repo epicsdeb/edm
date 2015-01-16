@@ -15,8 +15,8 @@ Package: edm
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          netpbm, 
-         edm-color-default | edm-color, 
-         edm-font-default | edm-font
+         edm-color-default (= ${source:Version}) | edm-color,
+         edm-font-default (= ${source:Version}) | edm-font
 Recommends: xfonts-75dpi,
            edm-color-default (= ${source:Version}),
            edm-font-default (= ${source:Version})

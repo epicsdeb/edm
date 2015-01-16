@@ -1,3 +1,17 @@
+edm (1.12.85-4) unstable; urgency=low
+
+  * debian/control: typo fixed
+
+ -- Joachim Rahn <Joachim.Rahn@helmholtz-berlin.de>  Thu, 15 Jan 2015 13:52:52 +0100
+
+edm (1.12.85-3) unstable; urgency=low
+
+  * debian/control: fix dependency problem for edm-font-default
+  * add package edm-font-default
+  * debian/control: enable replacement of edm-font-default and edm-color-default
+
+ -- Joachim Rahn <Joachim.Rahn@helmholtz-berlin.de>  Thu, 15 Jan 2015 12:27:41 +0100
+
 edm (1.12.85-2) unstable; urgency=low
 
   * Apply fix for baselib/xyplot: use nan for negative log10 axis

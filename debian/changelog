@@ -1,3 +1,9 @@
+edm (1.12.85-6) unstable; urgency=low
+
+  * debian/README.local-defs-setup added 
+
+ -- Joachim Rahn <Joachim.Rahn@helmholtz-berlin.de>  Tue, 20 Jan 2015 12:54:28 +0100
+
 edm (1.12.85-5) unstable; urgency=low
 
   * Stricter dep. from edm to edm-font-default and edm-color-default

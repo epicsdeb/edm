@@ -1,0 +1,100 @@
+The following example shows a debian package setup for local color and font defs. 
+The default edm color and font defs will be deinstalled by installing 
+a package following this example and vice versa.
+
+Assumed a definition of local fonts and colors for edm has the following debian
+package directory structure
+
+edm-conf-mylocaldefs
+├── debian
+│   ├── changelog
+│   ├── compat
+│   ├── control
+│   ├── copyright
+│   ├── edm-color-mylocaldefs.install
+│   ├── edm-font-mylocaldefs.install
+│   ├── README.Debian
+│   └── rules
+└── edmConfFiles
+    ├── colors.list
+    └── fonts.list
+
+where the local defs for font and color placed in the files
+edmConfFiles/colors.list and edmConfFiles/fonts.list,
+the files in the debian directory should look like:
+
+====================
+BEGIN debian/control
+====================
+
+Source: edm-conf-mylocaldefs
+Section: contrib/x11
+Priority: optional
+Maintainer: Maintainer Name <Maintainer.Name@MailAccount.org>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.9.4
+
+Package: edm-color-mylocaldefs
+Architecture: all
+Depends: ${misc:Depends}
+Provides: edm-color
+Replaces: edm-color
+Conflicts: edm (<< 1.12.24-1), edm-color
+Description: Extensible Display Manager
+ A display manager (GUI) for the EPICS control system
+ .
+ This is the MyLocalDefs specific colors.list intended to use with EDM.
+
+Package: edm-font-mylocaldefs
+Architecture: all
+Depends: ${misc:Depends}
+Provides: edm-font
+Replaces: edm-font
+Conflicts: edm (<= 1.12.85-2), edm-font
+Description: Extensible Display Manager
+ A display manager (GUI) for the EPICS control system
+ .
+ This is the MyLocalDefs specific fonts.list intended to use with EDM.
+
+====================
+END debian/control
+====================
+
+==========================================
+BEGIN debian/edm-color-mylocaldefs.install
+==========================================
+
+edmConfFiles/colors.list etc/edm
+
+==========================================
+END debian/edm-color-mylocaldefs.install
+==========================================
+
+==========================================
+BEGIN debian/edm-font-mylocaldefs.install
+==========================================
+
+edm-conf-hzb/debian/edm-font-hzb.install
+
+==========================================
+END debian/edm-font-mylocaldefs.install
+==========================================
+
+==================
+BEGIN debian/rules
+==================
+
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+%:
+        dh $@ 
+
+==================
+END debian/rules
+==================
+
+

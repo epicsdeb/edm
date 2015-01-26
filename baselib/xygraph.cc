@@ -25,8 +25,8 @@ void _edmDebug ( void );
 
 static double loc_log10 ( double d ) {
 
-  if ( d == 0 ) return 0;
-  return log10( fabs( d ) );
+  if ( d <= 0 ) d=0;
+  return log10( d );
 
 }
 
@@ -11285,7 +11285,7 @@ short scaledX, scaledY;
 
     plotInfo[trace][i].firstX = scaledX;
     plotInfo[trace][i].firstY = scaledY;
-    plotInfo[trace][i].yZero = scaledYZero;
+    plotInfo[trace][i].yZero = scaledYZero+6;
 
     i++;
     if ( i >= plotBufSize[trace] ) {// use plotBufSize here
@@ -11308,7 +11308,7 @@ short scaledX, scaledY;
       return;
     }
 
-    plotInfo[trace][scaledX].yZero = scaledYZero;
+    plotInfo[trace][scaledX].yZero = scaledYZero+6;
 
     if ( plotInfo[trace][scaledX].n == 0 ) {
 

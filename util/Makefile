@@ -1,8 +1,8 @@
-TOP = ./..
+TOP = ../../..
 ifdef EPICS_HOST_ARCH
 include $(TOP)/configure/CONFIG
 
-EDMTOP = $(TOP)
+EDMTOP = $(TOP)/src/edm
 
 SHARED_LIBRARIES = YES
 

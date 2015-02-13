@@ -1,5 +1,5 @@
 # Makefile for edm top level
-TOP = .
+TOP = ../..
 ifdef EPICS_HOST_ARCH
  include $(TOP)/configure/CONFIG
  DIRS += util 
@@ -23,7 +23,7 @@ ifdef EPICS_HOST_ARCH
  include $(TOP)/configure/RULES_DIRS
 
 else
-    TOP = .
+    TOP = ../..
     ifneq ($(wildcard $(TOP)/config)x,x)
       # New Makefile.Host config file location
       include $(TOP)/config/CONFIG_EXTENSIONS

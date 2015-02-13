@@ -23,9 +23,6 @@ static mode_t gUmask = 0;
 
 int debugMode ( void );
 
-#define  index(STR, CHR) const_cast<char*>(index(STR, CHR))
-#define rindex(STR, CHR) const_cast<char*>(rindex(STR, CHR))
-
 typedef struct nameListTag {
   AVL_FIELDS(nameListTag)
   char *ext;

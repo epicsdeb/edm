@@ -19,8 +19,16 @@
 #define __xygraph_cc 1
 
 #include "xygraph.h"
+#include "math.h"
 
 void _edmDebug ( void );
+
+static double loc_log10 ( double d ) {
+
+  if ( d <= 0 ) d=0;
+  return log10( d );
+
+}
 
 static void setVal (
   int pvtype,
@@ -48,7 +56,7 @@ static void setVal (
     break;
 
   case ProcessVariable::specificType::integer:
-    ( (long *) dest )[i] = (long) src;
+    ( (int *) dest )[i] = (int) src;
     break;
 
   case ProcessVariable::specificType::enumerated:
@@ -66,7 +74,7 @@ static void setVal (
 static double dclamp (
   double val
 ) {
-  if (isnan(val)) return val;
+
   if ( val < -16000 ) return -16000;
   if ( val >  16000 ) return  16000;
   return val;
@@ -307,10 +315,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
             }
             else {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -401,10 +409,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
             }
             else {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -478,10 +486,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->xSigned[i] ) {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[n];
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
             }
             else {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[n];
+              dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -523,10 +531,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
             }
             else {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -596,10 +604,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->xSigned[i] ) {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[n];
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[n];
             }
             else {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[n];
+              dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -641,10 +649,10 @@ edmTime base( (const unsigned long) ( xyo->curSec ),
             break;
           case ProcessVariable::specificType::integer:
             if (  xyo->ySigned[i] ) {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[n];
             }
             else {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[n];
+              dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[n];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -852,7 +860,16 @@ xyGraphClass *xyo = (xyGraphClass *) client;
   if ( ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
        ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
 
-    xyo->xRescaleValue = log10(xyo->kpXMin);
+    if ( xyo->kpXMin > 0 ) {
+
+      xyo->xRescaleValue = loc_log10( xyo->kpXMin );
+
+    }
+    else {
+
+      xyo->xRescaleValue = 0;
+
+    }
 
   }
   else {
@@ -890,7 +907,16 @@ xyGraphClass *xyo = (xyGraphClass *) client;
   if ( ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
        ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
 
-    xyo->xRescaleValue = log10(xyo->kpXMax);
+    if ( xyo->kpXMax > 0 ) {
+
+      xyo->xRescaleValue = loc_log10( xyo->kpXMax );
+
+    }
+    else {
+
+      xyo->xRescaleValue = 0;
+
+    }
 
   }
   else {
@@ -935,10 +961,12 @@ int ctl;
     minValue = xyo->xMin.value();
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      minValue = log10( minValue );
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = loc_log10(  minValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      minValue = log10( minValue );
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -950,10 +978,12 @@ int ctl;
     }
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      minValue = log10( minValue );
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = loc_log10(  minValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      minValue = log10( minValue );
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -1000,10 +1030,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
           else {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[ii];
           }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -1039,10 +1069,12 @@ int ctl;
     }
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      minValue = log10( minValue );
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = loc_log10(  minValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      minValue = log10( minValue );
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -1075,10 +1107,12 @@ int ctl;
     maxValue = xyo->xMax.value();
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      maxValue = log10( maxValue );
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = loc_log10(  maxValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      maxValue = log10( maxValue );
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = loc_log10(  maxValue  );
     }
 
   }
@@ -1090,10 +1124,12 @@ int ctl;
     }
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      maxValue = log10( maxValue );
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = loc_log10(  maxValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      maxValue = log10( maxValue );
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = loc_log10(  maxValue  );
     }
 
   }
@@ -1140,10 +1176,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
           else {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[ii];
           }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -1179,10 +1215,12 @@ int ctl;
     }
 
     if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      maxValue = log10( maxValue );
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = loc_log10(  maxValue  );
     }
     else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      maxValue = log10( maxValue );
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = loc_log10(  maxValue  );
     }
 
   }
@@ -1228,7 +1266,12 @@ int yi = yIndex;
   xyo->needY1Rescale[yi] = 1;
 
   if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      xyo->y1RescaleValue[yi] = log10(xyo->kpY1Min[yi]);
+    if ( xyo->kpY1Min[yi] > 0 ) {
+      xyo->y1RescaleValue[yi] = loc_log10( xyo->kpY1Min[yi] );
+    }
+    else {
+      xyo->y1RescaleValue[yi] = 0;
+    }
   }
   else {
     xyo->y1RescaleValue[yi] = xyo->kpY1Min[yi];
@@ -1271,7 +1314,12 @@ int yi = yIndex;
   xyo->needY1Rescale[yi] = 1;
 
   if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      xyo->y1RescaleValue[yi] = log10(xyo->kpY1Max[yi]);
+    if ( xyo->kpY1Max[yi] > 0 ) {
+      xyo->y1RescaleValue[yi] = loc_log10( xyo->kpY1Max[yi] );
+    }
+    else {
+      xyo->y1RescaleValue[yi] = 0;
+    }
   }
   else {
     xyo->y1RescaleValue[yi] = xyo->kpY1Max[yi];
@@ -1323,7 +1371,8 @@ int ctl;
     minValue = xyo->y1Min[yi].value();
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      minValue = log10( minValue );
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -1342,7 +1391,8 @@ int ctl;
     }
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      minValue = log10( minValue );
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -1394,10 +1444,10 @@ int ctl;
             break;
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              dy1Value = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
             else {
-              dy1Value = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dy1Value = (double) ( (unsigned int *) xyo->yPvData[i] )[ii];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -1435,7 +1485,8 @@ int ctl;
     }
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      minValue = log10( minValue );
+      if ( minValue <= 0 ) minValue = 1;
+      minValue = loc_log10(  minValue  );
     }
 
   }
@@ -1490,7 +1541,8 @@ int ctl;
     maxValue = xyo->y1Max[yi].value();
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      maxValue = log10( maxValue );
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = loc_log10( maxValue );
     }
 
   }
@@ -1509,7 +1561,8 @@ int ctl;
     }
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      maxValue = log10( maxValue );
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = loc_log10(  maxValue  );
     }
 
   }
@@ -1561,10 +1614,10 @@ int ctl;
             break;
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              dy1Value = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dy1Value = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
             else {
-              dy1Value = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dy1Value = (double) ( (unsigned int *) xyo->yPvData[i] )[ii];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -1602,7 +1655,8 @@ int ctl;
     }
 
     if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      maxValue = log10( maxValue );
+      if ( maxValue <= 0 ) maxValue = 1;
+      maxValue = loc_log10(  maxValue  );
     }
 
   }
@@ -1786,10 +1840,10 @@ int ctl;
             break;
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
             }
             else {
-              dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+              dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[ii];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -1806,7 +1860,7 @@ int ctl;
           }
 
           if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-            dyValue = log10( dyValue );
+            dyValue = loc_log10(  dyValue  );
           }
 
           if ( !ctl ) {
@@ -1828,19 +1882,21 @@ int ctl;
           }
 	  }
 
-          if (isnan(dyValue)) {
-            scaledY=dyValue;
-          } else {
-            scaledY = xyo->plotAreaH -
-              rint( ( dyValue - xyo->curY1Min[yi] ) *
-                    xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-            scaledY = dclamp( scaledY );
-          }
-
-          yZero = xyo->plotAreaH -
-           rint( ( 0.0 - xyo->curY1Min[yi] ) *
+          scaledY = xyo->plotAreaH -
+           rint( ( dyValue - xyo->curY1Min[yi] ) *
            xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-          yZero = dclamp( yZero );
+          scaledY = dclamp( scaledY );
+
+
+          if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+            yZero = xyo->plotAreaH + xyo->y1Offset[yi][i];
+          }
+          else {
+            yZero = xyo->plotAreaH -
+             rint( ( 0.0 - xyo->curY1Min[yi] ) *
+             xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+            yZero = dclamp( yZero );
+          }
 
           // There are two views of pv types, Type and specificType; this uses
           // specificType
@@ -1869,10 +1925,10 @@ int ctl;
             break;
           case ProcessVariable::specificType::integer:
             if ( xyo->xSigned[i] ) {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+              dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
             }
             else {
-              dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+              dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[ii];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -1889,10 +1945,10 @@ int ctl;
           }
 
           if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-            dxValue = log10( dxValue );
+            dxValue = loc_log10(  dxValue  );
           }
           else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-            dxValue  = log10( dxValue );
+            dxValue  = loc_log10(  dxValue  );
           }
 
           if ( !ctl ) {
@@ -1967,7 +2023,7 @@ int ctl;
             dxValue = (double) xyo->xPvCurValue[i];
 
             if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-              dyValue = log10( dyValue );
+              dyValue = loc_log10(  dyValue  );
             }
 
             if ( !ctl ) {
@@ -2008,19 +2064,20 @@ int ctl;
 
 	    }
 
-            if (isnan(dyValue)) {
-              scaledY=dyValue;
-            } else {
-              scaledY = xyo->plotAreaH -
-                rint( ( dyValue - xyo->curY1Min[yi] ) *
-                      xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-              scaledY = dclamp( scaledY );
-            }
-
-            yZero = xyo->plotAreaH -
-             rint( ( 0.0 - xyo->curY1Min[yi] ) *
+            scaledY = xyo->plotAreaH -
+             rint( ( dyValue - xyo->curY1Min[yi] ) *
              xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-            yZero = dclamp( yZero );
+            scaledY = dclamp( scaledY );
+
+            if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+              yZero = xyo->plotAreaH + xyo->y1Offset[yi][i];
+            }
+            else {
+              yZero = xyo->plotAreaH -
+               rint( ( 0.0 - xyo->curY1Min[yi] ) *
+               xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+              yZero = dclamp( yZero );
+            }
 
             scaledX = rint( ( dxValue - xyo->curXMin ) *
              xyo->xFactor[i] + xyo->xOffset[i] );
@@ -2179,11 +2236,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->xSigned[i] ) {
-              ( (long *) xyo->xPvData[i] )[ii] = pv->get_int();
+              ( (int *) xyo->xPvData[i] )[ii] = pv->get_int();
             }
             else {
-              ( (unsigned long *) xyo->xPvData[i] )[ii] =
-               (unsigned long) pv->get_int();
+              ( (unsigned int *) xyo->xPvData[i] )[ii] =
+               (unsigned int) pv->get_int();
             }
             break;
 
@@ -2241,11 +2298,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->xSigned[i] ) {
-              ( (long *) xyo->xPvData[i] )[ii] = pv->get_int_array()[ii];
+              ( (int *) xyo->xPvData[i] )[ii] = pv->get_int_array()[ii];
             }
             else {
-              ( (unsigned long *) xyo->xPvData[i] )[ii] =
-               (unsigned long) pv->get_int_array()[ii];
+              ( (unsigned int *) xyo->xPvData[i] )[ii] =
+               (unsigned int) pv->get_int_array()[ii];
             }
             break;
 
@@ -2328,11 +2385,11 @@ int ctl;
 
       case ProcessVariable::specificType::integer:
         if ( xyo->xSigned[i] ) {
-          ( (long *) xyo->xPvData[i] )[ii] = pv->get_int();
+          ( (int *) xyo->xPvData[i] )[ii] = pv->get_int();
         }
         else {
-          ( (unsigned long *) xyo->xPvData[i] )[ii] =
-           (unsigned long) pv->get_int();
+          ( (unsigned int *) xyo->xPvData[i] )[ii] =
+           (unsigned int) pv->get_int();
         }
         break;
 
@@ -2396,10 +2453,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->ySigned[i] ) {
-            dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+            dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
           }
           else {
-            dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+            dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[ii];
           }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -2416,7 +2473,7 @@ int ctl;
         }
 
         if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          dyValue = log10( dyValue );
+          dyValue = loc_log10(  dyValue  );
         }
 
 	if ( !ctl ) {
@@ -2440,19 +2497,20 @@ int ctl;
 
 	}
 
-        if (isnan(dyValue)) {
-          scaledY=dyValue;
-        } else {
-          scaledY = xyo->plotAreaH -
-            rint( ( dyValue - xyo->curY1Min[yi] ) *
-                  xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-          scaledY = dclamp( scaledY );
-        }
-
-        yZero = xyo->plotAreaH -
-         rint( ( 0.0 - xyo->curY1Min[yi] ) *
+        scaledY = xyo->plotAreaH -
+         rint( ( dyValue - xyo->curY1Min[yi] ) *
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-        yZero = dclamp( yZero );
+        scaledY = dclamp( scaledY );
+
+        if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          yZero = xyo->plotAreaH + xyo->y1Offset[yi][i];
+        }
+        else {
+          yZero = xyo->plotAreaH -
+           rint( ( 0.0 - xyo->curY1Min[yi] ) *
+           xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+          yZero = dclamp( yZero );
+        }
 
         // There are two views of pv types, Type and specificType; this uses
         // specificType
@@ -2481,10 +2539,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
           }
           else {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[ii];
           }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -2501,10 +2559,10 @@ int ctl;
         }
 
         if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          dxValue = log10( dxValue );
+          dxValue = loc_log10(  dxValue  );
         }
         else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          dxValue  = log10( dxValue );
+          dxValue  = loc_log10(  dxValue  );
         }
 
 
@@ -2740,11 +2798,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+              ( (int *) xyo->yPvData[i] )[ii] = pv->get_int();
             }
             else {
-              ( (unsigned long *) xyo->yPvData[i] )[ii] =
-               (unsigned long) pv->get_int();
+              ( (unsigned int *) xyo->yPvData[i] )[ii] =
+               (unsigned int) pv->get_int();
             }
             break;
 
@@ -2802,11 +2860,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
+              ( (int *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
             }
             else {
-              ( (unsigned long *) xyo->yPvData[i] )[ii] =
-               (unsigned long) pv->get_int_array()[ii];
+              ( (unsigned int *) xyo->yPvData[i] )[ii] =
+               (unsigned int) pv->get_int_array()[ii];
             }
             break;
 
@@ -2889,11 +2947,11 @@ int ctl;
 
       case ProcessVariable::specificType::integer:
         if ( xyo->ySigned[i] ) {
-          ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+          ( (int *) xyo->yPvData[i] )[ii] = pv->get_int();
         }
         else {
-          ( (unsigned long *) xyo->yPvData[i] )[ii] =
-           (unsigned long) pv->get_int();
+          ( (unsigned int *) xyo->yPvData[i] )[ii] =
+           (unsigned int) pv->get_int();
         }
         break;
 
@@ -2957,10 +3015,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->ySigned[i] ) {
-            dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+            dyValue = (double) ( (int *) xyo->yPvData[i] )[ii];
 	  }
 	  else {
-            dyValue = (double) ( (long *) xyo->yPvData[i] )[ii];
+            dyValue = (double) ( (unsigned int *) xyo->yPvData[i] )[ii];
 	  }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -2977,7 +3035,7 @@ int ctl;
         }
 
         if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          dyValue = log10( dyValue );
+          dyValue = loc_log10(  dyValue  );
         }
 
 	if ( !ctl ) {
@@ -3001,19 +3059,20 @@ int ctl;
 
 	}
 
-        if (isnan(dyValue)) {
-          scaledY=dyValue;
-        } else {
-          scaledY = xyo->plotAreaH -
-            rint( ( dyValue - xyo->curY1Min[yi] ) *
-                  xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-          scaledY = dclamp( scaledY );
-        }
-
-        yZero = xyo->plotAreaH -
-         rint( ( 0.0 - xyo->curY1Min[yi] ) *
+        scaledY = xyo->plotAreaH -
+         rint( ( dyValue - xyo->curY1Min[yi] ) *
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-        yZero = dclamp( yZero );
+        scaledY = dclamp( scaledY );
+
+        if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          yZero = xyo->plotAreaH + xyo->y1Offset[yi][i];
+        }
+        else {
+          yZero = xyo->plotAreaH -
+           rint( ( 0.0 - xyo->curY1Min[yi] ) *
+           xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+          yZero = dclamp( yZero );
+        }
 
         // There are two views of pv types, Type and specificType; this uses
         // specificType
@@ -3042,10 +3101,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xyo->xSigned[i] ) {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (int *) xyo->xPvData[i] )[ii];
 	  }
 	  else {
-            dxValue = (double) ( (long *) xyo->xPvData[i] )[ii];
+            dxValue = (double) ( (unsigned int *) xyo->xPvData[i] )[ii];
 	  }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -3062,10 +3121,10 @@ int ctl;
         }
 
         if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          dxValue = log10( dxValue );
+          dxValue = loc_log10(  dxValue  );
         }
         else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          dxValue  = log10( dxValue );
+          dxValue  = loc_log10(  dxValue  );
         }
 
 	if ( !ctl ) {
@@ -3217,11 +3276,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+              ( (int *) xyo->yPvData[i] )[ii] = pv->get_int();
             }
             else {
-              ( (unsigned long *) xyo->yPvData[i] )[ii] =
-               (unsigned long) pv->get_int();
+              ( (unsigned int *) xyo->yPvData[i] )[ii] =
+               (unsigned int) pv->get_int();
             }
             break;
 
@@ -3279,11 +3338,11 @@ int ctl;
 
           case ProcessVariable::specificType::integer:
             if ( xyo->ySigned[i] ) {
-              ( (long *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
+              ( (int *) xyo->yPvData[i] )[ii] = pv->get_int_array()[ii];
             }
             else {
-              ( (unsigned long *) xyo->yPvData[i] )[ii] =
-               (unsigned long) pv->get_int_array()[ii];
+              ( (unsigned int *) xyo->yPvData[i] )[ii] =
+               (unsigned int) pv->get_int_array()[ii];
             }
             break;
 
@@ -3376,13 +3435,13 @@ int ctl;
 
       case ProcessVariable::specificType::integer:
         if ( xyo->ySigned[i] ) {
-          ( (long *) xyo->yPvData[i] )[ii] = pv->get_int();
+          ( (int *) xyo->yPvData[i] )[ii] = pv->get_int();
 	  dyValue = pv->get_int();
         }
         else {
-          ( (unsigned long *) xyo->yPvData[i] )[ii] =
-           (unsigned long) pv->get_int();
-	  dyValue = (unsigned long) pv->get_int();
+          ( (unsigned int *) xyo->yPvData[i] )[ii] =
+           (unsigned int) pv->get_int();
+	  dyValue = (unsigned int) pv->get_int();
         }
         sec = pv->get_time_t();
         nsec = pv->get_nano();
@@ -3432,7 +3491,7 @@ int ctl;
 
         dxValue = (double) sec + (double) nsec * 0.000000001;
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
-        dxValue = log10( dxValue );
+        dxValue = loc_log10(  dxValue  );
 
       }
       else if ( xyo->xAxisStyle == XYGC_K_AXIS_STYLE_LINEAR ) {
@@ -3459,7 +3518,7 @@ int ctl;
           dxValue = (double) xyo->totalCount[i];
 	}
         ( (double *) xyo->xPvData[i] )[ii] = dxValue;
-        dxValue = log10( dxValue );
+        dxValue = loc_log10(  dxValue  );
 
         if ( !xyo->firstTimeSample ) {
           ++(xyo->totalCount[i]);
@@ -3472,7 +3531,7 @@ int ctl;
       if ( xyo->plotUpdateMode[i] != XYGC_K_UPDATE_ON_TRIG ) {
 
         if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          dyValue = log10( dyValue );
+          dyValue = loc_log10(  dyValue  );
         }
 
 	if ( !ctl ) {
@@ -3513,19 +3572,20 @@ int ctl;
 
 	}
 
-        if (isnan(dyValue)) {
-          scaledY=dyValue;
-        } else {
-          scaledY = xyo->plotAreaH -
-            rint( ( dyValue - xyo->curY1Min[yi] ) *
-                  xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-          scaledY = dclamp( scaledY );
-        }
-
-        yZero = xyo->plotAreaH -
-         rint( ( 0.0 - xyo->curY1Min[yi] ) *
+        scaledY = xyo->plotAreaH -
+         rint( ( dyValue - xyo->curY1Min[yi] ) *
          xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
-        yZero = dclamp( yZero );
+        scaledY = dclamp( scaledY );
+
+        if ( xyo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+          yZero = xyo->plotAreaH + xyo->y1Offset[yi][i];
+        }
+        else {
+          yZero = xyo->plotAreaH -
+           rint( ( 0.0 - xyo->curY1Min[yi] ) *
+           xyo->y1Factor[yi][i] - xyo->y1Offset[yi][i] );
+          yZero = dclamp( yZero );
+        }
 
         scaledX = rint( ( dxValue - xyo->curXMin ) *
          xyo->xFactor[i] + xyo->xOffset[i] );
@@ -3784,10 +3844,10 @@ int i, yi;
   for ( i=0; i<axygo->numTraces; i++ ) {
 
     if ( axygo->xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      if ( axygo->xMin.value() <= 0.0 ) axygo->xMin.setValue( 0.0 );
+      if ( axygo->xMin.value() <= 0.0 ) axygo->xMin.setValue( 1.0 );
     }
     else if ( axygo->xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      if ( axygo->xMin.value() <= 0.0 ) axygo->xMin.setValue( 0.0 );
+      if ( axygo->xMin.value() <= 0.0 ) axygo->xMin.setValue( 1.0 );
     }
 
     if ( axygo->xMin.value() >= axygo->xMax.value() ) {
@@ -3802,7 +3862,7 @@ int i, yi;
 
       if ( axygo->y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
         if ( axygo->y1Min[yi].value() <= 0.0 )
-          axygo->y1Min[yi].setValue( 0.0 );
+          axygo->y1Min[yi].setValue( 1.0 );
       }
 
       if ( axygo->y1Min[yi].value() >= axygo->y1Max[yi].value() ) {
@@ -4354,10 +4414,10 @@ int ctl;
             break;
           case ProcessVariable::specificType::integer:
             if ( xSigned[i] ) {
-              dxValue = (double) ( (long *) xPvData[i] )[ii];
+              dxValue = (double) ( (int *) xPvData[i] )[ii];
             }
             else {
-              dxValue = (double) ( (long *) xPvData[i] )[ii];
+              dxValue = (double) ( (unsigned int *) xPvData[i] )[ii];
             }
             break;
           case ProcessVariable::specificType::enumerated:
@@ -4451,10 +4511,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( ySigned[i] ) {
-            dyValue[yi] = (double) ( (long *) yPvData[i] )[ii];
+            dyValue[yi] = (double) ( (int *) yPvData[i] )[ii];
           }
           else {
-            dyValue[yi] = (double) ( (long *) yPvData[i] )[ii];
+            dyValue[yi] = (double) ( (unsigned int *) yPvData[i] )[ii];
           }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -4632,7 +4692,7 @@ static char *xAxisStyleEnumStr[4] = {
   "linear",
   "log10",
   "time",
-  "log10(time)"
+  "loc_log10(time)"
 };
 static int xAxisStyleEnum[4] = {
   0,
@@ -5060,7 +5120,7 @@ static char *xAxisStyleEnumStr[4] = {
   "linear",
   "log10",
   "time",
-  "log10(time)"
+  "loc_log10(time)"
 };
 static int xAxisStyleEnum[4] = {
   0,
@@ -5316,10 +5376,10 @@ static int resetModeEnum[2] = {
   for ( i=0; i<numTraces; i++ ) {
 
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      if ( xMin.value() <= 0.0 ) xMin.setValue( 0.0 );
+      if ( xMin.value() <= 0.0 ) xMin.setValue( 1.0 );
     }
     else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      if ( xMin.value() <= 0.0 ) xMin.setValue( 0.0 );
+      if ( xMin.value() <= 0.0 ) xMin.setValue( 1.0 );
     }
 
     if ( xMin.value() >= xMax.value() ) {
@@ -5333,7 +5393,7 @@ static int resetModeEnum[2] = {
     for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
 
       if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( y1Min[yi].value() <= 0.0 ) y1Min[yi].setValue( 0.0 );
+        if ( y1Min[yi].value() <= 0.0 ) y1Min[yi].setValue( 1.0 );
       }
 
       if ( y1Min[yi].value() >= y1Max[yi].value() ) {
@@ -5541,10 +5601,10 @@ efDouble dummy;
   for ( i=0; i<numTraces; i++ ) {
 
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      if ( xMin.value() <= 0.0 ) xMin.setValue( 0.0 );
+      if ( xMin.value() <= 0.0 ) xMin.setValue( 1.0 );
     }
     else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      if ( xMin.value() <= 0.0 ) xMin.setValue( 0.0 );
+      if ( xMin.value() <= 0.0 ) xMin.setValue( 1.0 );
     }
 
     if ( xMin.value() >= xMax.value() ) {
@@ -5558,7 +5618,7 @@ efDouble dummy;
     for ( yi=0; yi<xyGraphClass::NUM_Y_AXES; yi++ ) {
 
       if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-        if ( y1Min[yi].value() <= 0.0 ) y1Min[yi].setValue( 0.0 );
+        if ( y1Min[yi].value() <= 0.0 ) y1Min[yi].setValue( 1.0 );
       }
 
       if ( y1Min[yi].value() >= y1Max[yi].value() ) {
@@ -5866,7 +5926,7 @@ int i, yi;
     efAxis->addLabel( " Show" );
     efAxis->addToggle( " ", &eBuf->bufXAxis );
     efAxis->addLabel( " Style" );
-    efAxis->addOption( "", "linear|log10|time|log10(time)", &eBuf->bufXAxisStyle );
+    efAxis->addOption( "", "linear|log10|time|loc_log10(time)", &eBuf->bufXAxisStyle );
     efAxis->addLabel( " Range" );
     efAxis->addOption( "", "from pv|user-specified|auto-scale",
      &eBuf->bufXAxisSource );
@@ -6091,10 +6151,10 @@ int ctl;
         break;
       case ProcessVariable::specificType::integer:
           if ( ySigned[i] ) {
-            dyValue = (double) ( (long *) yPvData[i] )[ii];
+            dyValue = (double) ( (int *) yPvData[i] )[ii];
           }
           else {
-            dyValue = (double) ( (long *) yPvData[i] )[ii];
+            dyValue = (double) ( (unsigned int *) yPvData[i] )[ii];
           }
         break;
       case ProcessVariable::specificType::enumerated:
@@ -6111,22 +6171,23 @@ int ctl;
       }
 
       if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-        dyValue = log10( dyValue );
+        dyValue = loc_log10(  dyValue  );
       }
 
-      if (isnan(dyValue)) {
-        scaledY=dyValue;
-      } else {
-        scaledY = plotAreaH -
-          rint( ( dyValue - curY1Min[yi] ) *
-                y1Factor[yi][i] - y1Offset[yi][i] );
-        scaledY = dclamp( scaledY );
-      }
-
-      yZero = plotAreaH -
-       rint( ( 0.0 - curY1Min[yi] ) *
+      scaledY = plotAreaH -
+       rint( ( dyValue - curY1Min[yi] ) *
        y1Factor[yi][i] - y1Offset[yi][i] );
-      yZero = dclamp( yZero );
+      scaledY = dclamp( scaledY );
+
+      if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+        yZero = plotAreaH + y1Offset[yi][i];
+      }
+      else {
+        yZero = plotAreaH -
+         rint( ( 0.0 - curY1Min[yi] ) *
+         y1Factor[yi][i] - y1Offset[yi][i] );
+        yZero = dclamp( yZero );
+      }
 
       if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
@@ -6162,10 +6223,10 @@ int ctl;
           break;
         case ProcessVariable::specificType::integer:
           if ( xSigned[i] ) {
-            dxValue = (double) ( (long *) xPvData[i] )[ii];
+            dxValue = (double) ( (int *) xPvData[i] )[ii];
 	  }
 	  else {
-            dxValue = (double) ( (long *) xPvData[i] )[ii];
+            dxValue = (double) ( (unsigned int *) xPvData[i] )[ii];
 	  }
           break;
         case ProcessVariable::specificType::enumerated:
@@ -6184,10 +6245,10 @@ int ctl;
       }
 
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        dxValue = log10( dxValue );
+        dxValue = loc_log10(  dxValue  );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        dxValue = log10( dxValue );
+        dxValue = loc_log10(  dxValue  );
       }
 
       scaledX = rint( ( dxValue - curXMin ) *
@@ -6265,10 +6326,10 @@ int ctl;
       break;
     case ProcessVariable::specificType::integer:
       if ( ySigned[i] ) {
-        dyValue = (double) ( (long *) yPvData[i] )[ii];
+        dyValue = (double) ( (int *) yPvData[i] )[ii];
       }
       else {
-        dyValue = (double) ( (long *) yPvData[i] )[ii];
+        dyValue = (double) ( (unsigned int *) yPvData[i] )[ii];
       }
       break;
     case ProcessVariable::specificType::enumerated:
@@ -6285,22 +6346,23 @@ int ctl;
     }
 
     if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      dyValue = log10( dyValue );
+      dyValue = loc_log10(  dyValue  );
     }
 
-    if (isnan(dyValue)) {
-      scaledY=dyValue;
-    } else {
-      scaledY = plotAreaH -
-        rint( ( dyValue - curY1Min[yi] ) *
-              y1Factor[yi][i] - y1Offset[yi][i] );
-      scaledY = dclamp( scaledY );
-    }
-
-    yZero = plotAreaH -
-     rint( ( 0.0 - curY1Min[yi] ) *
+    scaledY = plotAreaH -
+     rint( ( dyValue - curY1Min[yi] ) *
      y1Factor[yi][i] - y1Offset[yi][i] );
-    yZero = dclamp( yZero );
+    scaledY = dclamp( scaledY );
+
+    if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+      yZero = plotAreaH + y1Offset[yi][i];
+    }
+    else {
+      yZero = plotAreaH -
+       rint( ( 0.0 - curY1Min[yi] ) *
+       y1Factor[yi][i] - y1Offset[yi][i] );
+      yZero = dclamp( yZero );
+    }
 
 #if 0
     // There are two views of pv types, Type and specificType; this uses
@@ -6330,10 +6392,10 @@ int ctl;
       break;
     case ProcessVariable::specificType::integer:
       if ( xSigned[i] ) {
-        dxValue = (double) ( (long *) xPvData[i] )[ii];
+        dxValue = (double) ( (int *) xPvData[i] )[ii];
       }
       else {
-        dxValue = (double) ( (long *) xPvData[i] )[ii];
+        dxValue = (double) ( (unsigned int *) xPvData[i] )[ii];
       }
       break;
     case ProcessVariable::specificType::enumerated:
@@ -6354,10 +6416,10 @@ int ctl;
     dxValue = ( (double *) xPvData[i] )[ii];
 
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      dxValue = log10( dxValue );
+      dxValue = loc_log10(  dxValue  );
     }
     else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      dxValue = log10( dxValue );
+      dxValue = loc_log10(  dxValue  );
     }
 
     scaledX = rint( ( dxValue - curXMin ) *
@@ -6552,10 +6614,10 @@ int ctl;
       break;
     case ProcessVariable::specificType::integer:
       if ( ySigned[i] ) {
-        dyValue = (double) ( (long *) yPvData[i] )[ii];
+        dyValue = (double) ( (int *) yPvData[i] )[ii];
       }
       else {
-        dyValue = (double) ( (long *) yPvData[i] )[ii];
+        dyValue = (double) ( (unsigned int *) yPvData[i] )[ii];
       }
       break;
     case ProcessVariable::specificType::enumerated:
@@ -6572,7 +6634,7 @@ int ctl;
     }
 
     if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-      dyValue = log10( dyValue );
+      dyValue = loc_log10(  dyValue  );
     }
 // Ron Chestnut changes 3/2/2007
     if ( ii == 0) new_min_y = new_max_y = dyValue;
@@ -6581,19 +6643,20 @@ int ctl;
       if(dyValue < new_min_y) new_min_y=dyValue;
     }
 // end of changes
-    if (isnan(dyValue)) {
-      scaledY=dyValue;
-    } else {
-        scaledY = plotAreaH -
-        rint( ( dyValue - curY1Min[yi] ) *
-              y1Factor[yi][i] - y1Offset[yi][i] );
-      scaledY = dclamp( scaledY );
-    }
-
-    yZero = plotAreaH -
-     rint( ( 0.0 - curY1Min[yi] ) *
+    scaledY = plotAreaH -
+     rint( ( dyValue - curY1Min[yi] ) *
      y1Factor[yi][i] - y1Offset[yi][i] );
-    yZero = dclamp( yZero );
+    scaledY = dclamp( scaledY );
+
+    if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+      yZero = plotAreaH + y1Offset[yi][i];
+    }
+    else {
+      yZero = plotAreaH -
+       rint( ( 0.0 - curY1Min[yi] ) *
+       y1Factor[yi][i] - y1Offset[yi][i] );
+      yZero = dclamp( yZero );
+    }
 
     // There are two views of pv types, Type and specificType; this uses
     // specificType
@@ -6622,10 +6685,10 @@ int ctl;
       break;
     case ProcessVariable::specificType::integer:
       if ( xSigned[i] ) {
-        dxValue = (double) ( (long *) xPvData[i] )[ii];
+        dxValue = (double) ( (int *) xPvData[i] )[ii];
       }
       else {
-        dxValue = (double) ( (long *) xPvData[i] )[ii];
+        dxValue = (double) ( (unsigned int *) xPvData[i] )[ii];
       }
       break;
     case ProcessVariable::specificType::enumerated:
@@ -6642,10 +6705,10 @@ int ctl;
     }
 
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      dxValue = log10( dxValue );
+      dxValue = loc_log10(  dxValue  );
     }
     else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      dxValue = log10( dxValue );
+      dxValue = loc_log10(  dxValue  );
     }
 
     scaledX = rint( ( dxValue - curXMin ) *
@@ -7881,12 +7944,12 @@ XmString str;
       curXMin = xMin.value();
       curXMax = xMax.value();
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        curXMin = log10( curXMin );
-	curXMax = log10( curXMax );
+        curXMin = loc_log10(  curXMin  );
+	curXMax = loc_log10(  curXMax  );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        curXMin = log10( curXMin );
-	curXMax = log10( curXMax );
+        curXMin = loc_log10(  curXMin  );
+	curXMax = loc_log10(  curXMax  );
       }
 
       adjCurXMin = curXMin;
@@ -7896,8 +7959,8 @@ XmString str;
         curY1Min[yi] = y1Min[yi].value();
         curY1Max[yi] = y1Max[yi].value();
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          curY1Min[yi] = log10( curY1Min[yi] );
-          curY1Max[yi] = log10( curY1Max[yi] );
+          curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+          curY1Max[yi] = loc_log10(  curY1Max[yi]  );
         }
         adjCurY1Min[yi] = curY1Min[yi];
         adjCurY1Max[yi] = curY1Max[yi];
@@ -9216,8 +9279,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
             curY1Max[yi] = dbYMax[i];
             curY1Prec[yi] = dbYPrec[i];
             if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-              curY1Min[yi] = log10( curY1Min[yi] );
-              curY1Max[yi] = log10( curY1Max[yi] );
+              if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+              if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+              curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+              curY1Max[yi] = loc_log10(  curY1Max[yi]  );
             }
           }
         }
@@ -9304,12 +9369,16 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
               curXMax = dbXMax[i];
               curXPrec = dbXPrec[i];
               if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-                curXMin = log10( curXMin );
-                curXMax = log10( curXMax );
+                if ( curXMin <= 0 ) curXMin = 1e-2;
+                if ( curXMax <= 0 ) curXMax = 1e-1;
+                curXMin = loc_log10(  curXMin  );
+                curXMax = loc_log10(  curXMax  );
               }
               else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-                curXMin = log10( curXMin );
-                curXMax = log10( curXMax );
+                if ( curXMin <= 0 ) curXMin = 1e-2;
+                if ( curXMax <= 0 ) curXMax = 1e-1;
+                curXMin = loc_log10(  curXMin  );
+                curXMax = loc_log10(  curXMax  );
               }
             }
           }
@@ -9798,10 +9867,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
                 break;
               case ProcessVariable::specificType::integer:
                 if ( ySigned[i] ) {
-                  dyValue = (double) ( (long *) yPvData[i] )[ii];
+                  dyValue = (double) ( (int *) yPvData[i] )[ii];
                 }
                 else {
-                  dyValue = (double) ( (long *) yPvData[i] )[ii];
+                  dyValue = (double) ( (unsigned int *) yPvData[i] )[ii];
                 }
                 break;
               case ProcessVariable::specificType::enumerated:
@@ -9818,22 +9887,23 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
               }
 
               if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-                dyValue = log10( dyValue );
+                dyValue = loc_log10(  dyValue  );
               }
 
-              if (isnan(dyValue)) {
-                scaledY=dyValue;
-              } else {
-                scaledY = plotAreaH -
-                  rint( ( dyValue - curY1Min[yi] ) *
-                        y1Factor[yi][i] - y1Offset[yi][i] );
-                scaledY = dclamp( scaledY );
-              }
-
-              yZero = plotAreaH -
-               rint( ( 0.0 - curY1Min[yi] ) *
+              scaledY = plotAreaH -
+               rint( ( dyValue - curY1Min[yi] ) *
                y1Factor[yi][i] - y1Offset[yi][i] );
-              yZero = dclamp( yZero );
+              scaledY = dclamp( scaledY );
+
+              if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
+                yZero = plotAreaH + y1Offset[yi][i];
+              }
+              else {
+                yZero = plotAreaH -
+                 rint( ( 0.0 - curY1Min[yi] ) *
+                 y1Factor[yi][i] - y1Offset[yi][i] );
+                yZero = dclamp( yZero );
+              }
 
               if ( traceType[i] == XYGC_K_TRACE_CHRONOLOGICAL ) {
 
@@ -9869,10 +9939,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
                   break;
                 case ProcessVariable::specificType::integer:
                   if ( xSigned[i] ) {
-                    dxValue = (double) ( (long *) xPvData[i] )[ii];
+                    dxValue = (double) ( (int *) xPvData[i] )[ii];
                   }
                   else {
-                    dxValue = (double) ( (long *) xPvData[i] )[ii];
+                    dxValue = (double) ( (unsigned int *) xPvData[i] )[ii];
                   }
                   break;
                 case ProcessVariable::specificType::enumerated:
@@ -9891,10 +9961,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
               }
 
               if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-                dxValue = log10( dxValue );
+                dxValue = loc_log10(  dxValue  );
               }
               else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-                dxValue = log10( dxValue );
+                dxValue = loc_log10(  dxValue  );
               }
 
               scaledX = rint( ( dxValue - curXMin ) *
@@ -9956,7 +10026,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       curXMin = kpXMinEfDouble.value();
       if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
            ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
-        curXMin = log10(curXMin);
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        curXMin = loc_log10( curXMin );
       }
     }
 
@@ -9965,7 +10036,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       curXMax = kpXMaxEfDouble.value();
       if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
            ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
-        curXMax = log10(curXMax);
+        if ( curXMax <= 0 ) curXMax = 1e-1;
+        curXMax = loc_log10( curXMax );
       }
     }
 
@@ -9974,10 +10046,12 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( xAxisSource == XYGC_K_FROM_PV ) {
         curXMin = dbXMin[0];
         if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          curXMin = log10( curXMin );
+          if ( curXMin <= 0 ) curXMin = 1e-2;
+          curXMin = loc_log10(  curXMin  );
         }
         else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          curXMin = log10( curXMin );
+          if ( curXMin <= 0 ) curXMin = 1e-2;
+          curXMin = loc_log10(  curXMin  );
         }
       }
       else {
@@ -9990,10 +10064,12 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( xAxisSource == XYGC_K_FROM_PV ) {
         curXMax = dbXMax[0];
         if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          curXMax = log10( curXMax );
+          if ( curXMax <= 0 ) curXMax = 1e-1;
+          curXMax = loc_log10(  curXMax  );
         }
         else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          curXMax = log10( curXMax );
+          if ( curXMax <= 0 ) curXMax = 1e-1;
+          curXMax = loc_log10(  curXMax  );
         }
       }
       else {
@@ -10083,14 +10159,16 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       if ( !kpY1MinEfDouble[yi].isNull() ) {
         curY1Min[yi] = kpY1MinEfDouble[yi].value();
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          curY1Min[yi] = log10(curY1Min[yi]);
+          if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+          curY1Min[yi] = loc_log10( curY1Min[yi] );
         }
       }
 
       if ( !kpY1MaxEfDouble[yi].isNull() ) {
         curY1Max[yi] = kpY1MaxEfDouble[yi].value();
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          curY1Max[yi] = log10(curY1Max[yi]);
+          if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+          curY1Max[yi] = loc_log10( curY1Max[yi] );
         }
       }
 
@@ -10099,7 +10177,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( y1AxisSource[yi] == XYGC_K_FROM_PV ) {
           curY1Min[yi] = dbYMin[lowestYScaleIndex[yi]];
           if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-            curY1Min[yi] = log10( curY1Min[yi] );
+            if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+            curY1Min[yi] = loc_log10(  curY1Min[yi]  );
           }
         }
         else {
@@ -10112,7 +10191,8 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         if ( y1AxisSource[yi] == XYGC_K_FROM_PV ) {
           curY1Max[yi] = dbYMax[lowestYScaleIndex[yi]];
           if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-            curY1Max[yi] = log10( curY1Max[yi] );
+            if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+            curY1Max[yi] = loc_log10(  curY1Max[yi]  );
           }
         }
         else {
@@ -10244,12 +10324,16 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 	}
       }
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
       }
 
       if ( allChronological ) { // then autoscale X
@@ -10345,8 +10429,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           if ( ymax[yi] > curY1Max[yi] ) curY1Max[yi] = ymax[yi];
 	}
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          curY1Min[yi] = log10( curY1Min[yi] );
-          curY1Max[yi] = log10( curY1Max[yi] );
+          if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+          if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+          curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+          curY1Max[yi] = loc_log10(  curY1Max[yi]  );
 	}
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
@@ -10456,8 +10542,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         getYMinMax( yi, checkY1Min, checkY1Max );
 
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          checkY1Min[yi] = log10( checkY1Min[yi] );
-          checkY1Max[yi] = log10( checkY1Max[yi] );
+          if ( checkY1Min[yi] <= 0 ) checkY1Min[yi] = 1e-2;
+          if ( checkY1Max[yi] <= 0 ) checkY1Max[yi] = 1e-1;
+          checkY1Min[yi] = loc_log10(  checkY1Min[yi]  );
+          checkY1Max[yi] = loc_log10(  checkY1Max[yi]  );
 	}
 
         if ( checkY1Min[yi] != checkY1Max[yi] ) {
@@ -10499,8 +10587,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 	}
 
         if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-          curXMin = log10( curXMin );
-          curXMax = log10( curXMax );
+          if ( curXMin <= 0 ) curXMin = 1e-2;
+          if ( curXMax <= 0 ) curXMax = 1e-1;
+          curXMin = loc_log10(  curXMin  );
+          curXMax = loc_log10(  curXMax  );
           get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
@@ -10512,8 +10602,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           }
         }
         else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-          curXMin = log10( curXMin );
-          curXMax = log10( curXMax );
+          if ( curXMin <= 0 ) curXMin = 1e-2;
+          if ( curXMax <= 0 ) curXMax = 1e-1;
+          curXMin = loc_log10(  curXMin  );
+          curXMax = loc_log10(  curXMax  );
           get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
            &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
            format );
@@ -10570,8 +10662,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           anyRescale = 1;
 
           if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-            curY1Min[yi] = log10( curY1Min[yi] );
-            curY1Max[yi] = log10( curY1Max[yi] );
+            if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+            if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+            curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+            curY1Max[yi] = loc_log10(  curY1Max[yi]  );
             get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
              &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
              &curY1MinorsPerMajor[yi], format );
@@ -10640,8 +10734,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       }
 
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
         get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
          &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
          format );
@@ -10653,8 +10749,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         }
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
         get_log10_scale_params1( curXMin, curXMax, &adjCurXMin, &adjCurXMax,
          &curXNumLabelTicks, &curXMajorsPerLabel, &curXMinorsPerMajor,
          format );
@@ -10721,8 +10819,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
         anyRescale = 1;
 
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          curY1Min[yi] = log10( curY1Min[yi] );
-          curY1Max[yi] = log10( curY1Max[yi] );
+          if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+          if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+          curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+          curY1Max[yi] = loc_log10(  curY1Max[yi]  );
           get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
            &curY1NumLabelTicks[yi], &curY1MajorsPerLabel[yi],
            &curY1MinorsPerMajor[yi], format );
@@ -10877,12 +10977,16 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
 	}
       }
       if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
       }
       else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-        curXMin = log10( curXMin );
-        curXMax = log10( curXMax );
+        if ( curXMin <= 0 ) curXMin = 1e-2;
+        if ( curXMax <= 0 ) curXMax = 1e-1;
+        curXMin = loc_log10(  curXMin  );
+        curXMax = loc_log10(  curXMax  );
       }
 
       if ( allChronological ) { // then autoscale X
@@ -10965,8 +11069,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
           curY1Max[yi] = y1Max[yi].value();
 	}
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-          curY1Min[yi] = log10( curY1Min[yi] );
-          curY1Max[yi] = log10( curY1Max[yi] );
+          if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+          if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+          curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+          curY1Max[yi] = loc_log10(  curY1Max[yi]  );
 	}
         if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
           get_log10_scale_params1( curY1Min[yi], curY1Max[yi], &adjCurY1Min[yi], &adjCurY1Max[yi],
@@ -11014,12 +11120,16 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
     curXMin = xMin.value();
     curXMax = xMax.value();
     if ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) {
-      curXMin = log10( curXMin );
-      curXMax = log10( curXMax );
+      if ( curXMin <= 0 ) curXMin = 1e-2;
+      if ( curXMax <= 0 ) curXMax = 1e-1;
+      curXMin = loc_log10(  curXMin  );
+      curXMax = loc_log10(  curXMax  );
     }
     else if ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) {
-      curXMin = log10( curXMin );
-      curXMax = log10( curXMax );
+      if ( curXMin <= 0 ) curXMin = 1e-2;
+      if ( curXMax <= 0 ) curXMax = 1e-1;
+      curXMin = loc_log10(  curXMin  );
+      curXMax = loc_log10(  curXMax  );
     }
 
     for ( i=0; i<numTraces; i++ ) {
@@ -11033,8 +11143,10 @@ int autoScaleX=0, autoScaleY[NUM_Y_AXES];
       curY1Min[yi] = y1Min[yi].value();
       curY1Max[yi] = y1Max[yi].value();
       if ( y1AxisStyle[yi] == XYGC_K_AXIS_STYLE_LOG10 ) {
-        curY1Min[yi] = log10( curY1Min[yi] );
-        curY1Max[yi] = log10( curY1Max[yi] );
+        if ( curY1Min[yi] <= 0 ) curY1Min[yi] = 1e-2;
+        if ( curY1Max[yi] <= 0 ) curY1Max[yi] = 1e-1;
+        curY1Min[yi] = loc_log10(  curY1Min[yi]  );
+        curY1Max[yi] = loc_log10(  curY1Max[yi]  );
       }
 
       for ( i=0; i<numTraces; i++ ) {
@@ -11162,10 +11274,10 @@ short scaledX, scaledY;
   if ( ( dScaledX > 32767 ) ||
        ( dScaledX < -32768 ) ||
        ( dScaledY > 32767 ) ||
-       ( dScaledY < -32768 ) ) return;
+       ( dScaledY < -32767 ) ) return;
 
   scaledX = (short) dScaledX;
-  scaledY = (short) (isnan(dScaledY)?-32768:dScaledY);
+  scaledY = (short) dScaledY;
 
   if ( opMode[trace] == XYGC_K_SCOPE_MODE ) {
 
@@ -11173,7 +11285,7 @@ short scaledX, scaledY;
 
     plotInfo[trace][i].firstX = scaledX;
     plotInfo[trace][i].firstY = scaledY;
-    plotInfo[trace][i].yZero = scaledYZero;
+    plotInfo[trace][i].yZero = scaledYZero+6;
 
     i++;
     if ( i >= plotBufSize[trace] ) {// use plotBufSize here
@@ -11196,7 +11308,7 @@ short scaledX, scaledY;
       return;
     }
 
-    plotInfo[trace][scaledX].yZero = scaledYZero;
+    plotInfo[trace][scaledX].yZero = scaledYZero+6;
 
     if ( plotInfo[trace][scaledX].n == 0 ) {
 
@@ -11297,7 +11409,6 @@ double n;
         //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
         npts++;
 
-          if (curY > -32768) {
         plotBuf[trace][npts].x = prevX;
         plotBuf[trace][npts].y = prevY;
         npts++;
@@ -11306,7 +11417,7 @@ double n;
         plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
         //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
         npts++;
-          }
+
       }
 
       if ( !isVector ) {
@@ -11334,7 +11445,6 @@ double n;
           //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
 
-          if (curY > -32768) {
           plotBuf[trace][npts].x = curX;
           plotBuf[trace][npts].y = curY;
           npts++;
@@ -11343,7 +11453,6 @@ double n;
           plotBuf[trace][npts].y = plotInfo[trace][i].yZero;
           //plotBuf[trace][npts].y = plotAreaY+plotAreaH+11;
           npts++;
-          }
 
         }
 
@@ -11368,7 +11477,7 @@ double n;
           n = (double) npts;
           if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
                ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
-            n = log10( n );
+            n = loc_log10(  n  );
           }
           prevX = (short) rint( ( n - curXMin ) *
            xFactor[trace] + xOffset[trace] );
@@ -11399,7 +11508,7 @@ double n;
           n = (double) npts;
           if ( ( xAxisStyle == XYGC_K_AXIS_STYLE_LOG10 ) ||
                ( xAxisStyle == XYGC_K_AXIS_STYLE_TIME_LOG10 ) ) {
-            n = log10( n );
+            n = loc_log10(  n  );
           }
           curX = (short) rint( ( n - curXMin ) *
            xFactor[trace] + xOffset[trace] );

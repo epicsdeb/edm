@@ -1,3 +1,15 @@
+edm (1.12.98-2) unstable; urgency=medium
+
+  * fix bug with log10 plot
+
+ -- Joachim Rahn <Joachim.Rahn@helmholtz-berlin.de>  Mon, 26 Jan 2015 12:56:18 +0100
+
+edm (1.12.98-1) unstable; urgency=medium
+
+  * initial release of imported version 1.12.98 
+
+ -- Joachim Rahn <Joachim.Rahn@helmholtz-berlin.de>  Mon, 26 Jan 2015 12:37:38 +0100
+
 edm (1.12.85-6) unstable; urgency=low
 
   * debian/README.local-defs-setup added 

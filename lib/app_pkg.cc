@@ -2209,7 +2209,7 @@ char *sysMacros[] = {
   }
   else {
 
-    strcpy( buf, env_default_str5 );
+    strcpy( buf, "/etc/edm/" );
 
   }
 
@@ -4547,6 +4547,8 @@ static void displayParamInfo ( void ) {
   fprintf( stderr, global_str151 );
   fprintf( stderr, "\n" );
   fprintf( stderr, global_str152 );
+  fprintf( stderr, "\n" );
+  fprintf( stderr, global_str155 );
   fprintf( stderr, "\n" );
 
 }

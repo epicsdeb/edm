@@ -1,3 +1,12 @@
+edm (1.12.98-3) unstable; urgency=low
+
+  * Convert to source format 3.0 (quilt)
+  * Patches to fix default search location for
+    default.scheme, calc.list, and help files.
+    Also log10 xy-plot fix
+
+ -- Michael Davidsaver <mdavidsaver@mddesk.nsls2.bnl.gov>  Fri, 13 Feb 2015 13:52:48 -0500
+
 edm (1.12.98-2) unstable; urgency=medium
 
   * fix bug with log10 plot

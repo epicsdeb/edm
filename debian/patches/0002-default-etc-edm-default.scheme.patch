@@ -1,0 +1,25 @@
+From: Michael Davidsaver <mdavidsaver@bnl.gov>
+Date: Fri, 13 Feb 2015 11:07:22 -0500
+Subject: default /etc/edm/default.scheme
+
+---
+ lib/scheme.cc | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/lib/scheme.cc b/lib/scheme.cc
+index 7d18e03..df28ebb 100644
+--- a/lib/scheme.cc
++++ b/lib/scheme.cc
+@@ -76,6 +76,12 @@ unsigned int pixel;
+   else {
+ 
+     f = fopen( "./default.scheme", "r" );
++
++  }
++
++  if (!f) {
++
++    f = fopen( "/etc/edm/default.scheme", "r" );
+     if ( !f ) return 0;
+ 
+   }

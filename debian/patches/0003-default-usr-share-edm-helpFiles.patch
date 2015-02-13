@@ -1,0 +1,48 @@
+From: Michael Davidsaver <mdavidsaver@bnl.gov>
+Date: Fri, 13 Feb 2015 11:07:55 -0500
+Subject: default /usr/share/edm/helpFiles/
+
+---
+ lib/act_win.cc      | 2 +-
+ lib/app_pkg.cc      | 2 +-
+ lib/environment.str | 1 +
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/lib/act_win.cc b/lib/act_win.cc
+index 3267d6f..b6675e1 100644
+--- a/lib/act_win.cc
++++ b/lib/act_win.cc
+@@ -23202,7 +23202,7 @@ char *sysMacros[] = {
+   }
+   else {
+ 
+-    strcpy( buf, "/etc/edm/" );
++    strcpy( buf, env_default_str5 );
+ 
+   }
+ 
+diff --git a/lib/app_pkg.cc b/lib/app_pkg.cc
+index 841c160..354261e 100644
+--- a/lib/app_pkg.cc
++++ b/lib/app_pkg.cc
+@@ -2209,7 +2209,7 @@ char *sysMacros[] = {
+   }
+   else {
+ 
+-    strcpy( buf, "/etc/edm/" );
++    strcpy( buf, env_default_str5 );
+ 
+   }
+ 
+diff --git a/lib/environment.str b/lib/environment.str
+index 86c35b7..b417904 100644
+--- a/lib/environment.str
++++ b/lib/environment.str
+@@ -8,6 +8,7 @@
+ #define environment_str3 (char *) "EDMOBJECTS"
+ #define environment_str4 (char *) "EDMPVOBJECTS"
+ #define environment_str5 (char *) "EDMHELPFILES"
++#define env_default_str5 (char *) "/usr/share/edm/helpFiles/"
+ #define environment_str6 (char *) "EDMUSERLIB"
+ #define environment_str7 (char *) "EDMPRINTDEF"
+ #define environment_str8 (char *) "EDMTMPFILES"

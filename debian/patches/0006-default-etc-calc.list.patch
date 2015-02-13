@@ -1,0 +1,22 @@
+From: Michael Davidsaver <mdavidsaver@bnl.gov>
+Date: Fri, 13 Feb 2015 11:31:29 -0500
+Subject: default /etc/calc.list
+
+---
+ calcPv/calc_pv_factory.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/calcPv/calc_pv_factory.cc b/calcPv/calc_pv_factory.cc
+index 2aecf8b..7897ca3 100644
+--- a/calcPv/calc_pv_factory.cc
++++ b/calcPv/calc_pv_factory.cc
+@@ -810,7 +810,8 @@ CALC_PV_Factory::CALC_PV_Factory()
+           }
+         }
+         else {
+-          parseFile(CALC_FILENAME);
++          if(!parseFile(CALC_FILENAME))
++            parseFile("/etc/" CALC_FILENAME);
+         }
+       }
+     }

@@ -1,0 +1,7 @@
+0001-fix-TOP.patch
+0002-default-etc-edm-default.scheme.patch
+0003-default-usr-share-edm-helpFiles.patch
+0004-fixup-font-list-for-Debian.patch
+0005-fix-bug-with-log10-xy-plot.patch
+0006-default-etc-calc.list.patch
+0007-motif-and-X-libraries-in-system-path.patch

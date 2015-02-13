@@ -1,0 +1,439 @@
+From: Michael Davidsaver <mdavidsaver@bnl.gov>
+Date: Fri, 13 Feb 2015 13:15:19 -0500
+Subject: motif and X libraries in system path
+
+---
+ archivePlot/Makefile.Host        | 2 +-
+ baselib/Makefile                 | 2 +-
+ baselib/Makefile.Host            | 2 +-
+ calcPv/Makefile                  | 2 +-
+ calcPvOld/Makefile               | 2 +-
+ choiceButton/Makefile            | 2 +-
+ choiceButton/Makefile.Host       | 3 ++-
+ diamondlib/Makefile              | 2 +-
+ edmMain/Makefile                 | 2 +-
+ edmMain/Makefile.Host            | 3 ++-
+ epicsPv/Makefile                 | 2 +-
+ giflib/Makefile                  | 2 +-
+ giflib/Makefile.Host             | 3 ++-
+ html/Makefile.Host               | 3 ++-
+ imagelib/Makefile.Host           | 3 ++-
+ indicator/Makefile               | 2 +-
+ lib/Makefile                     | 2 +-
+ lib/Makefile.Host                | 4 ++--
+ locPv/Makefile                   | 2 +-
+ locPvOld/Makefile                | 2 +-
+ logPv/Makefile                   | 2 +-
+ multiSegRampButton/Makefile      | 2 +-
+ multiSegRampButton/Makefile.Host | 3 ++-
+ pnglib/Makefile                  | 2 +-
+ pnglib/Makefile.Host             | 3 ++-
+ slaclib/Makefile                 | 2 +-
+ triumflib/Makefile               | 2 +-
+ triumflib/Makefile.Host          | 3 ++-
+ userLib/Makefile                 | 2 +-
+ userLib/Makefile.Host            | 3 ++-
+ 30 files changed, 40 insertions(+), 31 deletions(-)
+
+diff --git a/archivePlot/Makefile.Host b/archivePlot/Makefile.Host
+index d4ec1a7..84097fa 100755
+--- a/archivePlot/Makefile.Host
++++ b/archivePlot/Makefile.Host
+@@ -10,7 +10,7 @@ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ USR_CXXFLAGS_Linux += -g -O0
+ 
+   
+-USR_LIBS_Linux = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
++USR_SYS_LIBS_Linux = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
+ 
+   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+   USR_LIBS_solaris = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
+diff --git a/baselib/Makefile b/baselib/Makefile
+index d04116e..3426b4d 100644
+--- a/baselib/Makefile
++++ b/baselib/Makefile
+@@ -12,7 +12,7 @@ ifdef EPICS_HOST_ARCH
+ 
+    USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-   EdmBase_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmBase_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmBase_SYS_LIBS_Linux += pthread dl
+ 
+    EdmBase_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/baselib/Makefile.Host b/baselib/Makefile.Host
+index c59c2f0..e8aeace 100755
+--- a/baselib/Makefile.Host
++++ b/baselib/Makefile.Host
+@@ -10,7 +10,7 @@ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ USR_CXXFLAGS_Linux += -g -O0
+ 
+   
+-USR_LIBS_Linux = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
++USR_SYS_LIBS_Linux = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
+ 
+   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+   USR_LIBS_solaris = cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt
+diff --git a/calcPv/Makefile b/calcPv/Makefile
+index 2eda1a3..6e5b500 100644
+--- a/calcPv/Makefile
++++ b/calcPv/Makefile
+@@ -12,7 +12,7 @@ ifdef EPICS_HOST_ARCH
+ 
+    USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-   EdmBase_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmBase_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmBase_SYS_LIBS_Linux += pthread dl
+ 
+    EdmBase_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/calcPvOld/Makefile b/calcPvOld/Makefile
+index a76c709..1c0f9ad 100644
+--- a/calcPvOld/Makefile
++++ b/calcPvOld/Makefile
+@@ -12,7 +12,7 @@ ifdef EPICS_HOST_ARCH
+ 
+    USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-   EdmBase_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmBase_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmBase_SYS_LIBS_Linux += pthread dl
+ 
+    EdmBase_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/choiceButton/Makefile b/choiceButton/Makefile
+index 72bcaa7..450174c 100644
+--- a/choiceButton/Makefile
++++ b/choiceButton/Makefile
+@@ -8,7 +8,7 @@ ifdef EPICS_HOST_ARCH
+    USR_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+ 
+    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
+-   USR_LIBS_Linux += Xm Xt Xp Xtst X11
++   USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    USR_SYS_LIBS_Linux += pthread dl
+    
+    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-long-long
+diff --git a/choiceButton/Makefile.Host b/choiceButton/Makefile.Host
+index 7cc2e23..1ddcc2c 100755
+--- a/choiceButton/Makefile.Host
++++ b/choiceButton/Makefile.Host
+@@ -7,7 +7,8 @@ SHARED_LIBRARIES=YES
+ USR_CXXFLAGS_Linux += -g -O0
+ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
++USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
++USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
+ 
+ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+diff --git a/diamondlib/Makefile b/diamondlib/Makefile
+index e9a1739..87849ca 100644
+--- a/diamondlib/Makefile
++++ b/diamondlib/Makefile
+@@ -13,7 +13,7 @@ ifdef EPICS_HOST_ARCH
+    EdmDiamond_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+    EdmDiamond_LIBS += Com
+ 
+-   EdmDiamond_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmDiamond_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmDiamond_SYS_LIBS_Linux += pthread dl
+ 
+    EdmDiamond_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/edmMain/Makefile b/edmMain/Makefile
+index 9d10065..6496d3d 100644
+--- a/edmMain/Makefile
++++ b/edmMain/Makefile
+@@ -13,7 +13,7 @@ ifdef EPICS_HOST_ARCH
+    edm_LIBS += cfcaa62e-8199-11d3-a77f-00104b8742df 
+    edm_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+ 
+-   edm_LIBS_Linux += Xm Xmu Xt Xp Xtst X11
++   edm_SYS_LIBS_Linux += Xm Xmu Xt Xp Xtst X11
+    edm_SYS_LIBS_Linux += pthread dl
+    
+    edm_LIBS_Darwin += Xm Xmu Xt Xp Xtst X11
+diff --git a/edmMain/Makefile.Host b/edmMain/Makefile.Host
+index 40d9a91..b3875cd 100755
+--- a/edmMain/Makefile.Host
++++ b/edmMain/Makefile.Host
+@@ -7,7 +7,8 @@ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ # Add Debugging
+ USR_CXXFLAGS_Linux += -g -O0
+ 
+-USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 114135a4-6f6c-11d3-95bc-00104b8742df Xm Xmu Xt Xp Xtst X11 pthread dl
++USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 114135a4-6f6c-11d3-95bc-00104b8742df
++USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
+ 
+ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+diff --git a/epicsPv/Makefile b/epicsPv/Makefile
+index 94d9dda..28ede07 100644
+--- a/epicsPv/Makefile
++++ b/epicsPv/Makefile
+@@ -12,7 +12,7 @@ ifdef EPICS_HOST_ARCH
+ 
+    USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-   EdmBase_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmBase_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmBase_SYS_LIBS_Linux += pthread dl
+ 
+    EdmBase_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/giflib/Makefile b/giflib/Makefile
+index 77a00ff..fff1d0d 100644
+--- a/giflib/Makefile
++++ b/giflib/Makefile
+@@ -20,7 +20,7 @@ GIF_INC ?= /usr/include
+    USR_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+    USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+ 
+-   USR_LIBS_Linux += Xm Xt Xp Xtst X11
++   USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    USR_SYS_LIBS_Linux += pthread dl ungif gif
+ 
+    USR_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/giflib/Makefile.Host b/giflib/Makefile.Host
+index 389c9cc..b04ba6c 100755
+--- a/giflib/Makefile.Host
++++ b/giflib/Makefile.Host
+@@ -10,7 +10,8 @@ USR_CXXFLAGS_Linux += -g -O0
+ 
+ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl ungif
++USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
++USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
+ 
+ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+diff --git a/html/Makefile.Host b/html/Makefile.Host
+index ec25073..e2411ea 100755
+--- a/html/Makefile.Host
++++ b/html/Makefile.Host
+@@ -7,7 +7,8 @@ IMAGELIB=/usr/local
+ 
+ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xpm Xtst X11 pthread dl html
++USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
++USR_SYS_LIBS_Linux += Xm Xt Xp Xpm Xtst X11 pthread dl html
+ 
+ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+diff --git a/imagelib/Makefile.Host b/imagelib/Makefile.Host
+index cf1b4c0..8106e96 100755
+--- a/imagelib/Makefile.Host
++++ b/imagelib/Makefile.Host
+@@ -7,7 +7,8 @@ IMAGELIB=/usr/local
+ 
+ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl gif png
++USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
++USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl gif png
+ 
+ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+diff --git a/indicator/Makefile b/indicator/Makefile
+index 6b02bba..407c020 100644
+--- a/indicator/Makefile
++++ b/indicator/Makefile
+@@ -8,7 +8,7 @@ ifdef EPICS_HOST_ARCH
+    USR_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+ 
+    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
+-   USR_LIBS_Linux += Xm Xt Xp Xtst X11
++   USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    USR_SYS_LIBS_Linux += pthread dl
+    
+    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-long-long
+diff --git a/lib/Makefile b/lib/Makefile
+index c82a701..d4ca686 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -24,7 +24,7 @@ ifdef EPICS_HOST_ARCH
+   USR_LIBS_Darwin += Xm Xt Xp Xtst X11
+   USR_SYS_LIBS_Darwin += pthread dl
+ 
+-  USR_LIBS_Linux += Xm Xt Xp Xtst X11
++  USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+   USR_SYS_LIBS_Linux += pthread dl
+ 
+   USR_LIBS_solaris += Xm Xt Xmu X11 Xext
+diff --git a/lib/Makefile.Host b/lib/Makefile.Host
+index dce1bf3..9e1b6a9 100755
+--- a/lib/Makefile.Host
++++ b/lib/Makefile.Host
+@@ -19,9 +19,9 @@ USR_CXXFLAGS_Linux += -g -O0
+ 
+ 
+ ifeq ($(USE_CURL), YES)
+-	USR_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl curl
++	USR_SYS_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl curl
+ else
+-	USR_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl
++	USR_SYS_LIBS_Linux = Xm Xt Xp Xtst X11 pthread dl
+ endif
+ 
+ 
+diff --git a/locPv/Makefile b/locPv/Makefile
+index 2fbbfe8..f1ffe11 100644
+--- a/locPv/Makefile
++++ b/locPv/Makefile
+@@ -12,7 +12,7 @@ ifdef EPICS_HOST_ARCH
+ 
+    USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-   EdmBase_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmBase_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmBase_SYS_LIBS_Linux += pthread dl
+ 
+    EdmBase_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/locPvOld/Makefile b/locPvOld/Makefile
+index fd11710..f29a800 100644
+--- a/locPvOld/Makefile
++++ b/locPvOld/Makefile
+@@ -12,7 +12,7 @@ ifdef EPICS_HOST_ARCH
+ 
+    USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-   EdmBase_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmBase_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmBase_SYS_LIBS_Linux += pthread dl
+ 
+    EdmBase_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/logPv/Makefile b/logPv/Makefile
+index 9565bdd..7334ae3 100644
+--- a/logPv/Makefile
++++ b/logPv/Makefile
+@@ -12,7 +12,7 @@ ifdef EPICS_HOST_ARCH
+ 
+    USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-   EdmBase_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmBase_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmBase_SYS_LIBS_Linux += pthread dl
+ 
+    EdmBase_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/multiSegRampButton/Makefile b/multiSegRampButton/Makefile
+index 106b2c5..f82df28 100644
+--- a/multiSegRampButton/Makefile
++++ b/multiSegRampButton/Makefile
+@@ -8,7 +8,7 @@ ifdef EPICS_HOST_ARCH
+    USR_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+ 
+    USR_CXXFLAGS_Linux += -DSINGLE_THREADED=1 -D__epics__=1
+-   USR_LIBS_Linux += Xm Xt Xp Xtst X11
++   USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    USR_SYS_LIBS_Linux += pthread dl
+    
+    USR_CXXFLAGS_Darwin += -DSINGLE_THREADED=1 -D__epics__=1 -Wno-long-long
+diff --git a/multiSegRampButton/Makefile.Host b/multiSegRampButton/Makefile.Host
+index 815c42e..9917ccd 100755
+--- a/multiSegRampButton/Makefile.Host
++++ b/multiSegRampButton/Makefile.Host
+@@ -7,7 +7,8 @@ SHARED_LIBRARIES=YES
+ USR_CXXFLAGS_Linux += -g -O0
+ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
++USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
++USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
+ 
+ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+diff --git a/pnglib/Makefile b/pnglib/Makefile
+index 2f00353..06b72bd 100644
+--- a/pnglib/Makefile
++++ b/pnglib/Makefile
+@@ -21,7 +21,7 @@ PNG_INC=/usr/include
+    USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+    USR_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+ 
+-   USR_LIBS_Linux += Xm Xt Xp Xtst X11
++   USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    USR_SYS_LIBS_Linux += pthread dl png z
+ 
+    USR_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/pnglib/Makefile.Host b/pnglib/Makefile.Host
+index 9f54d32..54b709f 100755
+--- a/pnglib/Makefile.Host
++++ b/pnglib/Makefile.Host
+@@ -10,7 +10,8 @@ IMAGELIB=/usr/local
+ USR_CXXFLAGS_Linux += -g -O0
+ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl png
++USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df 
++USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl png
+ 
+ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+diff --git a/slaclib/Makefile b/slaclib/Makefile
+index 0332918..084f1b7 100644
+--- a/slaclib/Makefile
++++ b/slaclib/Makefile
+@@ -13,7 +13,7 @@ ifdef EPICS_HOST_ARCH
+    EdmSlac_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+    EdmSlac_LIBS += Com
+ 
+-   EdmSlac_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmSlac_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmSlac_SYS_LIBS_Linux += pthread dl
+ 
+    EdmSlac_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/triumflib/Makefile b/triumflib/Makefile
+index 56a56a7..74d358c 100644
+--- a/triumflib/Makefile
++++ b/triumflib/Makefile
+@@ -13,7 +13,7 @@ ifdef EPICS_HOST_ARCH
+    EdmTriumf_LIBS += EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
+    EdmTriumf_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+ 
+-   EdmTriumf_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmTriumf_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmTriumf_SYS_LIBS_Linux += pthread dl
+    
+    EdmTriumf_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/triumflib/Makefile.Host b/triumflib/Makefile.Host
+index 610e37b..8ab5d93 100755
+--- a/triumflib/Makefile.Host
++++ b/triumflib/Makefile.Host
+@@ -10,7 +10,8 @@ IMAGELIB=/usr/local
+ USR_CXXFLAGS_Linux += -g -O0
+ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xp Xtst X11 pthread dl
++USR_LIBS_Linux = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df
++USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
+ 
+ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+diff --git a/userLib/Makefile b/userLib/Makefile
+index 2101870..ebda190 100644
+--- a/userLib/Makefile
++++ b/userLib/Makefile
+@@ -12,7 +12,7 @@ ifdef EPICS_HOST_ARCH
+ 
+    USR_CXXFLAGS_hpux11_11_mt += +W652 -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-   EdmBase_LIBS_Linux += Xm Xt Xp Xtst X11
++   EdmBase_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+    EdmBase_SYS_LIBS_Linux += pthread dl
+ 
+    EdmBase_LIBS_Darwin += Xm Xt Xp Xtst X11
+diff --git a/userLib/Makefile.Host b/userLib/Makefile.Host
+index d72be8f..65de20e 100755
+--- a/userLib/Makefile.Host
++++ b/userLib/Makefile.Host
+@@ -9,7 +9,8 @@ USR_CXXFLAGS_Linux += -D__linux__ -DSINGLE_THREADED=1 -D__epics__=1
+ # Add Debugging
+ USR_CXXFLAGS_Linux += -g -O0
+ 
+-USR_LIBS_Linux = 114135a4-6f6c-11d3-95bc-00104b8742df Xm Xt Xp Xtst X11 pthread dl
++USR_LIBS_Linux = 114135a4-6f6c-11d3-95bc-00104b8742df
++USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
+ 
+   USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+   USR_LIBS_solaris = 114135a4-6f6c-11d3-95bc-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt

@@ -1,0 +1,286 @@
+From: Michael Davidsaver <mdavidsaver@bnl.gov>
+Date: Fri, 13 Feb 2015 11:06:11 -0500
+Subject: fix TOP
+
+---
+ Makefile                    | 4 ++--
+ archivePlot/Makefile        | 2 +-
+ baselib/Makefile            | 2 +-
+ calcPv/Makefile             | 2 +-
+ choiceButton/Makefile       | 2 +-
+ diamondlib/Makefile         | 2 +-
+ edmMain/Makefile            | 2 +-
+ epicsPv/Makefile            | 2 +-
+ giflib/Makefile             | 2 +-
+ html/Makefile               | 2 +-
+ imagelib/Makefile           | 2 +-
+ indicator/Makefile          | 2 +-
+ lib/Makefile                | 2 +-
+ locPv/Makefile              | 2 +-
+ logPv/Makefile              | 2 +-
+ moveLibs/Makefile           | 2 +-
+ multiSegRampButton/Makefile | 2 +-
+ pnglib/Makefile             | 2 +-
+ pvFactory/Makefile          | 2 +-
+ slaclib/Makefile            | 2 +-
+ triumflib/Makefile          | 2 +-
+ userLib/Makefile            | 2 +-
+ util/Makefile               | 4 ++--
+ videowidget/Makefile        | 2 +-
+ 24 files changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 51e4fd4..e360fb0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,5 +1,5 @@
+ # Makefile for edm top level
+-TOP = ../..
++TOP = .
+ ifdef EPICS_HOST_ARCH
+  include $(TOP)/configure/CONFIG
+  DIRS += util 
+@@ -23,7 +23,7 @@ ifdef EPICS_HOST_ARCH
+  include $(TOP)/configure/RULES_DIRS
+ 
+ else
+-    TOP = ../..
++    TOP = .
+     ifneq ($(wildcard $(TOP)/config)x,x)
+       # New Makefile.Host config file location
+       include $(TOP)/config/CONFIG_EXTENSIONS
+diff --git a/archivePlot/Makefile b/archivePlot/Makefile
+index 8acd5f6..6268227 100644
+--- a/archivePlot/Makefile
++++ b/archivePlot/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifneq ($(wildcard $(TOP)/config)x,x)
+   # New Makefile.Host config file location
+   include $(TOP)/config/CONFIG_EXTENSIONS
+diff --git a/baselib/Makefile b/baselib/Makefile
+index 0fc0bd0..d04116e 100644
+--- a/baselib/Makefile
++++ b/baselib/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/calcPv/Makefile b/calcPv/Makefile
+index c9caac8..2eda1a3 100644
+--- a/calcPv/Makefile
++++ b/calcPv/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/choiceButton/Makefile b/choiceButton/Makefile
+index 853cd9e..72bcaa7 100644
+--- a/choiceButton/Makefile
++++ b/choiceButton/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+    
+diff --git a/diamondlib/Makefile b/diamondlib/Makefile
+index 9647e19..e9a1739 100644
+--- a/diamondlib/Makefile
++++ b/diamondlib/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/edmMain/Makefile b/edmMain/Makefile
+index 23f4529..9d10065 100644
+--- a/edmMain/Makefile
++++ b/edmMain/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/epicsPv/Makefile b/epicsPv/Makefile
+index 1945ee4..94d9dda 100644
+--- a/epicsPv/Makefile
++++ b/epicsPv/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/giflib/Makefile b/giflib/Makefile
+index 91698be..77a00ff 100644
+--- a/giflib/Makefile
++++ b/giflib/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/html/Makefile b/html/Makefile
+index 8acd5f6..6268227 100644
+--- a/html/Makefile
++++ b/html/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifneq ($(wildcard $(TOP)/config)x,x)
+   # New Makefile.Host config file location
+   include $(TOP)/config/CONFIG_EXTENSIONS
+diff --git a/imagelib/Makefile b/imagelib/Makefile
+index 8acd5f6..6268227 100644
+--- a/imagelib/Makefile
++++ b/imagelib/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifneq ($(wildcard $(TOP)/config)x,x)
+   # New Makefile.Host config file location
+   include $(TOP)/config/CONFIG_EXTENSIONS
+diff --git a/indicator/Makefile b/indicator/Makefile
+index f5b6dd2..6b02bba 100644
+--- a/indicator/Makefile
++++ b/indicator/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+    
+diff --git a/lib/Makefile b/lib/Makefile
+index 389b82b..c82a701 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+   #HOST_OPT=NO
+diff --git a/locPv/Makefile b/locPv/Makefile
+index bc00436..2fbbfe8 100644
+--- a/locPv/Makefile
++++ b/locPv/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/logPv/Makefile b/logPv/Makefile
+index 195d06f..9565bdd 100644
+--- a/logPv/Makefile
++++ b/logPv/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/moveLibs/Makefile b/moveLibs/Makefile
+index 873516c..0916f6c 100644
+--- a/moveLibs/Makefile
++++ b/moveLibs/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifneq ($(wildcard $(TOP)/config)x,x)
+   # New Makefile.Host config file location
+   include $(TOP)/config/CONFIG_EXTENSIONS
+diff --git a/multiSegRampButton/Makefile b/multiSegRampButton/Makefile
+index c9ffa0d..106b2c5 100644
+--- a/multiSegRampButton/Makefile
++++ b/multiSegRampButton/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+    
+diff --git a/pnglib/Makefile b/pnglib/Makefile
+index b386b0a..2f00353 100644
+--- a/pnglib/Makefile
++++ b/pnglib/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+ 
+   include $(TOP)/configure/CONFIG
+diff --git a/pvFactory/Makefile b/pvFactory/Makefile
+index 73c2782..0d175f8 100644
+--- a/pvFactory/Makefile
++++ b/pvFactory/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/slaclib/Makefile b/slaclib/Makefile
+index 03f99a0..0332918 100644
+--- a/slaclib/Makefile
++++ b/slaclib/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/triumflib/Makefile b/triumflib/Makefile
+index 546f668..56a56a7 100644
+--- a/triumflib/Makefile
++++ b/triumflib/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/userLib/Makefile b/userLib/Makefile
+index 9f50db3..2101870 100644
+--- a/userLib/Makefile
++++ b/userLib/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+ 
+diff --git a/util/Makefile b/util/Makefile
+index f036fcb..509623d 100644
+--- a/util/Makefile
++++ b/util/Makefile
+@@ -1,8 +1,8 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+ include $(TOP)/configure/CONFIG
+ 
+-EDMTOP = $(TOP)/src/edm
++EDMTOP = $(TOP)
+ 
+ SHARED_LIBRARIES = YES
+ 
+diff --git a/videowidget/Makefile b/videowidget/Makefile
+index 779c37f..1a523d9 100644
+--- a/videowidget/Makefile
++++ b/videowidget/Makefile
+@@ -1,4 +1,4 @@
+-TOP = ../../..
++TOP = ./..
+ ifdef EPICS_HOST_ARCH
+   include $(TOP)/configure/CONFIG
+   #HOST_OPT=NO

@@ -1,0 +1,192 @@
+From: Michael Davidsaver <mdavidsaver@bnl.gov>
+Date: Fri, 13 Feb 2015 11:08:14 -0500
+Subject: fixup font list for Debian
+
+---
+ contrib/fontparse.py | 147 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ edmMain/fonts.list   |  16 +++---
+ 2 files changed, 155 insertions(+), 8 deletions(-)
+ create mode 100755 contrib/fontparse.py
+
+diff --git a/contrib/fontparse.py b/contrib/fontparse.py
+new file mode 100755
+index 0000000..1137ec8
+--- /dev/null
++++ b/contrib/fontparse.py
+@@ -0,0 +1,147 @@
++#!/usr/bin/env python
++
++# EDM magic font script
++# Michael Davidsaver <mdavidsaver@bnl.gov>
++# 20091113
++#
++# $ cat << EOF > fonts.list
++# 3 0 0
++# helvetica-medium-r-12.0
++# helvetica-medium-r-18.0
++# EOF
++# $ xlsfonts -fn '-*-*-*-*-*-*-*-*-75-75-*-*-*-*' | ./fontparse.py >> fonts.list
++#
++
++import sys,re
++from collections import defaultdict
++
++inp=sys.stdin
++outp=sys.stdout
++
++xfontpat='-([^-]*)'
++xfont=re.compile(xfontpat)
++
++#print >>sys.stderr, 'Matching',xfontpat
++
++fset = defaultdict(list)
++
++# read and store by family
++
++melem=0
++for line in inp.readlines():
++
++	#remove '\n'
++	line=line[:-1]
++
++	spec = xfont.findall(line)
++
++	if len(spec)<14:
++#		print >>sys.stderr, 'invalid spec?',line
++		continue
++
++	fset[spec[1]].append(spec)
++	melem=max(melem, len(spec))
++
++#	print >>sys.stderr, spec
++
++print >>sys.stderr, 'Found',len(fset.keys()),'Families'
++for family in fset.keys():
++
++	print >>sys.stderr, '\nfamily',family,'has',len(fset[family]),'fonts'
++	
++	# These aren't practically usable
++	if len(fset[family]) < 32:
++		print >>sys.stderr, "Too small, skipping..."
++		del fset[family]
++
++
++# digest and group be field
++
++for family in fset.keys():
++
++	fspecs = map(lambda x:set(),range(melem))
++
++	for fn in fset[family]:
++#		print fn
++		for i in range(len(fn)):
++#			print i,fn[i],fspecs[i]
++			fspecs[i].add(fn[i])
++
++	fspecs=map(list,fspecs)
++
++	# X11 font spec
++	#   fields
++	# 0 - foundry
++	# 1 - family (ie times or helvetica)
++	# 2 - weight (bold)
++	# 3 - slant (r = normal,i , o)
++	# 4 - setwidth (normal, condensed)
++	# 5 - addedstyle (usually empty '')
++	# 6 - pixelsize (usually all '*')
++	# 7 - point size
++	# 8 - resx  (75 or 100)
++	# 9 - resy
++	#10 - space (m = mono, p = propor, c = cell)
++	#11 - average width
++	#12 - registry
++	#13 - encoding
++
++	# -*-*-*-*-*-*-*-*-75-75-*-*-*-*
++
++	fspecs[0]=['*']
++
++	# ensure that the ordering is correct
++	slant=[]
++	for s in 'rio':
++		if s in fspecs[3]:
++			slant.append(s)
++	fspecs[3]=slant
++
++	#fspecs[5]=['']
++	fspecs[6]=['*']
++	fspecs[11]=['*']
++	fspecs[12]=['*']
++	fspecs[13]=['*']
++
++	# EDM likes only 75 dpi fonts
++
++	fspecs[8]=['75']
++	fspecs[9]=['75']
++
++	# sort numeric fields and remove 0's
++
++	for i in [7]:
++		d=fspecs[i]
++
++		val=map(int,d)
++		val.sort()
++		val=filter(lambda x:x!=0,val)
++		d=map(str,val)
++
++		fspecs[i]=d
++
++	#print fspecs
++
++
++	# Create the spec line
++	# -*-*-*-*-*-...
++	ln=''
++	for field in fspecs:
++
++		ln=ln+'-'
++
++		if len(field)==0:
++			# empty fields '--'
++			pass
++		elif len(field)==1:
++			# single fields '-val-'
++			ln=ln+str(field[0])
++		else:
++			# group fields '-(a,b,c)-'
++			s=reduce(lambda a,b:a+b, map(lambda x:x+',',field),'')
++			s=s[:-1] # drop last ','
++			ln=ln+'(%s)' % s
++
++#	print ln
++
++	outp.write('%s=%s\n'%(family,ln))
+diff --git a/edmMain/fonts.list b/edmMain/fonts.list
+index e7226ac..6939c01 100644
+--- a/edmMain/fonts.list
++++ b/edmMain/fonts.list
+@@ -2,16 +2,16 @@
+ helvetica-medium-r-12.0
+ helvetica-medium-r-18.0
+ 
+-helvetica={
+--*-helvetica-(medium,bold)-(r,o)-normal--0-(80,100,120,140,180,240,320,480,720)-75-75-p-0-*-*
+--*-helvetica-(medium,bold)-(r,o)-normal--*-(80,100,120,140,180,240,320,480,720)-75-75-p-*-*-*
+-}
++charter=-*-charter-(medium,bold)-(r,i)-normal--*-(80,100,120,140,180,240)-75-75-p-*-*-*
+ 
+-utopia=-*-utopia-(medium,bold)-(r,i)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-p-0-*-*
++helvetica=-*-helvetica-(medium,bold)-(r,o)-normal--*-(80,100,120,140,180,240)-75-75-p-*-*-*
+ 
+-new century schoolbook=-*-century schoolbook l-(medium,bold)-(r,i)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-p-0-*-*
++new century schoolbook=-*-new century schoolbook-(medium,bold)-(r,i)-normal--*-(80,100,120,140,180,240)-75-75-p-*-*-*
+ 
+-times=-*-times-(medium,bold)-(r,i)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-p-0-*-*
++lucidabright=-*-lucidabright-(medium,demibold)-(r,i)-normal--*-(80,100,120,140,180,190,240)-75-75-p-*-*-*
+ 
+-courier=-*-courier-(medium,bold)-(r,o)-normal--0-(80,90,100,110,120,140,180,240,320,480,720)-75-75-*-0-*-*
++lucida=-*-lucida-(medium,bold)-(r,i)-normal-sans-*-(80,100,120,140,180,190,240)-75-75-p-*-*-*
+ 
++courier=-*-courier-(medium,bold)-(r,o)-normal--*-(80,100,120,140,180,240)-75-75-m-*-*-*
++
++times=-*-times-(medium,bold)-(r,i)-normal--*-(80,100,120,140,180,240)-75-75-p-*-*-*

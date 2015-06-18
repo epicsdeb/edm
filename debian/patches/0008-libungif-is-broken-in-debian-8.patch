@@ -1,0 +1,70 @@
+From: Michael Davidsaver <mdavidsaver@bnl.gov>
+Date: Thu, 18 Jun 2015 16:50:50 -0400
+Subject: libungif is broken in debian 8
+
+/usr/lib/libungif.so is a symlink to libgif.so.4.1.6
+however, this library was moved to /usr/lib/<multiarch>/libgif.so.4.1.6
+
+Can just be dropped in favor of libgif now anyway.
+---
+ giflib/Makefile        | 8 ++++----
+ giflib/Makefile.Host   | 4 ++--
+ imagelib/Makefile.Host | 2 +-
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/giflib/Makefile b/giflib/Makefile
+index fff1d0d..09aeaaf 100644
+--- a/giflib/Makefile
++++ b/giflib/Makefile
+@@ -21,16 +21,16 @@ GIF_INC ?= /usr/include
+    USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
+ 
+    USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
+-   USR_SYS_LIBS_Linux += pthread dl ungif gif
++   USR_SYS_LIBS_Linux += pthread dl gif
+ 
+    USR_LIBS_Darwin += Xm Xt Xp Xtst X11
+-   USR_SYS_LIBS_Darwin += pthread dl ungif gif
++   USR_SYS_LIBS_Darwin += pthread dl gif
+ 
+    USR_LIBS_solaris += Xm Xt Xmu X11 Xext
+-   USR_SYS_LIBS_solaris += pthread dl rt ungif gif
++   USR_SYS_LIBS_solaris += pthread dl rt gif
+ 
+    USR_LIBS_hpux11_11_mt = Xm Xt X11 Xext
+-   USR_SYS_LIBS_hpux11_11_mt = pthread ungif gif
++   USR_SYS_LIBS_hpux11_11_mt = pthread gif
+ 
+    LIBRARY = cf322683-513e-4570-a44b-7cdd7cae0de5
+ 
+diff --git a/giflib/Makefile.Host b/giflib/Makefile.Host
+index b04ba6c..a6c2194 100755
+--- a/giflib/Makefile.Host
++++ b/giflib/Makefile.Host
+@@ -15,11 +15,11 @@ USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
+ 
+ USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt ungif
++USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xext pthread dl rt gif
+ 
+ USR_CXXFLAGS_hpux11_11_mt += -DHP_UX=1111 -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-USR_LIBS_hpux11_11_mt = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt X11 Xext pthread ungif
++USR_LIBS_hpux11_11_mt = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt X11 Xext pthread gif
+ 
+ # Add Debugging
+ #USR_LDFLAGS += -g
+diff --git a/imagelib/Makefile.Host b/imagelib/Makefile.Host
+index 8106e96..ad5a017 100755
+--- a/imagelib/Makefile.Host
++++ b/imagelib/Makefile.Host
+@@ -16,7 +16,7 @@ USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xe
+ 
+ USR_CXXFLAGS_hpux11_11_mt += -DHP_UX__ -DSINGLE_THREADED=1 -D__epics__=1
+ 
+-USR_LIBS_hpux11_11_mt = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt X11 Xext pthread ungif png z
++USR_LIBS_hpux11_11_mt = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt X11 Xext pthread gif png z
+ 
+ USR_LDFLAGS += -L$(INSTALL_LIB) -L$(IMAGELIB)
+ 

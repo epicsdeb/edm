@@ -5,3 +5,4 @@
 0005-fix-bug-with-log10-xy-plot.patch
 0006-default-etc-calc.list.patch
 0007-motif-and-X-libraries-in-system-path.patch
+0008-libungif-is-broken-in-debian-8.patch

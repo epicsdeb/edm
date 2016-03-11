@@ -1,3 +1,11 @@
+edm (1.12.98-5) unstable; urgency=medium
+
+  * set SKIP_HARDENING=YES
+    Workaround as epics-dev >= 3.15.3-2 enables hardening flags to
+    host builds by default.
+
+ -- Michael Davidsaver <mdavidsaver@gmail.com>  Fri, 11 Mar 2016 09:37:05 -0500
+
 edm (1.12.98-4) unstable; urgency=medium
 
   * Fix libgif linking problem w/ debian 8 (broken symlink in libgif-dev)

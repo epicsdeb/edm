@@ -3,7 +3,7 @@ Section: contrib/x11
 Priority: extra
 Maintainer: Michael Davidsaver <mdavidsaver@gmail.com>
 Uploaders: Ralph Lange <Ralph.Lange@gmx.de>
-Build-Depends: debhelper (>= 7), cdbs,
+Build-Depends: debhelper (>= 9), cdbs,
                epics-dev (>= 3.14.11-2),
                epics-extensions-dev (>= 20091204.1),
                libgif-dev, libpng-dev, libz-dev, libmotif-dev,

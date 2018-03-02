@@ -7,3 +7,4 @@
 0007-motif-and-X-libraries-in-system-path.patch
 0008-libungif-is-broken-in-debian-8.patch
 0009-remove-unused-libXp.patch
+0010-fix-fprintf-for-format-security-option.patch

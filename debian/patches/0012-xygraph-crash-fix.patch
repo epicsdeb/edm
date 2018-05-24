@@ -1,0 +1,44 @@
+diff --git a/baselib/xygraph.cc b/baselib/xygraph.cc
+index f655342..f4b0e1b 100644
+--- a/baselib/xygraph.cc
++++ b/baselib/xygraph.cc
+@@ -6291,6 +6291,19 @@ int ctl;
+ 
+   if ( ctl ) return;
+ 
++  if ( xPvData[i] == NULL )
++  {
++	if ( debugMode() )
++		printf( "xyGraphClass::genChronoVector: trace %d NULL xPvData\n", i );
++	return;
++  }
++  if ( yPvData[i] == NULL )
++  {
++	if ( debugMode() )
++		printf( "xyGraphClass::genChronoVector: trace %d NULL yPvData\n", i );
++	return;
++  }
++
+   yi = 0;
+   if ( y2Scale[i] ) yi = 1;
+ 
+@@ -6576,6 +6589,19 @@ int ctl;
+ 
+   if ( ctl ) return;
+ 
++  if ( xPvData[i] == NULL )
++  {
++	if ( debugMode() )
++		printf( "xyGraphClass::genXyVector: trace %d NULL xPvData\n", i );
++	return;
++  }
++  if ( yPvData[i] == NULL )
++  {
++	if ( debugMode() )
++		printf( "xyGraphClass::genXyVector: trace %d NULL yPvData\n", i );
++	return;
++  }
++
+   yi = 0;
+   if ( y2Scale[i] ) yi = 1;
+ 

@@ -12,11 +12,9 @@ Can just be dropped in favor of libgif now anyway.
  imagelib/Makefile.Host | 2 +-
  3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/giflib/Makefile b/giflib/Makefile
-index fff1d0d..09aeaaf 100644
 --- a/giflib/Makefile
 +++ b/giflib/Makefile
-@@ -21,16 +21,16 @@ GIF_INC ?= /usr/include
+@@ -22,16 +22,16 @@
     USR_LIBS += 114135a4-6f6c-11d3-95bc-00104b8742df
  
     USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11
@@ -37,11 +35,9 @@ index fff1d0d..09aeaaf 100644
  
     LIBRARY = cf322683-513e-4570-a44b-7cdd7cae0de5
  
-diff --git a/giflib/Makefile.Host b/giflib/Makefile.Host
-index b04ba6c..a6c2194 100755
 --- a/giflib/Makefile.Host
 +++ b/giflib/Makefile.Host
-@@ -15,11 +15,11 @@ USR_SYS_LIBS_Linux += Xm Xt Xp Xtst X11 pthread dl
+@@ -15,11 +15,11 @@
  
  USR_CXXFLAGS_solaris += -D__solaris__ -DSINGLE_THREADED=1 -D__epics__=1
  
@@ -55,11 +51,9 @@ index b04ba6c..a6c2194 100755
  
  # Add Debugging
  #USR_LDFLAGS += -g
-diff --git a/imagelib/Makefile.Host b/imagelib/Makefile.Host
-index 8106e96..ad5a017 100755
 --- a/imagelib/Makefile.Host
 +++ b/imagelib/Makefile.Host
-@@ -16,7 +16,7 @@ USR_LIBS_solaris = EdmBase cfcaa62e-8199-11d3-a77f-00104b8742df Xm Xt Xmu X11 Xe
+@@ -16,7 +16,7 @@
  
  USR_CXXFLAGS_hpux11_11_mt += -DHP_UX__ -DSINGLE_THREADED=1 -D__epics__=1
  

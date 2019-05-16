@@ -1,3 +1,18 @@
+edm (1.12.105B-1) unstable; urgency=medium
+
+  * New upstream version 1.12.105B
+  * refresh patch queue for 1.12.105B
+  * add patch to remove unused libXp and remove it from build dependencies
+  * update patch to fix TOP in calcPvOld and proxyPv
+  * add fix-fprintf-for-format-security-option.patch
+  * add fix-macro-definition-for-giflib-5.1.patch
+  * increase compat level to 9
+  * update lintian overrides
+  * epics-debhelper>=8.12 uses LINKER_USE_RPATH instead of USE_RPATH
+  * update dependencies
+
+ -- Christoph Schröder <christoph.schroeder@helmholtz-berlin.de>  Wed, 16 May 2018 14:24:08 +0200
+
 edm (1.12.98-5) unstable; urgency=medium
 
   * set SKIP_HARDENING=YES

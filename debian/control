@@ -3,11 +3,11 @@ Section: contrib/x11
 Priority: extra
 Maintainer: Michael Davidsaver <mdavidsaver@gmail.com>
 Uploaders: Ralph Lange <Ralph.Lange@gmx.de>
-Build-Depends: debhelper (>= 7), cdbs,
-               epics-dev (>= 3.14.11-2),
-               epics-extensions-dev (>= 20091204.1),
+Build-Depends: debhelper (>= 9), cdbs,
+               epics-dev (>= 3.15.5-1~), epics-debhelper (>= 8.17~),
+               epics-extensions-dev (>= 20130514.5~),
                libgif-dev, libpng-dev, libz-dev, libmotif-dev,
-               libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
+               libx11-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
 Standards-Version: 3.9.4
 Homepage: http://ics-web.sns.ornl.gov/edm/
 
@@ -52,10 +52,10 @@ Section: contrib/devel
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
          edm (= ${binary:Version}),
-         epics-dev (>= 3.14.11-2),
+         epics-dev (>= 3.15.5-1~),
          epics-extensions-dev,
          libgif-dev, libpng-dev, libz-dev, libmotif-dev,
-         libx11-dev, libxp-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
+         libx11-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
 Description: Extensible Display Manager
  A display manager (GUI) for the EPICS control system.
  .

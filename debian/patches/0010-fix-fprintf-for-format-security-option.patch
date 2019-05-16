@@ -1,0 +1,70 @@
+From: Christoph Schroeder <christoph.schroeder@helmholtz-berlin.de>
+Date: Fri, 2 Mar 2018 11:51:43 +0100
+Subject: fix fprintf for format-security option
+
+---
+ lib/app_pkg.cc |  4 ++--
+ lib/utility.cc | 16 ++++++++--------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/lib/app_pkg.cc b/lib/app_pkg.cc
+index 1679d1b..1377ecc 100644
+--- a/lib/app_pkg.cc
++++ b/lib/app_pkg.cc
+@@ -6686,9 +6686,9 @@ void appContextClass::postMessage (
+ 
+   if ( useStdErrFlag ) {
+     if ( errMsgPrefix ) {
+-      fprintf( stderr, errMsgPrefix );
++      fprintf( stderr, "%s", errMsgPrefix );
+     }
+-    fprintf( stderr, msg );
++    fprintf( stderr, "%s", msg );
+     int l = strlen( msg );
+     if ( !l || ( msg[l-1] != '\n' ) ) {
+       fprintf( stderr, "\n" );
+diff --git a/lib/utility.cc b/lib/utility.cc
+index 68496dc..c17c43c 100644
+--- a/lib/utility.cc
++++ b/lib/utility.cc
+@@ -647,11 +647,11 @@ mode_t curMode;
+     curMode = umask( 0 );
+     fd = open( g_diagFileName, O_CREAT|O_WRONLY, 0777 );
+     umask( curMode );
+-    fprintf( stderr, time_string );
++    fprintf( stderr, "%s", time_string );
+     fprintf( stderr, "host %s, pid %-d - ", hostName, procPid );
+     fprintf( stderr, "first diagnostic message\n" );
+-    fprintf( stderr, time_string );
+-    fprintf( stderr, text );
++    fprintf( stderr, "%s", time_string );
++    fprintf( stderr, "%s", text );
+ 
+     envPtr = getenv( environment_str8 );
+     if ( envPtr ) {
+@@ -674,11 +674,11 @@ mode_t curMode;
+ 
+     if ( diagFile ) {
+ 
+-      fprintf( diagFile, time_string );
++      fprintf( diagFile, "%s", time_string );
+       fprintf( diagFile, "host %s, pid %-d - ", hostName, procPid );
+       fprintf( diagFile, "first diagnostic message\n" );
+-      fprintf( diagFile, time_string );
+-      fprintf( diagFile, text );
++      fprintf( diagFile, "%s", time_string );
++      fprintf( diagFile, "%s", text );
+ 
+     }
+     else {
+@@ -699,8 +699,8 @@ mode_t curMode;
+       sys_get_datetime_string( 31, time_string );
+       time_string[31] = 0;
+       Strncat( time_string, " : ", 34 );
+-      fprintf( diagFile, time_string );
+-      fprintf( diagFile, text );
++      fprintf( diagFile, "%s", time_string );
++      fprintf( diagFile, "%s", text );
+ 
+     }
+     else {

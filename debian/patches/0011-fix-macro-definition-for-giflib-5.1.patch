@@ -1,0 +1,42 @@
+From: Christoph Schroeder <christoph.schroeder@helmholtz-berlin.de>
+Date: Fri, 2 Mar 2018 13:48:24 +0100
+Subject: fix macro definition for giflib >=5.1
+
+---
+ giflib/gif.cc | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/giflib/gif.cc b/giflib/gif.cc
+index 9b59de0..a9be239 100644
+--- a/giflib/gif.cc
++++ b/giflib/gif.cc
+@@ -16,14 +16,6 @@
+ //  along with this program; if not, write to the Free Software
+ //  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+-#if GIFLIB_MAJOR > 5 || GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1
+-  #define GIF_CLOSE_FILE(gif) DGifCloseFile(gif, NULL)
+-  #define GIF_OPEN_FILE(gif) DGifOpenFileName(gif, NULL)
+-#else
+-  #define GIF_CLOSE_FILE(gif) DGifCloseFile(gif)
+-  #define GIF_OPEN_FILE(gif) DGifOpenFileName(gif)
+-#endif
+-
+ void printErrMsg (
+   const char *fileName,
+   int lineNum,
+@@ -42,6 +34,14 @@ void printErrMsg (
+ 
+ #include "thread.h"
+ 
++#if GIFLIB_MAJOR > 5 || GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1
++  #define GIF_CLOSE_FILE(gif) DGifCloseFile(gif, NULL)
++  #define GIF_OPEN_FILE(gif) DGifOpenFileName(gif, NULL)
++#else
++  #define GIF_CLOSE_FILE(gif) DGifCloseFile(gif)
++  #define GIF_OPEN_FILE(gif) DGifOpenFileName(gif)
++#endif
++
+ static jmp_buf g_jump_h;
+ 
+ static void signal_handler (

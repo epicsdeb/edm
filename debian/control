@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 9), cdbs,
                epics-dev (>= 3.15.5-1~), epics-debhelper (>= 8.17~),
                epics-extensions-dev (>= 20130514.5~),
                libgif-dev, libpng-dev, libz-dev, libmotif-dev,
-               libx11-dev, libxmu-dev, libxtst-dev, x11proto-print-dev
+               libx11-dev, libxmu-dev, libxtst-dev
 Standards-Version: 3.9.4
 Homepage: http://ics-web.sns.ornl.gov/edm/
 

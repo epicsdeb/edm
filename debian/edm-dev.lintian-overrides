@@ -1,3 +1,6 @@
 edm-dev: file-in-unusual-dir
 edm-dev: non-standard-dir-in-usr
 # EPICS lives in usr/epics
+edm-dev: unstripped-binary-or-object
+edm-dev: hardening-no-fortify-functions usr/lib/epics/lib/linux-x86_64-debug/*
+# -debug targets are built with -O0.  Fortify is disabled in this situation

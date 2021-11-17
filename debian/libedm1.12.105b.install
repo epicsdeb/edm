@@ -1,0 +1,4 @@
+# Basic EDM libraries:
+usr/lib/*/lib*.so.*
+# Widget / PV Plugins:
+usr/lib/*/edm/lib*.so.*

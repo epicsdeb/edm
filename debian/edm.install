@@ -1,6 +1,4 @@
 usr/bin/edm
-usr/lib/lib*.so.*
-usr/lib/edm/lib*.so.*
 usr/share/edm/helpFiles
 etc/edm/edmObjects
 etc/edm/edmPrintDef

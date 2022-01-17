@@ -1,3 +1,11 @@
+edm (1.12.105B-2) unstable; urgency=medium
+
+  * remove x11proto-print-dev dependency
+  * add use-prec-to-calc-slider-increments-and-reverse-list.patch
+  * move from cdbs to standard debhelper Since CDBS is deprecated, we will move to debhelper to build the package. This will also make changes in the package structure to comply to the debian policy. Libraries are now part of a separate libedm package.
+
+ -- Christoph Schröder <christoph.schroeder@helmholtz-berlin.de>  Mon, 17 Jan 2022 16:27:23 +0100
+
 edm (1.12.105B-1) unstable; urgency=medium
 
   * New upstream version 1.12.105B

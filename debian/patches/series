@@ -10,3 +10,4 @@
 0010-fix-fprintf-for-format-security-option.patch
 0011-fix-macro-definition-for-giflib-5.1.patch
 0012-xygraph-crash-fix.patch
+0013-use-prec-to-calc-slider-increments-and-reverse-list.patch

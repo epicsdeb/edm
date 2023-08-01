@@ -1,0 +1,76 @@
+From: =?utf-8?q?Christoph_Schr=C3=B6der?=
+ <christoph.schroeder@helmholtz-berlin.de>
+Date: Mon, 8 Jun 2020 17:12:29 +0200
+Subject: use prec to calc slider increments and reverse list
+
+---
+ baselib/motifSlider.cc | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/baselib/motifSlider.cc b/baselib/motifSlider.cc
+index d7d625f..4c0933a 100644
+--- a/baselib/motifSlider.cc
++++ b/baselib/motifSlider.cc
+@@ -211,6 +211,7 @@ double fvalue;
+ static void calcIncRange (
+   double minV,
+   double maxV,
++  int prec,
+   char *strVal,
+   double *incArray
+ ) {
+@@ -218,6 +219,7 @@ static void calcIncRange (
+ double max, lmin, lmax;
+ int i, j, start, end;
+ char tmpStr[255+1];
++int incArraySize = 7;
+ 
+     if ( minV == 0 ) {
+       lmin = 0;
+@@ -245,18 +247,23 @@ char tmpStr[255+1];
+       if ( lmax > max ) max = lmax;
+     }
+ 
+-    start = (int) max - 1;
+-    end = start - 5;
++    /* use precision if set */
++    if( prec > 0 ) {
++        max = (incArraySize-1) - prec;
++    }
++
++    end = (int) max - 1;
++    start = end - (incArraySize-2);
+     strcpy( strVal, "---|" );
+     incArray[0] = 0;
+-    for ( i=1,j=start; i<6; i++,j-- ) {
++    for ( i=1,j=start; i<(incArraySize-1); i++,j++ ) {
+       sprintf( tmpStr, "10^%-d|", j );
+       Strncat( strVal, tmpStr, 255 );
+       incArray[i] = pow( 10, (double) j );
+     }
+     sprintf( tmpStr, "10^%-d", end );
+     Strncat( strVal, tmpStr, 255 );
+-    incArray[6] = pow( 10, (double) j );
++    incArray[incArraySize-1] = pow( 10, (double) j );
+ 
+ }
+ 
+@@ -306,7 +313,8 @@ char strVal[255+1];
+     mslo->ef.addTextField( activeMotifSliderClass_str58, 20,
+      &mslo->bufIncrement );
+ 
+-    calcIncRange( mslo->minFv, mslo->maxFv, strVal, mslo->incArray );
++    calcIncRange( mslo->minFv, mslo->maxFv, mslo->precision,
++                  strVal, mslo->incArray );
+     mslo->incIndex = 0;
+     mslo->ef.addOption( activeMotifSliderClass_str58, strVal,
+      &mslo->incIndex );
+@@ -2652,7 +2660,7 @@ double fvalue, mult;
+         mslo->ef.addTextField( activeMotifSliderClass_str58, 20,
+          &mslo->bufIncrement );
+ 
+-        calcIncRange( mslo->efScaleMin.value(), mslo->efScaleMax.value(),
++        calcIncRange( mslo->minFv, mslo->maxFv, mslo->precision,
+          strVal, mslo->incArray );
+         mslo->incIndex = 0;
+         mslo->ef.addOption( activeMotifSliderClass_str58, strVal,
